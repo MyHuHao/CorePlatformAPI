@@ -1,5 +1,77 @@
+### .NET ###
+# 编译输出
 bin/
 obj/
-/packages/
-riderModule.iml
-/_ReSharper.Caches/
+[Bb]in/[Dd]ebug/
+[Bb]in/[Rr]elease/
+
+# NuGet 包缓存和恢复文件
+.nuget/
+packages/
+*.nupkg
+nuget.exe
+
+# 用户特定文件
+*.user
+*.suo
+*.userprefs
+*.usertest
+*.lock.json
+
+# IDE 相关
+.vs/
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# 本地开发配置（如环境变量）
+launchSettings.json
+appsettings.Development.json
+local.settings.json
+
+# 测试相关
+TestResults/
+*.coverage
+coverage.*
+*.trx
+
+### 操作系统生成文件 ###
+# macOS
+.DS_Store
+._*
+
+# Windows
+Thumbs.db
+[Tt]humbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Linux
+*~
+
+### 依赖项管理 ###
+**/[Dd]ependencies/
+
+### 日志和临时文件 ###
+*.log
+*.tmp
+logs/
+[Tt]emp/
+
+### 发布输出 ###
+publish/
+out/
+*.pubxml
+
+### 其他 ###
+# 环境敏感文件
+.env
+.env.local
+*.enc
+.secrets
+
+# 前端构建工具（如适用）
+node_modules/
+dist/
+wwwroot/
