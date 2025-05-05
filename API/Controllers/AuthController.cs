@@ -20,29 +20,4 @@ public class AuthController(IDistributedCache cache) : Controller
         return Ok(new { code = 0, token });
     }
 
-    [Authorize(AuthenticationSchemes = "MyScheme")]
-    [HttpPost("refresh")]
-    public async Task<IActionResult> Refresh()
-    {
-        // 假设当前用户已通过认证，生成新Token
-        var oldToken = Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
-        var username = User.Identity?.Name ?? "";
-        var newToken = Guid.NewGuid().ToString("N");
-        // 删除旧 Token，存新 Token
-        await cache.RemoveAsync(oldToken);
-        await cache.SetStringAsync(newToken, username, new DistributedCacheEntryOptions
-        {
-            AbsoluteExpirationRelativeToNow = TimeSpan.FromHours(1)
-        });
-        return Ok(new { code = 0, token = newToken });
-    }
-
-    [Authorize(AuthenticationSchemes = "MyScheme")]
-    [HttpPost("logout")]
-    public async Task<IActionResult> Logout()
-    {
-        var token = Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
-        await cache.RemoveAsync(token); // 移除Token实现下线
-        return Ok(new { code = 0, msg = "已注销" });
-    }
 }
