@@ -12,7 +12,6 @@
       <Folder Include="Interfaces\" />
       <Folder Include="Mappings\" />
       <Folder Include="Queries\" />
-      <Folder Include="Services\" />
     </ItemGroup>
 
     <ItemGroup>

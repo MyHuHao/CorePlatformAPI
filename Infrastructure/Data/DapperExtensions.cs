@@ -3,33 +3,27 @@ using System.Data;
 
 namespace Infrastructure.Data;
 
-public static class DapperExtensions
+public interface IDapperRepository<TEntity> where TEntity : class
 {
-    public static async Task<IEnumerable<T>> QueryAsync<T>(this IDbConnectionFactory factory, 
-        string databaseName, string sql, object? param = null)
+    Task<IEnumerable<TEntity>> QueryAsync(string sql, object? param = null);
+
+    Task<int> ExecuteAsync(string sql, object? param = null);
+
+    // 其他通用方法签名...
+}
+
+public class DapperRepository<TEntity>(IDbConnectionFactory dbConnectionFactory) : IDapperRepository<TEntity>
+    where TEntity : class
+{
+    public async Task<IEnumerable<TEntity>> QueryAsync(string sql, object? param = null)
     {
-        using IDbConnection connection = factory.CreateConnection(databaseName);
-        return await connection.QueryAsync<T>(sql, param);
-    }
-    
-    public static async Task<T> QueryFirstOrDefaultAsync<T>(this IDbConnectionFactory factory,
-        string databaseName, string sql, object? param = null)
-    {
-        using IDbConnection connection = factory.CreateConnection(databaseName);
-        return await connection.QueryFirstOrDefaultAsync<T>(sql, param) ?? throw new InvalidOperationException();
+        using var conn = dbConnectionFactory.CreateConnection();
+        return await conn.QueryAsync<TEntity>(sql, param);
     }
 
-    public static async Task<int> ExecuteAsync(this IDbConnectionFactory factory,
-        string databaseName, string sql, object? param = null)
+    public async Task<int> ExecuteAsync(string sql, object? param = null)
     {
-        using IDbConnection connection = factory.CreateConnection(databaseName);
-        return await connection.ExecuteAsync(sql, param);
-    }
-
-    public static async Task<T> ExecuteScalarAsync<T>(this IDbConnectionFactory factory,
-        string databaseName, string sql, object? param = null)
-    {
-        using IDbConnection connection = factory.CreateConnection(databaseName);
-        return await connection.ExecuteScalarAsync<T>(sql, param) ?? throw new InvalidOperationException();
+        using var conn = dbConnectionFactory.CreateConnection();
+        return await conn.ExecuteAsync(sql, param);
     }
 }

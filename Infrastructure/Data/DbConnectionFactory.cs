@@ -6,23 +6,21 @@ namespace Infrastructure.Data;
 
 public interface IDbConnectionFactory
 {
-    IDbConnection CreateConnection(string databaseName);
+    IDbConnection CreateConnection(string name = "DefaultConnection");
 }
 
 public class DbConnectionFactory(IConfiguration configuration) : IDbConnectionFactory
 {
-    private readonly string _connectionString = configuration.GetConnectionString("MasterDB")
-                                                ?? throw new InvalidOperationException();
-
-
-    public IDbConnection CreateConnection(string databaseName)
+    /// <summary>
+    /// 获取指定名称的数据库连接
+    /// </summary>
+    /// <param name="name">连接字符串名称</param>
+    public IDbConnection CreateConnection(string name = "DefaultConnection")
     {
-        MySqlConnectionStringBuilder builder = new(_connectionString)
-        {
-            Database = databaseName
-        };
-        MySqlConnection connection = new(builder.ConnectionString);
-        connection.Open();
-        return connection;
+        var connString = configuration.GetConnectionString(name);
+        if (string.IsNullOrEmpty(connString))
+            throw new ArgumentException($"连接字符串未配置: {name}");
+        // 使用 MySqlConnector 创建连接
+        return new MySqlConnection(connString);
     }
 }
