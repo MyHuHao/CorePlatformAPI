@@ -17,4 +17,10 @@
         <ProjectReference Include="..\Core\Core.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <PackageReference Include="Dapper" Version="2.1.66" />
+      <PackageReference Include="Microsoft.Extensions.Configuration" Version="9.0.4" />
+      <PackageReference Include="MySql.Data" Version="9.3.0" />
+    </ItemGroup>
+
 </Project>
