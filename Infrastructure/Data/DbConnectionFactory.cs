@@ -1,13 +1,9 @@
 using System.Data;
+using Core.Interfaces;
 using Microsoft.Extensions.Configuration;
 using MySql.Data.MySqlClient;
 
 namespace Infrastructure.Data;
-
-public interface IDbConnectionFactory
-{
-    IDbConnection CreateConnection(string name = "DefaultConnection");
-}
 
 public class DbConnectionFactory(IConfiguration configuration) : IDbConnectionFactory
 {

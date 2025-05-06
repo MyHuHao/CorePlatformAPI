@@ -1,6 +1,9 @@
 using System.Text;
 using System.Text.Json;
 using API.Middlewares;
+using Application.Services;
+using Core.Interfaces;
+using Infrastructure.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
@@ -24,7 +27,14 @@ builder.Services.AddHttpLogging(logging =>
     logging.ResponseBodyLogLimit = 4096;
 });
 
-// 添加配置和服务
+// 注册基础服务
+builder.Services.AddScoped<IDbConnectionFactory, DbConnectionFactory>();
+builder.Services.AddScoped(typeof(IDapperRepository<>), typeof(DapperRepository<>));
+
+// 注册业务服务
+builder.Services.AddScoped<LoginService>();
+
+// 添加配置
 builder.Services.AddControllers().AddJsonOptions(options =>
 {
     options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;

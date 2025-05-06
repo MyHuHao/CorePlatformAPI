@@ -9,6 +9,7 @@
     <ItemGroup>
       <Folder Include="DependencyInjection\" />
       <Folder Include="Logging\" />
+      <Folder Include="Security\" />
     </ItemGroup>
 
     <ItemGroup>

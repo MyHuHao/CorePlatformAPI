@@ -37,7 +37,7 @@ public class ApiLoggingMiddleware(RequestDelegate next, ILogger<ApiLoggingMiddle
         }
     }
 
-    private async Task<string> ReadRequestBodyAsync(HttpRequest request)
+    private static async Task<string> ReadRequestBodyAsync(HttpRequest request)
     {
         request.EnableBuffering();
         using var reader = new StreamReader(request.Body, Encoding.UTF8, true, 4096, true);
@@ -46,7 +46,7 @@ public class ApiLoggingMiddleware(RequestDelegate next, ILogger<ApiLoggingMiddle
         return Truncate(body, 4096);
     }
 
-    private async Task<string> ReadResponseBodyAsync(Stream responseBody, Stream originalBody)
+    private static async Task<string> ReadResponseBodyAsync(Stream responseBody, Stream originalBody)
     {
         responseBody.Seek(0, SeekOrigin.Begin);
         using var reader = new StreamReader(responseBody, Encoding.UTF8, true, 4096, true);
