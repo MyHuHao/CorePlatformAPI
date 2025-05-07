@@ -2,8 +2,8 @@ using System.Text;
 using System.Text.Json;
 using API.Middlewares;
 using Application.Services;
-using Core.Interfaces;
 using Infrastructure.Data;
+using Infrastructure.DependencyInjection;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
@@ -13,13 +13,13 @@ var builder = WebApplication.CreateBuilder(args);
 // 获取JWT配置
 var configuration = builder.Configuration;
 var jwtSettings = configuration.GetSection("JWT");
-
-// 日志记录相关
-builder.Host.UseSerilog((_, config) => config
-    .ReadFrom.Configuration(builder.Configuration)
-    .Enrich.FromLogContext()
-    .WriteTo.Console());
     
+// 日志记录相关
+builder.Host.UseSerilog((ctx, config) => config
+    .ReadFrom.Configuration(ctx.Configuration)
+    .Enrich.FromLogContext()
+);
+
 builder.Services.AddHttpLogging(logging =>
 {
     logging.LoggingFields = Microsoft.AspNetCore.HttpLogging.HttpLoggingFields.All;
@@ -27,12 +27,8 @@ builder.Services.AddHttpLogging(logging =>
     logging.ResponseBodyLogLimit = 4096;
 });
 
-// 注册基础服务
-builder.Services.AddScoped<IDbConnectionFactory, DbConnectionFactory>();
-builder.Services.AddScoped(typeof(IDapperRepository<>), typeof(DapperRepository<>));
-
-// 注册业务服务
-builder.Services.AddScoped<LoginService>();
+// 注册服务
+builder.Services.AddInfrastructure();
 
 // 添加配置
 builder.Services.AddControllers().AddJsonOptions(options =>
@@ -68,8 +64,6 @@ builder.Services.AddCors(options => options.AddPolicy("CorsPolicy", policy =>
         .AllowAnyMethod()
         .AllowAnyHeader()
         .WithExposedHeaders("Content-Disposition")));
-
-
 
 // Redis
 

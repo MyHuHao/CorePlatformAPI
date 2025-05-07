@@ -7,12 +7,12 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <Folder Include="DependencyInjection\" />
       <Folder Include="Logging\" />
       <Folder Include="Security\" />
     </ItemGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\Application\Application.csproj" />
         <ProjectReference Include="..\Core\Core.csproj" />
     </ItemGroup>
 

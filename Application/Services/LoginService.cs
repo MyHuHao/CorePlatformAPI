@@ -1,14 +1,15 @@
-﻿using API.Models;
-using Core.Dtos;
-using Core.Entities;
-using Core.Interfaces;
+﻿using Application.Interfaces;
+using Core.DTOs;
+using Core.DTOs.Base;
 
 namespace Application.Services;
 
-public class LoginService(IDapperRepository<User> userRepository)
+public class LoginService : ILoginService
 {
     public async Task<ApiResponse<string>> Login(LoginRequest request)
     {
+        // 验证账户，密码是否正确
+        // 生成token
         await Task.CompletedTask;
         return new ApiResponse<string>()
         {

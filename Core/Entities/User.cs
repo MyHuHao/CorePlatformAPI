@@ -36,7 +36,7 @@ public class User
     /// 出生日期
     /// </summary>
     public DateTime Birthday { get; set; }
-
+    
     /// <summary>
     /// 状态（0-禁用，1-启用）
     /// </summary>

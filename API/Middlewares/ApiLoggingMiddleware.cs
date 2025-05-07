@@ -31,7 +31,7 @@ public class ApiLoggingMiddleware(RequestDelegate next, ILogger<ApiLoggingMiddle
         finally
         {
             var responseBody = await ReadResponseBodyAsync(responseBodyStream, originalResponseBody);
-            var duration = (long)(DateTime.UtcNow - startTime).TotalMilliseconds;
+            var duration = (int)(DateTime.UtcNow - startTime).TotalMilliseconds;
 
             LogApiRequest(context, startTime, duration, requestBody, responseBody, statusCode, errorMessage);
         }
@@ -59,7 +59,7 @@ public class ApiLoggingMiddleware(RequestDelegate next, ILogger<ApiLoggingMiddle
     private void LogApiRequest(
         HttpContext context,
         DateTime requestTime,
-        long duration,
+        int duration,
         string requestBody,
         string responseBody,
         int statusCode,
@@ -68,7 +68,7 @@ public class ApiLoggingMiddleware(RequestDelegate next, ILogger<ApiLoggingMiddle
         var logData = new
         {
             IpAddress = context.Connection.RemoteIpAddress?.ToString(),
-            UserName = context.User.Identity?.IsAuthenticated == true ? context.User.Identity.Name : null,
+            UserName = context.User.Identity?.IsAuthenticated == true ? context.User.Identity.Name : "匿名",
             context.Request.Path,
             context.Request.Method,
             RequestBody = requestBody,

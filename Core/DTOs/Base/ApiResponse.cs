@@ -1,4 +1,4 @@
-﻿namespace Core.Dtos;
+﻿namespace Core.DTOs.Base;
 
 public class ApiResponse<T>
 {

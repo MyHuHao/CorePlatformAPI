@@ -50,10 +50,10 @@ public class ApiLog
     /// <summary>
     /// 请求时间
     /// </summary>
-    public required string RequestTime { get; set; }
+    public required DateTime RequestTime { get; set; }
 
     /// <summary>
     /// 处理耗时（毫秒）
     /// </summary>
-    public required string Duration { get; set; }
+    public required int  Duration { get; set; }
 }
