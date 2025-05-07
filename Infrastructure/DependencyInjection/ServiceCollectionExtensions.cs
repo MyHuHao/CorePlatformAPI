@@ -16,10 +16,17 @@ public static class ServiceCollectionExtensions
         services.AddScoped(typeof(IDapperExtensions<>), typeof(DapperExtensions<>));
 
         // 注册业务服务
+        services.AddScoped<IApiLogService, ApiLogService>();
         services.AddScoped<ILoginService, LoginService>();
         services.AddScoped<IUserService, UserService>();
         
         // 注册数据仓储
+        services.AddScoped<IApiLogRepository, ApiLogRepository>();
         services.AddScoped<IUserRepository, UserRepository>();
+        
+        
+        
+        
+        
     }
 }

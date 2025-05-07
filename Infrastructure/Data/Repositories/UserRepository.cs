@@ -23,10 +23,10 @@ public class UserRepository(IDapperExtensions<User> dapper) : IUserRepository
                            gender,
                            birthday,
                            status,
-                           create_by,
-                           create_time,
-                           modify_by,
-                           modify_time
+                           create_by as createBy,
+                           create_time as createTime,
+                           modify_by as modifyBy,
+                           modify_time as modifyTime
                            from 
                            `user`
                            where 

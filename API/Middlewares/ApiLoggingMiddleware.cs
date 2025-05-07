@@ -1,5 +1,7 @@
 ﻿using System.Text;
 using System.Text.Json;
+using Application.Interfaces;
+using Core.Entities;
 
 namespace API.Middlewares;
 
@@ -32,8 +34,8 @@ public class ApiLoggingMiddleware(RequestDelegate next, ILogger<ApiLoggingMiddle
         {
             var responseBody = await ReadResponseBodyAsync(responseBodyStream, originalResponseBody);
             var duration = (int)(DateTime.UtcNow - startTime).TotalMilliseconds;
-
-            LogApiRequest(context, startTime, duration, requestBody, responseBody, statusCode, errorMessage);
+            var apiLogService =  context.RequestServices.GetRequiredService<IApiLogService>();
+            await LogApiRequest(context, startTime, duration, requestBody, responseBody, statusCode, errorMessage, apiLogService);
         }
     }
 
@@ -56,37 +58,43 @@ public class ApiLoggingMiddleware(RequestDelegate next, ILogger<ApiLoggingMiddle
         return Truncate(body, 4096);
     }
 
-    private void LogApiRequest(
+    private async Task LogApiRequest(
         HttpContext context,
         DateTime requestTime,
         int duration,
         string requestBody,
         string responseBody,
         int statusCode,
-        string errorMessage)
+        string errorMessage,
+        IApiLogService logService)
     {
-        var logData = new
+        var logData = new ApiLog
         {
-            IpAddress = context.Connection.RemoteIpAddress?.ToString(),
-            UserName = context.User.Identity?.IsAuthenticated == true ? context.User.Identity.Name : "匿名",
-            context.Request.Path,
-            context.Request.Method,
+            Id = "",
+            IpAddress = context.Connection.RemoteIpAddress?.ToString() ?? "",
+            UserName = context.User.Identity is { IsAuthenticated: true, Name: not null } ? context.User.Identity.Name : "匿名",
+            Path = context.Request.Path,
+            Method = context.Request.Method,
             RequestBody = requestBody,
             ResponseBody = responseBody,
-            StatusCode = statusCode,
+            StatusCode = (short)statusCode,
             ErrorMessage = errorMessage,
             RequestTime = requestTime,
             Duration = duration
         };
+        
+        
+        await logService.InsertApiLog(logData);
 
         if (statusCode >= 500)
         {
-            logger.LogError("API Error: {@ApiLog}", logData);
+            logger.LogError("API Error: {@log}", logData);
         }
         else
         {
-            logger.LogInformation("API Request: {@ApiLog}", logData);
+            logger.LogInformation("API Request: {@log}", logData);
         }
+        
     }
 
     private static string Truncate(string value, int maxLength) =>

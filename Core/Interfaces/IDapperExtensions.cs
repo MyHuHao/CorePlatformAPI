@@ -60,6 +60,4 @@ public interface IDapperExtensions<TEntity> where TEntity : class
     /// <param name="param"></param>
     /// <returns></returns>
     Task<int> ExecuteAsync(string sql, object? param = null);
-
-    
 }

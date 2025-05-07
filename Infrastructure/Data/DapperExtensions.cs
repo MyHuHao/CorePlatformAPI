@@ -56,7 +56,7 @@ public class DapperExtensions<TEntity>(IDbConnectionFactory dbConnectionFactory)
         using var conn = dbConnectionFactory.CreateConnection();
         return await conn.ExecuteScalarAsync<int>(sql, param);
     }
-    
+
     /// <summary>
     /// 查询返回第一行第一列数据-字符串
     /// </summary>
