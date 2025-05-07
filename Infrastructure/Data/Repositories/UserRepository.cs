@@ -28,7 +28,7 @@ public class UserRepository(IDapperExtensions<User> dapper) : IUserRepository
                            modify_by,
                            modify_time
                            from 
-                           user
+                           `user`
                            where 
                            id = @Id 
                            """;

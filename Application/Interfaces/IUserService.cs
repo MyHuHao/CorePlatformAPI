@@ -6,7 +6,7 @@ namespace Application.Interfaces;
 
 public interface IUserService
 {
-    Task<ApiResponse<User>> GetUserByIdAsync(string id);
+    Task<ApiResponse<UserDto>> GetUserByIdAsync(string id);
     Task<IEnumerable<ApiResponse<PagedResult<User>>>> GetAllUsersAsync(GetAllUserRequest request);
     Task<int> CreateUserAsync(GetAllUserRequest request);
     Task<bool> DeleteUserAsync(string id);

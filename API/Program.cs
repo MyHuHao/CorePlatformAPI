@@ -1,8 +1,6 @@
 using System.Text;
 using System.Text.Json;
 using API.Middlewares;
-using Application.Services;
-using Infrastructure.Data;
 using Infrastructure.DependencyInjection;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
@@ -27,9 +25,6 @@ builder.Services.AddHttpLogging(logging =>
     logging.ResponseBodyLogLimit = 4096;
 });
 
-// 注册服务
-builder.Services.AddInfrastructure();
-
 // 添加配置
 builder.Services.AddControllers().AddJsonOptions(options =>
 {
@@ -41,6 +36,12 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddHttpClient();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddDistributedMemoryCache();
+
+// 注册服务
+builder.Services.AddInfrastructure();
+
+// AutoMapper
+builder.Services.AddAutoMapper(typeof(Application.Mappings.UserProfile).Assembly);
 
 // 认证
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
