@@ -5,13 +5,16 @@ using Core.Entities;
 
 namespace API.Middlewares;
 
-public class ApiLoggingMiddleware(RequestDelegate next, ILogger<ApiLoggingMiddleware> logger)
+public class ApiLoggingMiddleware(
+    RequestDelegate next,
+    ILogger<ApiLoggingMiddleware> logger,
+    IServiceScopeFactory scopeFactory)
 {
     public async Task InvokeAsync(HttpContext context)
     {
         var startTime = DateTime.UtcNow;
-        var requestBody = await ReadRequestBodyAsync(context.Request);
         var originalResponseBody = context.Response.Body;
+        var requestBody = await ReadRequestBodyAsync(context.Request);
 
         using var responseBodyStream = new MemoryStream();
         context.Response.Body = responseBodyStream;
@@ -32,10 +35,15 @@ public class ApiLoggingMiddleware(RequestDelegate next, ILogger<ApiLoggingMiddle
         }
         finally
         {
+            // 手动创建作用域
+            using var scope = scopeFactory.CreateScope();
+            // 从当前作用域解析服务
+            var apiLogService = scope.ServiceProvider.GetRequiredService<IApiLogService>();
             var responseBody = await ReadResponseBodyAsync(responseBodyStream, originalResponseBody);
             var duration = (int)(DateTime.UtcNow - startTime).TotalMilliseconds;
-            var apiLogService =  context.RequestServices.GetRequiredService<IApiLogService>();
-            await LogApiRequest(context, startTime, duration, requestBody, responseBody, statusCode, errorMessage, apiLogService);
+            await LogApiRequest(apiLogService, context, startTime, duration, requestBody, responseBody, statusCode,
+                errorMessage);
+            await responseBodyStream.CopyToAsync(originalResponseBody);
         }
     }
 
@@ -59,20 +67,23 @@ public class ApiLoggingMiddleware(RequestDelegate next, ILogger<ApiLoggingMiddle
     }
 
     private async Task LogApiRequest(
+        IApiLogService apiLogService,
         HttpContext context,
         DateTime requestTime,
         int duration,
         string requestBody,
         string responseBody,
         int statusCode,
-        string errorMessage,
-        IApiLogService logService)
+        string errorMessage
+    )
     {
         var logData = new ApiLog
         {
             Id = "",
             IpAddress = context.Connection.RemoteIpAddress?.ToString() ?? "",
-            UserName = context.User.Identity is { IsAuthenticated: true, Name: not null } ? context.User.Identity.Name : "匿名",
+            UserName = context.User.Identity is { IsAuthenticated: true, Name: not null }
+                ? context.User.Identity.Name
+                : "匿名",
             Path = context.Request.Path,
             Method = context.Request.Method,
             RequestBody = requestBody,
@@ -82,19 +93,19 @@ public class ApiLoggingMiddleware(RequestDelegate next, ILogger<ApiLoggingMiddle
             RequestTime = requestTime,
             Duration = duration
         };
-        
-        
-        await logService.InsertApiLog(logData);
 
-        if (statusCode >= 500)
-        {
-            logger.LogError("API Error: {@log}", logData);
-        }
-        else
-        {
-            logger.LogInformation("API Request: {@log}", logData);
-        }
-        
+        // 使用 apiLogService 处理日志逻辑
+        await apiLogService.InsertApiLog(logData);
+
+        LogToConsole(logData);
+    }
+
+    private void LogToConsole(ApiLog log)
+    {
+        var logLevel = log.StatusCode >= 500 ? LogLevel.Error : LogLevel.Information;
+        logger.Log(logLevel,
+            "API {Method} {Path} responded {StatusCode} in {Duration}ms",
+            log.Method, log.Path, log.StatusCode, log.Duration);
     }
 
     private static string Truncate(string value, int maxLength) =>

@@ -82,8 +82,6 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseMiddleware<ApiLoggingMiddleware>();
-app.UseHttpsRedirection();
-app.UseStaticFiles();
 app.UseRouting();
 app.UseCors("CorsPolicy");
 app.UseAuthentication();

@@ -36,31 +36,18 @@ public class ApiLogRepository(IDapperExtensions<ApiLog> dapper) : IApiLogReposit
                                @request_time,
                                @duration);
                            """;
-        // var rows = await dapper.ExecuteAsync(sql, new
-        // {
-        //     ip_address = apiLog.IpAddress,
-        //     user_name = apiLog.UserName,
-        //     path = apiLog.Path,
-        //     method = apiLog.Method,
-        //     request_body = apiLog.RequestBody,
-        //     response_body = apiLog.ResponseBody,
-        //     status_code = apiLog.StatusCode,
-        //     error_message = apiLog.ErrorMessage,
-        //     equest_time = apiLog.RequestTime,
-        //     duration = apiLog.Duration
-        // });
         var rows = await dapper.ExecuteAsync(sql, new
         {
-            ip_address = "localhost",
-            user_name = "测试",
-            path = "123456",
-            method = "GET",
-            request_body = "",
-            response_body = "测试",
-            status_code = 200,
-            error_message = "",
-            equest_time = "2025-05-07 09:26:59",
-            duration = 100
+            ip_address = apiLog.IpAddress == "::1" ? "127.0.0.1" : apiLog.IpAddress,
+            user_name = apiLog.UserName,
+            path = apiLog.Path,
+            method = apiLog.Method,
+            request_body = apiLog.RequestBody,
+            response_body = apiLog.ResponseBody,
+            status_code = apiLog.StatusCode,
+            error_message = apiLog.ErrorMessage,
+            request_time = apiLog.RequestTime,
+            duration = apiLog.Duration
         });
         return rows > 0;
     }
