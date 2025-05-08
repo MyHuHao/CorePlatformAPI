@@ -1,13 +1,14 @@
-﻿using Core.DTOs;
-using Core.DTOs.Base;
+﻿using Core.Contracts.Requests;
+using Core.Contracts.Results;
+using Core.DTOs;
 using Core.Entities;
 
 namespace Application.Interfaces;
 
 public interface IUserService
 {
-    Task<ApiResponse<UserDto>> GetUserByIdAsync(string id);
-    Task<IEnumerable<ApiResponse<PagedResult<User>>>> GetAllUsersAsync(GetAllUserRequest request);
+    Task<ApiResults<UserDto>> GetUserByIdAsync(string id);
+    Task<IEnumerable<ApiResults<PagedResult<User>>>> GetAllUsersAsync(GetAllUserRequest request);
     Task<int> CreateUserAsync(GetAllUserRequest request);
     Task<bool> DeleteUserAsync(string id);
 }

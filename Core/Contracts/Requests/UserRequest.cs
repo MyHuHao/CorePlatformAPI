@@ -1,5 +1,9 @@
-﻿namespace Core.DTOs;
+﻿namespace Core.Contracts.Requests;
 
+public class UserRequest
+{
+    
+}
 public class GetAllUserRequest
 {
     public required string Id { get; set; }

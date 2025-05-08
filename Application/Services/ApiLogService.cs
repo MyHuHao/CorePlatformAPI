@@ -1,10 +1,10 @@
-﻿using Application.Interfaces;
+﻿using Application.Commands;
+using Application.Interfaces;
 using Core.Entities;
-using Core.Interfaces;
 
 namespace Application.Services;
 
-public class ApiLogService(IApiLogRepository repository) : IApiLogService
+public class ApiLogService(UserCommand command) : IApiLogService
 {
     /// <summary>
     /// 插入api日志
@@ -12,6 +12,6 @@ public class ApiLogService(IApiLogRepository repository) : IApiLogService
     /// <param name="apiLog"></param>
     public async Task InsertApiLog(ApiLog apiLog)
     {
-        await repository.AddAsync(apiLog);
+        await command.AddAsync(apiLog);
     }
 }

@@ -1,6 +1,5 @@
 ﻿using Application.Interfaces;
-using Application.Services;
-using Core.DTOs;
+using Core.Contracts.Requests;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers;

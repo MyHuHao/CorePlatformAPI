@@ -1,4 +1,4 @@
-﻿namespace Core.DTOs.Base;
+﻿namespace Core.Contracts.Results;
 
 public class PagedResult<T>
 {

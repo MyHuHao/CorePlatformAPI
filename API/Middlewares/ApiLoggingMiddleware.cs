@@ -12,7 +12,7 @@ public class ApiLoggingMiddleware(
 {
     public async Task InvokeAsync(HttpContext context)
     {
-        var startTime = DateTime.UtcNow;
+        var startTime = DateTime.Now;
         var originalResponseBody = context.Response.Body;
         var requestBody = await ReadRequestBodyAsync(context.Request);
 
@@ -40,7 +40,7 @@ public class ApiLoggingMiddleware(
             // 从当前作用域解析服务
             var apiLogService = scope.ServiceProvider.GetRequiredService<IApiLogService>();
             var responseBody = await ReadResponseBodyAsync(responseBodyStream, originalResponseBody);
-            var duration = (int)(DateTime.UtcNow - startTime).TotalMilliseconds;
+            var duration = (int)(DateTime.Now - startTime).TotalMilliseconds;
             await LogApiRequest(apiLogService, context, startTime, duration, requestBody, responseBody, statusCode,
                 errorMessage);
             await responseBodyStream.CopyToAsync(originalResponseBody);

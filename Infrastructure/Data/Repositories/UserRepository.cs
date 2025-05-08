@@ -1,4 +1,5 @@
-﻿using Core.DTOs;
+﻿using Core.Contracts.Requests;
+using Core.DTOs;
 using Core.Entities;
 using Core.Interfaces;
 

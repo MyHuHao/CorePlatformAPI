@@ -1,10 +1,9 @@
-﻿using Core.DTOs;
-using Core.DTOs.Base;
-using Core.Entities;
+﻿using Core.Contracts.Requests;
+using Core.Contracts.Results;
 
 namespace Application.Interfaces;
 
 public interface ILoginService
 {
-    Task<ApiResponse<string>> Login(LoginRequest request);
+    Task<ApiResults<string>> Login(LoginRequest request);
 }

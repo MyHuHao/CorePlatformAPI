@@ -1,4 +1,6 @@
-﻿using Application.Interfaces;
+﻿using Application.Commands;
+using Application.Interfaces;
+using Application.Queries;
 using Application.Services;
 using Core.Interfaces;
 using Infrastructure.Data;
@@ -20,9 +22,16 @@ public static class ServiceCollectionExtensions
         services.AddScoped<ILoginService, LoginService>();
         services.AddScoped<IUserService, UserService>();
         
+        // 注册CQRS 
+        services.AddScoped<UserQuery>();
+        
+        // 注册命令
+        services.AddScoped<UserCommand>();
+        
         // 注册数据仓储
         services.AddScoped<IApiLogRepository, ApiLogRepository>();
         services.AddScoped<IUserRepository, UserRepository>();
+        
         
         
         

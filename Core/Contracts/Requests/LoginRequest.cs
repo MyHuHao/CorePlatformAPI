@@ -1,4 +1,4 @@
-﻿namespace Core.DTOs;
+﻿namespace Core.Contracts.Requests;
 
 public class LoginRequest
 {

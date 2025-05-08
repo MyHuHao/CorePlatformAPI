@@ -74,13 +74,15 @@ builder.Services.AddCors(options => options.AddPolicy("CorsPolicy", policy =>
 
 var app = builder.Build();
 
+
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
     app.UseDeveloperExceptionPage();
 }
-
+app.UseMiddleware<GlobalExceptionMiddleware>();
 app.UseMiddleware<ApiLoggingMiddleware>();
 app.UseRouting();
 app.UseCors("CorsPolicy");
