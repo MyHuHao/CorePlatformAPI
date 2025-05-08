@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Core.DTOs;
 using Core.Entities;
+using Core.Enums;
 
 namespace Application.Mappings;
 
@@ -10,9 +11,9 @@ public class UserProfile : Profile
     {
         CreateMap<User, UserDto>()
             .ForMember(dest => dest.Gender,
-                opt => opt.MapFrom(src => GenderToString(src.Gender)))
+                opt => opt.MapFrom(src => src.Gender.ToGenderString()))
             .ForMember(dest => dest.Status,
-                opt => opt.MapFrom(src => StatusToString(src.Status)))
+                opt => opt.MapFrom(src => src.Status.ToStatusString()))
             .ForMember(dest => dest.Birthday,
                 opt => opt.MapFrom(src => src.Birthday.ToString("yyyy-MM-dd HH:mm:ss")))
             .ForMember(dest => dest.CreateTime,
@@ -20,19 +21,4 @@ public class UserProfile : Profile
             .ForMember(dest => dest.ModifyTime,
                 opt => opt.MapFrom(src => src.ModifyTime.ToString("yyyy-MM-dd HH:mm:ss")));
     }
-
-    private static string GenderToString(int gender) => gender switch
-    {
-        0 => "未知",
-        1 => "男",
-        2 => "女",
-        _ => "未知"
-    };
-
-    private static string StatusToString(int status) => status switch
-    {
-        0 => "禁用",
-        1 => "启用",
-        _ => "未知"
-    };
 }
