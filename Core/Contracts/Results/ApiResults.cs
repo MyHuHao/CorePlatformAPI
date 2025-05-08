@@ -9,10 +9,7 @@ public class ApiResults<T>
 
     /// <summary>
     /// 返回信息提示
-    /// 0成功
-    /// 1警告
-    /// 2错误
-    /// 3信息
+    /// 0：成功提示，1：警告提示，2：错误提示，3：信息提示
     /// </summary>
     public required string Msg { get; set; }
 
