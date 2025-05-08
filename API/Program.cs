@@ -1,5 +1,6 @@
 using System.Text;
 using System.Text.Json;
+using API.Filters;
 using API.Middlewares;
 using Infrastructure.DependencyInjection;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -11,7 +12,7 @@ var builder = WebApplication.CreateBuilder(args);
 // 获取JWT配置
 var configuration = builder.Configuration;
 var jwtSettings = configuration.GetSection("JWT");
-    
+
 // 日志记录相关
 builder.Host.UseSerilog((ctx, config) => config
     .ReadFrom.Configuration(ctx.Configuration)
@@ -26,7 +27,7 @@ builder.Services.AddHttpLogging(logging =>
 });
 
 // 添加配置
-builder.Services.AddControllers().AddJsonOptions(options =>
+builder.Services.AddControllers(options => { options.Filters.Add<GlobalExceptionFilter>(); }).AddJsonOptions(options =>
 {
     options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
     options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
@@ -74,6 +75,7 @@ builder.Services.AddCors(options => options.AddPolicy("CorsPolicy", policy =>
 
 var app = builder.Build();
 
+app.UseMiddleware<GlobalExceptionMiddleware>();
 app.UseMiddleware<ApiLoggingMiddleware>();
 app.UseSwagger();
 app.UseSwaggerUI();

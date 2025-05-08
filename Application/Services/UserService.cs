@@ -1,11 +1,11 @@
-﻿using Application.Interfaces;
+﻿using System.ComponentModel.DataAnnotations;
+using Application.Interfaces;
 using Application.Queries;
 using AutoMapper;
 using Core.Contracts.Requests;
 using Core.Contracts.Results;
 using Core.DTOs;
 using Core.Entities;
-
 
 namespace Application.Services;
 
