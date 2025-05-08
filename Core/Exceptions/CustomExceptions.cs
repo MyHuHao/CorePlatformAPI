@@ -5,7 +5,6 @@
         : Exception(message)
     {
         public int MsgCode { get; } = msgCode;
-        public string Msg { get; } = message;
     }
 
     // 各种 HTTP 异常类型，均需写空类体 {}
