@@ -6,6 +6,7 @@ using Core.Contracts.Results;
 using Core.Entities;
 using Core.Enums;
 using Core.Exceptions;
+using MySql.Data.MySqlClient;
 
 namespace Application.Services;
 
@@ -13,6 +14,9 @@ public class LoginService(UserQuery userQuery, LoginCommand loginCommand) : ILog
 {
     public async Task<ApiResult<string>> CreateAccount(CreateAccountRequest request)
     {
+        await using MySqlConnection con = new("");
+        await con.OpenAsync();
+        await using var transaction = await con.BeginTransactionAsync();
         // 检查账户是否存在
         var userResult = await userQuery.GetByIdAsync(request.UserId);
         if (string.IsNullOrEmpty(userResult.Id))
@@ -21,6 +25,7 @@ public class LoginService(UserQuery userQuery, LoginCommand loginCommand) : ILog
         }
         // 创建账户
         await loginCommand.CreateAccount(request);
+        await transaction.CommitAsync();
         return new ApiResult<string> { MsgCode = MsgCodeEnum.Success, Msg = "创建成功" };
     }
 
