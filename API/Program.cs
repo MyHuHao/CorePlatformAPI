@@ -39,6 +39,7 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddDistributedMemoryCache();
 
 // 注册服务
+builder.Services.AddScoped<GlobalExceptionFilter>();
 builder.Services.AddInfrastructure();
 
 // AutoMapper

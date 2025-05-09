@@ -10,7 +10,7 @@ public class ApiResults<T>
     /// <summary>
     /// 返回信息提示
     /// </summary>
-    public required string Msg { get; set; }
+    public string Msg { get; set; } = "";
 
     /// <summary>
     /// 信息提示的类型

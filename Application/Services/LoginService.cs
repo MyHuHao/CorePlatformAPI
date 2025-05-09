@@ -9,6 +9,7 @@ public class LoginService : ILoginService
 {
     public async Task<ApiResults<string>> Login(LoginRequest request)
     {
+        throw new Exception("232323");
         // 验证账户，密码是否正确
         
         // 生成token
