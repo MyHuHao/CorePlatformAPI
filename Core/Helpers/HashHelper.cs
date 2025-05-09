@@ -9,9 +9,7 @@ public class HashHelper
     ///     生成密码哈希与盐值
     /// </summary>
     /// <param name="password">明文密码</param>
-    /// <param name="passwordHash">输出哈希值（Base64字符串）</param>
-    /// <param name="passwordSalt">输出盐值（Base64字符串）</param>
-    public static void GeneratePasswordHash(string password, out string passwordHash, out string passwordSalt)
+    public static (string passwordHash, string passwordSalt) GeneratePasswordHash(string password)
     {
         // 生成 32 字节随机盐值 [[8]]
         var salt = new byte[32];
@@ -24,8 +22,9 @@ public class HashHelper
         var passwordBytes = Encoding.UTF8.GetBytes(password);
         var saltedPassword = Combine(passwordBytes, salt);
         var hash = SHA256.HashData(saltedPassword);
-        passwordHash = Convert.ToBase64String(hash); // 存储为 Base64 字符串
-        passwordSalt = Convert.ToBase64String(salt); // 存储盐值
+        var passwordHash = Convert.ToBase64String(hash); // 存储为 Base64 字符串
+        var passwordSalt = Convert.ToBase64String(salt); // 存储盐值
+        return (passwordHash, passwordSalt);
     }
 
     /// <summary>
@@ -55,5 +54,23 @@ public class HashHelper
         Buffer.BlockCopy(first, 0, combined, 0, first.Length);
         Buffer.BlockCopy(second, 0, combined, first.Length, second.Length);
         return combined;
+    }
+
+    // 生成UUID 32 位
+    public static string GetUuid()
+    {
+        var randomBytes = new byte[10];
+        using (var rng = RandomNumberGenerator.Create())
+        {
+            rng.GetBytes(randomBytes);
+        }
+
+        var timestamp = DateTime.UtcNow.Ticks / 10000L;
+        var timestampBytes = BitConverter.GetBytes(timestamp);
+        if (BitConverter.IsLittleEndian) Array.Reverse(timestampBytes);
+        var guidBytes = new byte[16];
+        Array.Copy(timestampBytes, 2, guidBytes, 0, 6);
+        Array.Copy(randomBytes, 0, guidBytes, 6, 10);
+        return new Guid(guidBytes).ToString("N");
     }
 }

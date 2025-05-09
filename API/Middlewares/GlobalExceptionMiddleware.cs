@@ -1,6 +1,7 @@
 ﻿using System.Net;
 using System.Text.Json;
 using Core.Contracts.Results;
+using Core.Enums;
 
 namespace API.Middlewares;
 
@@ -24,9 +25,9 @@ public class GlobalExceptionMiddleware(RequestDelegate next, ILogger<GlobalExcep
         context.Response.ContentType = "application/json";
         context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
 
-        var result = new ApiResults<object>
+        var result = new ApiResult<object>
         {
-            MsgCode = 2,
+            MsgCode = MsgCodeEnum.Error,
             Msg = exception.Message
         };
 

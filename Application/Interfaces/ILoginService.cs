@@ -5,5 +5,12 @@ namespace Application.Interfaces;
 
 public interface ILoginService
 {
-    Task<ApiResults<string>> Login(LoginRequest request);
+    /// <summary>
+    /// 创建账号
+    /// </summary>
+    /// <param name="request"></param>
+    /// <returns></returns>
+    Task<ApiResult<string>> CreateAccount(CreateAccountRequest request);
+    Task<ApiResult<string>> Login(LoginRequest request);
+   
 }

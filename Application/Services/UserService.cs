@@ -13,19 +13,18 @@ namespace Application.Services;
 public class UserService(UserQuery userQuery, IMapper mapper) : IUserService
 {
     /// <summary>
-    ///     通过用户ID获取详情
+    /// 通过用户ID获取详情
     /// </summary>
     /// <param name="id"></param>
     /// <returns></returns>
-    public async Task<ApiResults<UserDto>> GetUserByIdAsync(string id)
+    public async Task<ApiResult<UserDto>> GetUserByIdAsync(string id)
     {
-        throw new ValidationException(MsgCodeEnum.Success, "232323");
         var user = await userQuery.GetByIdAsync(id);
         var userDto = mapper.Map<UserDto>(user);
-        return new ApiResults<UserDto> { MsgCode = 0, Msg = "查询成功", Data = userDto };
+        return new ApiResult<UserDto> { MsgCode = MsgCodeEnum.Success, Msg = "查询成功", Data = userDto };
     }
 
-    public Task<IEnumerable<ApiResults<PagedResult<User>>>> GetAllUsersAsync(GetAllUserRequest request)
+    public Task<IEnumerable<ApiResult<PagedResult<User>>>> GetAllUsersAsync(GetAllUserRequest request)
     {
         throw new NotImplementedException();
     }

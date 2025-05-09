@@ -10,12 +10,12 @@ public class GlobalExceptionFilter : IExceptionFilter
 {
     public void OnException(ExceptionContext context)
     {
-        var result = new ApiResults<object>();
+        var result = new ApiResult<object>();
 
         if (context.Exception is BaseApiException baseEx)
-            result.MsgCode = (int)baseEx.MsgCode;
+            result.MsgCode = baseEx.MsgCode;
         else
-            result.MsgCode = (int)MsgCodeEnum.Error;
+            result.MsgCode = MsgCodeEnum.Error;
 
         result.Msg = context.Exception.Message;
         context.Result = new BadRequestObjectResult(result);

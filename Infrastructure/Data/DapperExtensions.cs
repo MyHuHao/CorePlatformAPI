@@ -1,3 +1,5 @@
+using Core.Enums;
+using Core.Exceptions;
 using Core.Interfaces;
 using Dapper;
 
@@ -24,11 +26,11 @@ public class DapperExtensions<TEntity>(IDbConnectionFactory dbConnectionFactory)
     /// <param name="sql"></param>
     /// <param name="param"></param>
     /// <returns></returns>
-    /// <exception cref="InvalidOperationException"></exception>
+    /// <exception cref="NotFoundException"></exception>
     public async Task<TEntity> QueryFirstOrDefaultAsync(string sql, object? param = null)
     {
         using var conn = dbConnectionFactory.CreateConnection();
-        return await conn.QueryFirstOrDefaultAsync<TEntity>(sql, param) ?? throw new InvalidOperationException();
+        return await conn.QueryFirstOrDefaultAsync<TEntity>(sql, param) ?? throw new NotFoundException(MsgCodeEnum.Warning, "当前查询数据为空");
     }
 
     /// <summary>
@@ -37,11 +39,11 @@ public class DapperExtensions<TEntity>(IDbConnectionFactory dbConnectionFactory)
     /// <param name="sql"></param>
     /// <param name="param"></param>
     /// <returns></returns>
-    /// <exception cref="InvalidOperationException"></exception>
+    /// <exception cref="NotFoundException"></exception>
     public async Task<TEntity> QuerySingleOrDefaultAsync(string sql, object? param = null)
     {
         using var conn = dbConnectionFactory.CreateConnection();
-        return await conn.QuerySingleOrDefaultAsync<TEntity>(sql, param) ?? throw new InvalidOperationException();
+        return await conn.QuerySingleOrDefaultAsync<TEntity>(sql, param) ?? throw new NotFoundException(MsgCodeEnum.Warning, "当前查询数据为空");
     }
 
     /// <summary>
@@ -50,7 +52,6 @@ public class DapperExtensions<TEntity>(IDbConnectionFactory dbConnectionFactory)
     /// <param name="sql"></param>
     /// <param name="param"></param>
     /// <returns></returns>
-    /// <exception cref="InvalidOperationException"></exception>
     public async Task<int> ExecuteScalarAsync(string sql, object? param = null)
     {
         using var conn = dbConnectionFactory.CreateConnection();
@@ -63,11 +64,11 @@ public class DapperExtensions<TEntity>(IDbConnectionFactory dbConnectionFactory)
     /// <param name="sql"></param>
     /// <param name="param"></param>
     /// <returns></returns>
-    /// <exception cref="InvalidOperationException"></exception>
+    /// <exception cref="NotFoundException"></exception>
     public async Task<string> ExecuteScalarStringAsync(string sql, object? param = null)
     {
         using var conn = dbConnectionFactory.CreateConnection();
-        return await conn.ExecuteScalarAsync<string>(sql, param) ?? throw new InvalidOperationException();
+        return await conn.ExecuteScalarAsync<string>(sql, param) ?? throw new NotFoundException(MsgCodeEnum.Warning, "当前查询数据为空");
     }
 
     /// <summary>

@@ -12,9 +12,9 @@ public interface IUserService
     /// </summary>
     /// <param name="id"></param>
     /// <returns></returns>
-    Task<ApiResults<UserDto>> GetUserByIdAsync(string id);
+    Task<ApiResult<UserDto>> GetUserByIdAsync(string id);
 
-    Task<IEnumerable<ApiResults<PagedResult<User>>>> GetAllUsersAsync(GetAllUserRequest request);
+    Task<IEnumerable<ApiResult<PagedResult<User>>>> GetAllUsersAsync(GetAllUserRequest request);
     Task<int> CreateUserAsync(GetAllUserRequest request);
     Task<bool> DeleteUserAsync(string id);
 }

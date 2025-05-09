@@ -6,3 +6,11 @@ public class LoginRequest
     public required string PassWord { get; set; }
     public required int LoginType { get; set; }
 }
+
+public class CreateAccountRequest
+{
+    public required string Account { get; set; }
+    public required string PassWord { get; set; }
+    public required string UserId { get; set; }
+    public required string AccId { get; set; }
+}

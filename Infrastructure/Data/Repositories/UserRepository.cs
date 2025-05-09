@@ -32,8 +32,7 @@ public class UserRepository(IDapperExtensions<User> dapper) : IUserRepository
                            where 
                            id = @Id 
                            """;
-        return await dapper.QuerySingleOrDefaultAsync(sql,
-            new { Id = id }) ?? throw new InvalidOperationException();
+        return await dapper.QuerySingleOrDefaultAsync(sql, new { Id = id });
     }
 
     public async Task<IEnumerable<User>> GetAllAsync(GetAllUserRequest request)
@@ -111,7 +110,7 @@ public class UserRepository(IDapperExtensions<User> dapper) : IUserRepository
                 create_time = user.CreateTime,
                 modify_by = user.ModifyBy,
                 modify_time = user.ModifyTime
-            }) ?? throw new InvalidOperationException();
+            });
     }
 
     public async Task<bool> DeleteAsync(string id)
