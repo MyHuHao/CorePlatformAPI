@@ -6,7 +6,7 @@ namespace Core.Helpers;
 public class HashHelper
 {
     /// <summary>
-    /// 生成密码哈希与盐值
+    ///     生成密码哈希与盐值
     /// </summary>
     /// <param name="password">明文密码</param>
     /// <param name="passwordHash">输出哈希值（Base64字符串）</param>
@@ -29,7 +29,7 @@ public class HashHelper
     }
 
     /// <summary>
-    /// 验证密码是否匹配存储的哈希值
+    ///     验证密码是否匹配存储的哈希值
     /// </summary>
     /// <param name="password">输入密码</param>
     /// <param name="storedHash">数据库存储的哈希值（Base64）</param>
@@ -43,9 +43,7 @@ public class HashHelper
         // 重新计算哈希值
         var passwordBytes = Encoding.UTF8.GetBytes(password);
         var saltedPassword = Combine(passwordBytes, salt);
-
-        using var sha256 = SHA256.Create();
-        var hash = sha256.ComputeHash(saltedPassword);
+        var hash = SHA256.HashData(saltedPassword);
         var inputHash = Convert.ToBase64String(hash);
         return inputHash == storedHash; // 比对哈希值 [[6]]
     }

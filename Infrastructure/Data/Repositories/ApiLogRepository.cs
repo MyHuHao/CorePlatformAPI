@@ -6,7 +6,7 @@ namespace Infrastructure.Data.Repositories;
 public class ApiLogRepository(IDapperExtensions<ApiLog> dapper) : IApiLogRepository
 {
     /// <summary>
-    /// 插入数据
+    ///     插入数据
     /// </summary>
     /// <param name="apiLog"></param>
     /// <returns></returns>

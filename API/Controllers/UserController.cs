@@ -8,7 +8,7 @@ namespace API.Controllers;
 public class UserController(IUserService service) : Controller
 {
     /// <summary>
-    /// 通过用户ID获取详情
+    ///     通过用户ID获取详情
     /// </summary>
     /// <param name="id"></param>
     /// <returns></returns>

@@ -108,8 +108,10 @@ public class ApiLoggingMiddleware(
             log.Method, log.Path, log.StatusCode, log.Duration);
     }
 
-    private static string Truncate(string value, int maxLength) =>
-        value.Length <= maxLength ? value : value[..maxLength];
+    private static string Truncate(string value, int maxLength)
+    {
+        return value.Length <= maxLength ? value : value[..maxLength];
+    }
 
     private static Task HandleExceptionAsync(HttpContext context, Exception exception)
     {

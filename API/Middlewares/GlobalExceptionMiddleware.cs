@@ -27,7 +27,7 @@ public class GlobalExceptionMiddleware(RequestDelegate next, ILogger<GlobalExcep
         var result = new ApiResults<object>
         {
             MsgCode = 2,
-            Msg = exception.Message,
+            Msg = exception.Message
         };
 
         var json = JsonSerializer.Serialize(result);

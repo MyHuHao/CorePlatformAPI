@@ -2,8 +2,10 @@ using System.Text;
 using System.Text.Json;
 using API.Filters;
 using API.Middlewares;
+using Application.Mappings;
 using Infrastructure.DependencyInjection;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.HttpLogging;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
 
@@ -21,7 +23,7 @@ builder.Host.UseSerilog((ctx, config) => config
 
 builder.Services.AddHttpLogging(logging =>
 {
-    logging.LoggingFields = Microsoft.AspNetCore.HttpLogging.HttpLoggingFields.All;
+    logging.LoggingFields = HttpLoggingFields.All;
     logging.RequestBodyLogLimit = 4096;
     logging.ResponseBodyLogLimit = 4096;
 });
@@ -43,7 +45,7 @@ builder.Services.AddScoped<GlobalExceptionFilter>();
 builder.Services.AddInfrastructure();
 
 // AutoMapper
-builder.Services.AddAutoMapper(typeof(Application.Mappings.UserProfile).Assembly);
+builder.Services.AddAutoMapper(typeof(UserProfile).Assembly);
 
 // 认证
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)

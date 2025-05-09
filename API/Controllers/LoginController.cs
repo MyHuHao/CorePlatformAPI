@@ -1,6 +1,5 @@
 ﻿using Application.Interfaces;
 using Core.Contracts.Requests;
-using Core.Contracts.Results;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers;

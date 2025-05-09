@@ -17,20 +17,20 @@ public static class ServiceCollectionExtensions
         // 注册基础服务
         services.AddSingleton<IDbConnectionFactory, DbConnectionFactory>();
         services.AddScoped(typeof(IDapperExtensions<>), typeof(DapperExtensions<>));
-        
+
         // 自动注册
         services.AutoRegisterServices();
     }
-    
+
     private static void AutoRegisterServices(this IServiceCollection services)
     {
         //  自动注册工具类
         services.Scan(scan => scan
-            .FromAssemblyOf<HashHelper>() 
+            .FromAssemblyOf<HashHelper>()
             .AddClasses(classes => classes.InNamespaces("Core.Helpers"))
             .AsSelf()
             .WithScopedLifetime());
-        
+
         // 自动注册业务服务（接口+实现）
         services.Scan(scan => scan
             .FromAssemblyOf<ApiLogService>() // 确保类型在目标程序集中
@@ -41,7 +41,7 @@ public static class ServiceCollectionExtensions
 
         // 自动注册CQRS查询
         services.Scan(scan => scan
-            .FromAssemblyOf<UserQuery>() 
+            .FromAssemblyOf<UserQuery>()
             .AddClasses(classes => classes.InNamespaces("Application.Queries"))
             .AsSelf()
             .WithScopedLifetime());
@@ -58,7 +58,7 @@ public static class ServiceCollectionExtensions
             .FromAssemblyOf<ApiLogRepository>()
             .AddClasses(classes => classes.InNamespaces("Infrastructure.Data.Repositories"))
             .UsingRegistrationStrategy(RegistrationStrategy.Skip)
-            .AsMatchingInterface() 
+            .AsMatchingInterface()
             .WithScopedLifetime());
     }
 }

@@ -1,5 +1,4 @@
 ﻿using Core.Contracts.Requests;
-using Core.DTOs;
 using Core.Entities;
 using Core.Interfaces;
 
@@ -8,7 +7,7 @@ namespace Infrastructure.Data.Repositories;
 public class UserRepository(IDapperExtensions<User> dapper) : IUserRepository
 {
     /// <summary>
-    /// 通过ID获取用户详细
+    ///     通过ID获取用户详细
     /// </summary>
     /// <param name="id"></param>
     /// <returns></returns>
