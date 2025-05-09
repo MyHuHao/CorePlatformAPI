@@ -1,11 +1,11 @@
 ﻿using Application.Commands;
-using Application.Interfaces;
 using Application.Queries;
 using Application.Services;
 using Core.Interfaces;
 using Infrastructure.Data;
 using Infrastructure.Data.Repositories;
 using Microsoft.Extensions.DependencyInjection;
+using Scrutor;
 
 namespace Infrastructure.DependencyInjection;
 
@@ -17,25 +17,39 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<IDbConnectionFactory, DbConnectionFactory>();
         services.AddScoped(typeof(IDapperExtensions<>), typeof(DapperExtensions<>));
 
-        // 注册业务服务
-        services.AddScoped<IApiLogService, ApiLogService>();
-        services.AddScoped<ILoginService, LoginService>();
-        services.AddScoped<IUserService, UserService>();
-        
-        // 注册CQRS 
-        services.AddScoped<UserQuery>();
-        
-        // 注册命令
-        services.AddScoped<UserCommand>();
-        
-        // 注册数据仓储
-        services.AddScoped<IApiLogRepository, ApiLogRepository>();
-        services.AddScoped<IUserRepository, UserRepository>();
-        
-        
-        
-        
-        
-        
+        services.AutoRegisterServices();
+    }
+    
+    private static void AutoRegisterServices(this IServiceCollection services)
+    {
+        // 自动注册业务服务（接口+实现）
+        services.Scan(scan => scan
+            .FromAssemblyOf<ApiLogService>() // 确保类型在目标程序集中
+            .AddClasses(classes => classes.InNamespaces("Application.Services"))
+            .UsingRegistrationStrategy(RegistrationStrategy.Skip)
+            .AsImplementedInterfaces()
+            .WithScopedLifetime());
+
+        // 自动注册CQRS查询
+        services.Scan(scan => scan
+            .FromAssemblyOf<UserQuery>() 
+            .AddClasses(classes => classes.InNamespaces("Application.Queries"))
+            .AsSelf()
+            .WithScopedLifetime());
+
+        // 自动注册命令
+        services.Scan(scan => scan
+            .FromAssemblyOf<UserCommand>()
+            .AddClasses(classes => classes.InNamespaces("Application.Commands"))
+            .AsSelf()
+            .WithScopedLifetime());
+
+        // 自动注册仓储（接口+实现）
+        services.Scan(scan => scan
+            .FromAssemblyOf<ApiLogRepository>()
+            .AddClasses(classes => classes.InNamespaces("Infrastructure.Data.Repositories"))
+            .UsingRegistrationStrategy(RegistrationStrategy.Skip)
+            .AsMatchingInterface() 
+            .WithScopedLifetime());
     }
 }
