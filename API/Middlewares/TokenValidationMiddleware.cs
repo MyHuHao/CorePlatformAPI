@@ -1,7 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
-
-namespace API.Middlewares;
+﻿namespace API.Middlewares;
 
 public class TokenValidationMiddleware(RequestDelegate next)
 {
@@ -10,7 +7,6 @@ public class TokenValidationMiddleware(RequestDelegate next)
         var token = context.Request.Headers.Authorization.FirstOrDefault()?.Split(" ").Last();
 
         if (token != null)
-        {
             // 检查黑名单
             if (false)
             {
@@ -18,7 +14,6 @@ public class TokenValidationMiddleware(RequestDelegate next)
                 await context.Response.WriteAsync("Token revoked");
                 return;
             }
-        }
 
         await next(context);
     }

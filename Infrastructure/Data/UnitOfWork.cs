@@ -12,10 +12,7 @@ public class UnitOfWork(IDbConnectionFactory connectionFactory) : IUnitOfWork
     public async Task BeginTransactionAsync()
     {
         CurrentConnection ??= connectionFactory.CreateConnection();
-        if (CurrentConnection.State != ConnectionState.Open)
-        {
-            await CurrentConnection.OpenAsync();
-        }
+        if (CurrentConnection.State != ConnectionState.Open) await CurrentConnection.OpenAsync();
 
         CurrentTransaction = await CurrentConnection.BeginTransactionAsync();
     }

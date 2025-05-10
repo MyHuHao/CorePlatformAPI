@@ -4,7 +4,7 @@ using Core.Interfaces.Repositories;
 
 namespace Infrastructure.Data.Repositories;
 
-public class UserRepository(IDapperExtensions<User?> dapper, IUnitOfWork unitOfWork) : IUserRepository
+public class UserRepository(IDapperExtensions<User> dapper, IUnitOfWork unitOfWork) : IUserRepository
 {
     /// <summary>
     ///     通过ID获取用户详细

@@ -16,15 +16,15 @@ public class TokenService(IConfiguration configuration) : ITokenService
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
         var token = new JwtSecurityToken(
-            issuer: configuration["Jwt:Issuer"],
-            audience: configuration["Jwt:Audience"],
-            claims: claims,
+            configuration["Jwt:Issuer"],
+            configuration["Jwt:Audience"],
+            claims,
             expires: DateTime.Now.AddMinutes(30),
             signingCredentials: creds);
 
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
-    
+
     public ClaimsPrincipal GetPrincipalFromExpiredToken(string token)
     {
         var tokenValidationParameters = new TokenValidationParameters
@@ -39,7 +39,7 @@ public class TokenService(IConfiguration configuration) : ITokenService
         };
 
         var tokenHandler = new JwtSecurityTokenHandler();
-        var principal = tokenHandler.ValidateToken(token, tokenValidationParameters, out SecurityToken securityToken);
+        var principal = tokenHandler.ValidateToken(token, tokenValidationParameters, out var securityToken);
 
         if (securityToken is not JwtSecurityToken jwtSecurityToken ||
             !jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256,

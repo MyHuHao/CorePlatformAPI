@@ -70,9 +70,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             OnAuthenticationFailed = context =>
             {
                 if (context.Exception.GetType() == typeof(SecurityTokenExpiredException))
-                {
                     context.Response.Headers.Append("Token-Expired", "true");
-                }
 
                 return Task.CompletedTask;
             }

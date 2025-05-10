@@ -9,7 +9,7 @@ namespace API.Controllers;
 public class LoginController(ILoginService service) : Controller
 {
     /// <summary>
-    /// 创建账号
+    ///     创建账号
     /// </summary>
     /// <param name="request"></param>
     /// <returns></returns>
@@ -19,7 +19,7 @@ public class LoginController(ILoginService service) : Controller
         var result = await service.CreateAccount(request);
         return Ok(result);
     }
-    
+
     // 登录验证,获取Token
     [HttpPost]
     public async Task<IActionResult> Login([FromBody] LoginRequest request)

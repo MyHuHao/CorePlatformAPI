@@ -12,7 +12,7 @@ namespace Application.Services;
 public class UserService(UserQuery userQuery, IMapper mapper) : IUserService
 {
     /// <summary>
-    /// 通过用户ID获取详情
+    ///     通过用户ID获取详情
     /// </summary>
     /// <param name="id"></param>
     /// <returns></returns>

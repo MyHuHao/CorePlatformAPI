@@ -10,7 +10,7 @@ public class DapperExtensions<TEntity>(IDbConnectionFactory dbConnectionFactory)
     where TEntity : class
 {
     /// <summary>
-    /// 查询全部
+    ///     查询全部
     /// </summary>
     /// <param name="sql"></param>
     /// <param name="param"></param>
@@ -120,7 +120,7 @@ public class DapperExtensions<TEntity>(IDbConnectionFactory dbConnectionFactory)
     }
 
     /// <summary>
-    /// 查询返回第一行第一列数据-字符串
+    ///     查询返回第一行第一列数据-字符串
     /// </summary>
     /// <param name="sql"></param>
     /// <param name="param"></param>
@@ -148,7 +148,7 @@ public class DapperExtensions<TEntity>(IDbConnectionFactory dbConnectionFactory)
     }
 
     /// <summary>
-    /// 查询分页查询
+    ///     查询分页查询
     /// </summary>
     /// <param name="page"></param>
     /// <param name="pageSize"></param>
@@ -186,7 +186,7 @@ public class DapperExtensions<TEntity>(IDbConnectionFactory dbConnectionFactory)
     }
 
     /// <summary>
-    /// 执行sql
+    ///     执行sql
     /// </summary>
     /// <param name="connection"></param>
     /// <param name="transaction"></param>

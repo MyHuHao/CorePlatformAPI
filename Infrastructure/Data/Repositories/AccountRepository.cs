@@ -5,7 +5,7 @@ using Core.Interfaces.Repositories;
 
 namespace Infrastructure.Data.Repositories;
 
-public class AccountRepository(IDapperExtensions<Account?> dapper, IUnitOfWork unitOfWork) : IAccountRepository
+public class AccountRepository(IDapperExtensions<Account> dapper, IUnitOfWork unitOfWork) : IAccountRepository
 {
     public async Task<Account?> GetByIdAsync(string id)
     {
@@ -29,8 +29,8 @@ public class AccountRepository(IDapperExtensions<Account?> dapper, IUnitOfWork u
                                     account_name = @account_name
                            """;
         return await dapper.QueryFirstOrDefaultAsync(
-            sql, 
-            new { account_name = id }, 
+            sql,
+            new { account_name = id },
             unitOfWork.CurrentConnection,
             unitOfWork.CurrentTransaction);
     }
