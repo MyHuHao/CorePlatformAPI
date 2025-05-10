@@ -1,10 +1,10 @@
 ﻿using Core.Contracts.Requests;
 using Core.Entities;
-using Core.Interfaces;
+using Infrastructure.Interfaces;
 
 namespace Infrastructure.Data.Repositories;
 
-public class UserRepository(IDapperExtensions<User> dapper) : IUserRepository
+public class UserRepository(IDapperExtensions<User> dapper, IUnitOfWork unitOfWork) : IUserRepository
 {
     /// <summary>
     ///     通过ID获取用户详细
@@ -32,7 +32,10 @@ public class UserRepository(IDapperExtensions<User> dapper) : IUserRepository
                            where 
                            id = @Id 
                            """;
-        return await dapper.QuerySingleOrDefaultAsync(sql, new { Id = id });
+        return await dapper.QuerySingleOrDefaultAsync(
+            sql,
+            new { Id = id },
+            transaction: unitOfWork.CurrentTransaction);
     }
 
     public async Task<IEnumerable<User>> GetAllAsync(GetAllUserRequest request)

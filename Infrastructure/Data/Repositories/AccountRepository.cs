@@ -1,7 +1,7 @@
 ﻿using Core.Contracts.Requests;
 using Core.Entities;
 using Core.Helpers;
-using Core.Interfaces;
+using Infrastructure.Interfaces;
 
 namespace Infrastructure.Data.Repositories;
 
@@ -10,7 +10,7 @@ public class AccountRepository(IDapperExtensions<Account> dapper) : IAccountRepo
     public async Task<int> AddAsync(CreateAccountRequest request)
     {
         const string sql = """
-                            insert into account
+                            insert into `account`
                                 (id, 
                                 account_name, 
                                 user_id, 

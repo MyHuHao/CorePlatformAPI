@@ -1,17 +1,16 @@
-using System.Data;
-using Core.Interfaces;
+using Infrastructure.Interfaces;
 using Microsoft.Extensions.Configuration;
 using MySql.Data.MySqlClient;
 
 namespace Infrastructure.Data;
 
-public class DbConnectionFactory(IConfiguration configuration) : IDbConnectionFactory
+public class MySqlConnectionFactory(IConfiguration configuration) : IMySqlConnectionFactory
 {
     /// <summary>
     ///     获取指定名称的数据库连接
     /// </summary>
     /// <param name="name">连接字符串名称</param>
-    public IDbConnection CreateConnection(string name = "DefaultConnection")
+    public MySqlConnection CreateConnection(string name = "DefaultConnection")
     {
         var connString = configuration.GetConnectionString(name);
         if (string.IsNullOrEmpty(connString))

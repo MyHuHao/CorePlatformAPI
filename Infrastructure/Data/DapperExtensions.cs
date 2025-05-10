@@ -1,11 +1,12 @@
 using Core.Enums;
 using Core.Exceptions;
-using Core.Interfaces;
 using Dapper;
+using Infrastructure.Interfaces;
+using MySql.Data.MySqlClient;
 
 namespace Infrastructure.Data;
 
-public class DapperExtensions<TEntity>(IDbConnectionFactory dbConnectionFactory) : IDapperExtensions<TEntity>
+public class DapperExtensions<TEntity>(IMySqlConnectionFactory dbConnectionFactory) : IDapperExtensions<TEntity>
     where TEntity : class
 {
     /// <summary>
@@ -13,11 +14,15 @@ public class DapperExtensions<TEntity>(IDbConnectionFactory dbConnectionFactory)
     /// </summary>
     /// <param name="sql"></param>
     /// <param name="param"></param>
+    /// <param name="transaction"></param>
     /// <returns></returns>
-    public async Task<IEnumerable<TEntity>> QueryAsync(string sql, object? param = null)
+    public async Task<IEnumerable<TEntity>> QueryAsync(
+        string sql,
+        object? param = null,
+        MySqlTransaction? transaction = null)
     {
-        using var conn = dbConnectionFactory.CreateConnection();
-        return await conn.QueryAsync<TEntity>(sql, param);
+        await using var conn = dbConnectionFactory.CreateConnection();
+        return await conn.QueryAsync<TEntity>(sql, param, transaction);
     }
 
     /// <summary>
@@ -25,25 +30,35 @@ public class DapperExtensions<TEntity>(IDbConnectionFactory dbConnectionFactory)
     /// </summary>
     /// <param name="sql"></param>
     /// <param name="param"></param>
+    /// <param name="transaction"></param>
     /// <returns></returns>
     /// <exception cref="NotFoundException"></exception>
-    public async Task<TEntity> QueryFirstOrDefaultAsync(string sql, object? param = null)
+    public async Task<TEntity> QueryFirstOrDefaultAsync(
+        string sql,
+        object? param = null,
+        MySqlTransaction? transaction = null)
     {
-        using var conn = dbConnectionFactory.CreateConnection();
-        return await conn.QueryFirstOrDefaultAsync<TEntity>(sql, param) ?? throw new NotFoundException(MsgCodeEnum.Warning, "当前查询数据为空");
+        await using var conn = dbConnectionFactory.CreateConnection();
+        return await conn.QueryFirstOrDefaultAsync<TEntity>(sql, param, transaction)
+               ?? throw new NotFoundException(MsgCodeEnum.Warning, "当前查询数据为空");
     }
 
     /// <summary>
     ///     查询只能有一个对象数据
     /// </summary>
+    /// <param name="transaction"></param>
     /// <param name="sql"></param>
     /// <param name="param"></param>
     /// <returns></returns>
     /// <exception cref="NotFoundException"></exception>
-    public async Task<TEntity> QuerySingleOrDefaultAsync(string sql, object? param = null)
+    public async Task<TEntity> QuerySingleOrDefaultAsync(
+        string sql,
+        object? param = null,
+        MySqlTransaction? transaction = null)
     {
-        using var conn = dbConnectionFactory.CreateConnection();
-        return await conn.QuerySingleOrDefaultAsync<TEntity>(sql, param) ?? throw new NotFoundException(MsgCodeEnum.Warning, "当前查询数据为空");
+        await using var conn = dbConnectionFactory.CreateConnection();
+        return await conn.QuerySingleOrDefaultAsync<TEntity>(sql, param, transaction)
+               ?? throw new NotFoundException(MsgCodeEnum.Warning, "当前查询数据为空");
     }
 
     /// <summary>
@@ -51,11 +66,12 @@ public class DapperExtensions<TEntity>(IDbConnectionFactory dbConnectionFactory)
     /// </summary>
     /// <param name="sql"></param>
     /// <param name="param"></param>
+    /// <param name="transaction"></param>
     /// <returns></returns>
-    public async Task<int> ExecuteScalarAsync(string sql, object? param = null)
+    public async Task<int> ExecuteScalarAsync(string sql, object? param = null, MySqlTransaction? transaction = null)
     {
-        using var conn = dbConnectionFactory.CreateConnection();
-        return await conn.ExecuteScalarAsync<int>(sql, param);
+        await using var conn = dbConnectionFactory.CreateConnection();
+        return await conn.ExecuteScalarAsync<int>(sql, param, transaction);
     }
 
     /// <summary>
@@ -63,12 +79,17 @@ public class DapperExtensions<TEntity>(IDbConnectionFactory dbConnectionFactory)
     /// </summary>
     /// <param name="sql"></param>
     /// <param name="param"></param>
+    /// <param name="transaction"></param>
     /// <returns></returns>
     /// <exception cref="NotFoundException"></exception>
-    public async Task<string> ExecuteScalarStringAsync(string sql, object? param = null)
+    public async Task<string> ExecuteScalarStringAsync(
+        string sql,
+        object? param = null,
+        MySqlTransaction? transaction = null)
     {
-        using var conn = dbConnectionFactory.CreateConnection();
-        return await conn.ExecuteScalarAsync<string>(sql, param) ?? throw new NotFoundException(MsgCodeEnum.Warning, "当前查询数据为空");
+        await using var conn = dbConnectionFactory.CreateConnection();
+        return await conn.ExecuteScalarAsync<string>(sql, param, transaction)
+               ?? throw new NotFoundException(MsgCodeEnum.Warning, "当前查询数据为空");
     }
 
     /// <summary>
@@ -78,15 +99,20 @@ public class DapperExtensions<TEntity>(IDbConnectionFactory dbConnectionFactory)
     /// <param name="pageSize"></param>
     /// <param name="sql"></param>
     /// <param name="param"></param>
+    /// <param name="transaction"></param>
     /// <returns></returns>
-    public async Task<(IEnumerable<TEntity> items, int total)> QueryPageAsync(int page, int pageSize, string sql,
-        object? param = null)
+    public async Task<(IEnumerable<TEntity> items, int total)> QueryPageAsync(
+        int page,
+        int pageSize,
+        string sql,
+        object? param = null,
+        MySqlTransaction? transaction = null)
     {
-        using var conn = dbConnectionFactory.CreateConnection();
+        await using var conn = dbConnectionFactory.CreateConnection();
         // 在MySQL中通过 LIMIT 分页并获取总数
         var pagedSql = $"{sql} LIMIT @Offset, @PageSize; SELECT COUNT(*) FROM ({sql}) AS totalSub";
         var multi = await conn.QueryMultipleAsync(pagedSql,
-            new { Offset = (page - 1) * pageSize, PageSize = pageSize, param });
+            new { Offset = (page - 1) * pageSize, PageSize = pageSize, param }, transaction);
         var items = await multi.ReadAsync<TEntity>();
         var total = await multi.ReadSingleAsync<int>();
         return (items, total);
@@ -95,12 +121,13 @@ public class DapperExtensions<TEntity>(IDbConnectionFactory dbConnectionFactory)
     /// <summary>
     ///     执行sql
     /// </summary>
+    /// <param name="transaction"></param>
     /// <param name="sql"></param>
     /// <param name="param"></param>
     /// <returns></returns>
-    public async Task<int> ExecuteAsync(string sql, object? param = null)
+    public async Task<int> ExecuteAsync(string sql, object? param = null, MySqlTransaction? transaction = null)
     {
-        using var conn = dbConnectionFactory.CreateConnection();
-        return await conn.ExecuteAsync(sql, param);
+        await using var conn = dbConnectionFactory.CreateConnection();
+        return await conn.ExecuteAsync(sql, param, transaction);
     }
 }

@@ -2,9 +2,9 @@
 using Application.Queries;
 using Application.Services;
 using Core.Helpers;
-using Core.Interfaces;
 using Infrastructure.Data;
 using Infrastructure.Data.Repositories;
+using Infrastructure.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 using Scrutor;
 
@@ -15,7 +15,7 @@ public static class ServiceCollectionExtensions
     public static void AddInfrastructure(this IServiceCollection services)
     {
         // 注册基础服务
-        services.AddSingleton<IDbConnectionFactory, DbConnectionFactory>();
+        services.AddSingleton<IMySqlConnectionFactory, MySqlConnectionFactory>();
         services.AddScoped(typeof(IDapperExtensions<>), typeof(DapperExtensions<>));
 
         // 自动注册

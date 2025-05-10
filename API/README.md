@@ -24,9 +24,9 @@ CorePlatformAPI
 API/
 ├── Controllers/           # API控制器
 ├── Middlewares/           # 自定义中间件
-├── Extensions/            # 扩展方法
+├── Filters/               # 过滤器
 ├── appsettings.json       # 配置文件
-├── Program.cs             # 入口文件
+└── Program.cs             # 入口文件
 ```
 
 #### 2. CorePlatformAPI.Application（应用服务层）
@@ -40,7 +40,6 @@ Application/
 ├── Services/              # 应用服务
 ├── Commands/              # CQRS模式中的命令
 ├── Queries/               # CQRS模式中的查询
-├── DTOs/                  # 数据传输对象
 ├── Interfaces/            # 服务接口
 └── Mappings/              # AutoMapper配置
 ```
@@ -53,12 +52,15 @@ Application/
 
 ```
 Core/
-├── Entities/              # 领域实体
-├── ValueObjects/          # 值对象
-├── Enums/                 # 枚举类型
-├── Interfaces/            # 仓储接口
-├── Exceptions/            # 自定义异常
-└── Services/              # 领域服务
+├── Contracts/          # 接口自定义类
+│   ├── Requests/       # 接口请求类
+│   └── Results/        # 接口返回类
+├── DTOs/               # 实体自定义格式化转出类
+├── Entities/           # 实体类
+├── Enums/              # 枚举
+├── Exceptions/         # 扩展方法
+├── Helpers/            # 工具类
+└── Interfaces/         # 仓储服务
 ```
 
 #### 4. CorePlatformAPI.Infrastructure（基础设施层）
@@ -75,6 +77,7 @@ Infrastructure/
 │   └── DapperExtensions.cs    # Dapper扩展方法
 ├── Logging/               # 日志实现
 ├── Caching/               # 缓存实现
+├── Services/              # 基础服务实现（邮箱，通知，短信，钉钉）
 └── DependencyInjection/   # 依赖注入配置
 ```
 

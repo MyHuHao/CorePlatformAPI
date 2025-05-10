@@ -1,5 +1,4 @@
 ﻿using Core.Contracts.Requests;
-using Core.Interfaces;
 
 namespace Application.Commands;
 
