@@ -9,20 +9,32 @@ using Core.Interfaces.Services;
 
 namespace Application.Services;
 
-public class LoginService(IUserRepository repository, UserQuery userQuery, LoginCommand loginCommand)
-    : ILoginService
+public class LoginService(IUnitOfWork unitOfWork, UserQuery userQuery, LoginCommand loginCommand) : ILoginService
 {
     public async Task<ApiResult<string>> CreateAccount(CreateAccountRequest request)
     {
-        // 检查账户是否存在
-        var userResult = await userQuery.GetByIdAsync(request.UserId);
-        if (string.IsNullOrEmpty(userResult.Id))
+        try
         {
-            throw new ValidationException(MsgCodeEnum.Error, "人员不存在，禁止创建");
+            await unitOfWork.BeginTransactionAsync();
+            // 检查账户是否存在
+            var userResult = await userQuery.GetByIdAsync(request.UserId);
+            if (string.IsNullOrEmpty(userResult.Id))
+            {
+                throw new ValidationException(MsgCodeEnum.Warning, "人员不存在，禁止创建");
+            }
+
+            // 创建账户
+            await loginCommand.CreateAccount(request);
+
+            // 结束事务，返回结果
+            await unitOfWork.CommitAsync();
+            return new ApiResult<string> { MsgCode = MsgCodeEnum.Success, Msg = "创建成功" };
         }
-        // 创建账户
-        await loginCommand.CreateAccount(request);
-        return new ApiResult<string> { MsgCode = MsgCodeEnum.Success, Msg = "创建成功" };
+        catch (Exception exception)
+        {
+            await unitOfWork.RollbackAsync();
+            throw new BadRequestException(MsgCodeEnum.Error, exception.Message);
+        }
     }
 
     public async Task<ApiResult<string>> Login(LoginRequest request)

@@ -5,7 +5,7 @@ using Core.Interfaces.Repositories;
 
 namespace Infrastructure.Data.Repositories;
 
-public class AccountRepository(IDapperExtensions<Account> dapper) : IAccountRepository
+public class AccountRepository(IDapperExtensions<Account> dapper, IUnitOfWork unitOfWork) : IAccountRepository
 {
     public async Task<int> AddAsync(CreateAccountRequest request)
     {
@@ -53,6 +53,8 @@ public class AccountRepository(IDapperExtensions<Account> dapper) : IAccountRepo
                 created_time = DateTime.Now,
                 modify_by = request.AccId,
                 modify_time = DateTime.Now
-            });
+            },
+            unitOfWork.CurrentConnection,
+            unitOfWork.CurrentTransaction);
     }
 }

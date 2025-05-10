@@ -2,6 +2,7 @@
 using Application.Queries;
 using Application.Services;
 using Core.Helpers;
+using Core.Interfaces.Repositories;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Application.DependencyInjection;

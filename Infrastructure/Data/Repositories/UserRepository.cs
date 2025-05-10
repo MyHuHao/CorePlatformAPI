@@ -35,7 +35,8 @@ public class UserRepository(IDapperExtensions<User> dapper, IUnitOfWork unitOfWo
         return await dapper.QuerySingleOrDefaultAsync(
             sql,
             new { Id = id },
-            transaction: unitOfWork.CurrentTransaction);
+            unitOfWork.CurrentConnection,
+            unitOfWork.CurrentTransaction);
     }
 
     public async Task<IEnumerable<User>> GetAllAsync(GetAllUserRequest request)

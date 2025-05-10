@@ -17,7 +17,7 @@ public static class ServiceCollectionExtensions
     {
         services.AddSingleton<IDbConnectionFactory, DbConnectionFactory>();
         services.AddScoped(typeof(IDapperExtensions<>), typeof(DapperExtensions<>));
-        services.AddScoped(typeof(IUnitOfWork), typeof(UnitOfWork));
+        services.AddScoped<IUnitOfWork, UnitOfWork>();
     }
 
     private static void AddRepositories(this IServiceCollection services)

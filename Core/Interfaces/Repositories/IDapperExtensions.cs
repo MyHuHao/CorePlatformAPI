@@ -27,9 +27,14 @@ public interface IDapperExtensions<TEntity> where TEntity : class
     /// </summary>
     /// <param name="sql"></param>
     /// <param name="param"></param>
+    /// <param name="connection"></param>
     /// <param name="transaction"></param>
     /// <returns></returns>
-    Task<TEntity> QuerySingleOrDefaultAsync(string sql, object? param = null, DbTransaction? transaction = null);
+    Task<TEntity> QuerySingleOrDefaultAsync(
+        string sql,
+        object? param = null,
+        DbConnection? connection = null,
+        DbTransaction? transaction = null);
 
     /// <summary>
     ///     返回第一行第一列数据
@@ -70,7 +75,12 @@ public interface IDapperExtensions<TEntity> where TEntity : class
     /// </summary>
     /// <param name="sql"></param>
     /// <param name="param"></param>
+    /// <param name="connection"></param>
     /// <param name="transaction"></param>
     /// <returns></returns>
-    Task<int> ExecuteAsync(string sql, object? param = null, DbTransaction? transaction = null);
+    Task<int> ExecuteAsync(
+        string sql,
+        object? param = null,
+        DbConnection? connection = null,
+        DbTransaction? transaction = null);
 }

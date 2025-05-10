@@ -46,6 +46,7 @@ public class DapperExtensions<TEntity>(IDbConnectionFactory dbConnectionFactory)
     /// <summary>
     ///     查询只能有一个对象数据
     /// </summary>
+    /// <param name="connection"></param>
     /// <param name="transaction"></param>
     /// <param name="sql"></param>
     /// <param name="param"></param>
@@ -54,10 +55,17 @@ public class DapperExtensions<TEntity>(IDbConnectionFactory dbConnectionFactory)
     public async Task<TEntity> QuerySingleOrDefaultAsync(
         string sql,
         object? param = null,
+        DbConnection? connection = null,
         DbTransaction? transaction = null)
     {
+        if (connection != null && transaction != null)
+        {
+            var result = await connection.QuerySingleOrDefaultAsync<TEntity>(sql, param, transaction);
+            return result ?? throw new NotFoundException(MsgCodeEnum.Warning, "当前查询数据为空");
+        }
+
         await using var conn = dbConnectionFactory.CreateConnection();
-        return await conn.QuerySingleOrDefaultAsync<TEntity>(sql, param, transaction)
+        return await conn.QuerySingleOrDefaultAsync<TEntity>(sql, param)
                ?? throw new NotFoundException(MsgCodeEnum.Warning, "当前查询数据为空");
     }
 
@@ -121,13 +129,23 @@ public class DapperExtensions<TEntity>(IDbConnectionFactory dbConnectionFactory)
     /// <summary>
     ///     执行sql
     /// </summary>
+    /// <param name="connection"></param>
     /// <param name="transaction"></param>
     /// <param name="sql"></param>
     /// <param name="param"></param>
     /// <returns></returns>
-    public async Task<int> ExecuteAsync(string sql, object? param = null, DbTransaction? transaction = null)
+    public async Task<int> ExecuteAsync(
+        string sql,
+        object? param = null,
+        DbConnection? connection = null,
+        DbTransaction? transaction = null)
     {
+        if (connection != null && transaction != null)
+        {
+            return await connection.ExecuteAsync(sql, param, transaction);
+        }
+
         await using var conn = dbConnectionFactory.CreateConnection();
-        return await conn.ExecuteAsync(sql, param, transaction);
+        return await conn.ExecuteAsync(sql, param);
     }
 }
