@@ -4,14 +4,14 @@ using Core.Interfaces.Repositories;
 
 namespace Infrastructure.Data.Repositories;
 
-public class UserRepository(IDapperExtensions<User> dapper, IUnitOfWork unitOfWork) : IUserRepository
+public class UserRepository(IDapperExtensions<User?> dapper, IUnitOfWork unitOfWork) : IUserRepository
 {
     /// <summary>
     ///     通过ID获取用户详细
     /// </summary>
     /// <param name="id"></param>
     /// <returns></returns>
-    public async Task<User> GetByIdAsync(string id)
+    public async Task<User?> GetByIdAsync(string id)
     {
         const string sql = """
                            select 
@@ -39,7 +39,7 @@ public class UserRepository(IDapperExtensions<User> dapper, IUnitOfWork unitOfWo
             unitOfWork.CurrentTransaction);
     }
 
-    public async Task<IEnumerable<User>> GetAllAsync(GetAllUserRequest request)
+    public async Task<IEnumerable<User?>> GetAllAsync(GetAllUserRequest request)
     {
         const string sql = """
                            SET @page;

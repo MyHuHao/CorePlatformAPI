@@ -5,8 +5,8 @@ namespace Core.Interfaces.Repositories;
 
 public interface IUserRepository
 {
-    Task<User> GetByIdAsync(string id);
-    Task<IEnumerable<User>> GetAllAsync(GetAllUserRequest request);
+    Task<User?> GetByIdAsync(string id);
+    Task<IEnumerable<User?>> GetAllAsync(GetAllUserRequest request);
     Task<string> AddAsync(User user);
     Task<bool> DeleteAsync(string id);
 }

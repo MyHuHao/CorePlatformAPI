@@ -10,19 +10,30 @@ public class DapperExtensions<TEntity>(IDbConnectionFactory dbConnectionFactory)
     where TEntity : class
 {
     /// <summary>
-    ///     查询全部
+    /// 查询全部
     /// </summary>
     /// <param name="sql"></param>
     /// <param name="param"></param>
+    /// <param name="connection"></param>
     /// <param name="transaction"></param>
     /// <returns></returns>
     public async Task<IEnumerable<TEntity>> QueryAsync(
         string sql,
         object? param = null,
+        DbConnection? connection = null,
         DbTransaction? transaction = null)
     {
-        await using var conn = dbConnectionFactory.CreateConnection();
-        return await conn.QueryAsync<TEntity>(sql, param, transaction);
+        if (connection != null && transaction != null)
+        {
+            var result = await connection.QueryAsync<TEntity>(sql, param, transaction);
+            return result;
+        }
+        else
+        {
+            await using var conn = dbConnectionFactory.CreateConnection();
+            var result = await conn.QueryAsync<TEntity>(sql, param);
+            return result;
+        }
     }
 
     /// <summary>
@@ -30,17 +41,27 @@ public class DapperExtensions<TEntity>(IDbConnectionFactory dbConnectionFactory)
     /// </summary>
     /// <param name="sql"></param>
     /// <param name="param"></param>
+    /// <param name="connection"></param>
     /// <param name="transaction"></param>
     /// <returns></returns>
     /// <exception cref="NotFoundException"></exception>
-    public async Task<TEntity> QueryFirstOrDefaultAsync(
+    public async Task<TEntity?> QueryFirstOrDefaultAsync(
         string sql,
         object? param = null,
+        DbConnection? connection = null,
         DbTransaction? transaction = null)
     {
-        await using var conn = dbConnectionFactory.CreateConnection();
-        return await conn.QueryFirstOrDefaultAsync<TEntity>(sql, param, transaction)
-               ?? throw new NotFoundException(MsgCodeEnum.Warning, "当前查询数据为空");
+        if (connection != null && transaction != null)
+        {
+            var result = await connection.QueryFirstOrDefaultAsync<TEntity>(sql, param, transaction);
+            return result;
+        }
+        else
+        {
+            await using var conn = dbConnectionFactory.CreateConnection();
+            var result = await conn.QueryFirstOrDefaultAsync<TEntity>(sql, param);
+            return result;
+        }
     }
 
     /// <summary>
@@ -52,7 +73,7 @@ public class DapperExtensions<TEntity>(IDbConnectionFactory dbConnectionFactory)
     /// <param name="param"></param>
     /// <returns></returns>
     /// <exception cref="NotFoundException"></exception>
-    public async Task<TEntity> QuerySingleOrDefaultAsync(
+    public async Task<TEntity?> QuerySingleOrDefaultAsync(
         string sql,
         object? param = null,
         DbConnection? connection = null,
@@ -61,12 +82,14 @@ public class DapperExtensions<TEntity>(IDbConnectionFactory dbConnectionFactory)
         if (connection != null && transaction != null)
         {
             var result = await connection.QuerySingleOrDefaultAsync<TEntity>(sql, param, transaction);
-            return result ?? throw new NotFoundException(MsgCodeEnum.Warning, "当前查询数据为空");
+            return result;
         }
-
-        await using var conn = dbConnectionFactory.CreateConnection();
-        return await conn.QuerySingleOrDefaultAsync<TEntity>(sql, param)
-               ?? throw new NotFoundException(MsgCodeEnum.Warning, "当前查询数据为空");
+        else
+        {
+            await using var conn = dbConnectionFactory.CreateConnection();
+            var result = await conn.QuerySingleOrDefaultAsync<TEntity>(sql, param);
+            return result;
+        }
     }
 
     /// <summary>
@@ -74,39 +97,64 @@ public class DapperExtensions<TEntity>(IDbConnectionFactory dbConnectionFactory)
     /// </summary>
     /// <param name="sql"></param>
     /// <param name="param"></param>
+    /// <param name="connection"></param>
     /// <param name="transaction"></param>
     /// <returns></returns>
-    public async Task<int> ExecuteScalarAsync(string sql, object? param = null, DbTransaction? transaction = null)
+    public async Task<int> ExecuteScalarAsync(
+        string sql,
+        object? param = null,
+        DbConnection? connection = null,
+        DbTransaction? transaction = null)
     {
-        await using var conn = dbConnectionFactory.CreateConnection();
-        return await conn.ExecuteScalarAsync<int>(sql, param, transaction);
+        if (connection != null && transaction != null)
+        {
+            var result = await connection.ExecuteScalarAsync<int>(sql, param, transaction);
+            return result;
+        }
+        else
+        {
+            await using var conn = dbConnectionFactory.CreateConnection();
+            var result = await conn.ExecuteScalarAsync<int>(sql, param);
+            return result;
+        }
     }
 
     /// <summary>
-    ///     查询返回第一行第一列数据-字符串
+    /// 查询返回第一行第一列数据-字符串
     /// </summary>
     /// <param name="sql"></param>
     /// <param name="param"></param>
+    /// <param name="connection"></param>
     /// <param name="transaction"></param>
     /// <returns></returns>
     /// <exception cref="NotFoundException"></exception>
     public async Task<string> ExecuteScalarStringAsync(
         string sql,
         object? param = null,
+        DbConnection? connection = null,
         DbTransaction? transaction = null)
     {
-        await using var conn = dbConnectionFactory.CreateConnection();
-        return await conn.ExecuteScalarAsync<string>(sql, param, transaction)
-               ?? throw new NotFoundException(MsgCodeEnum.Warning, "当前查询数据为空");
+        if (connection != null && transaction != null)
+        {
+            var result = await connection.ExecuteScalarAsync<string>(sql, param, transaction);
+            return result ?? throw new NotFoundException(MsgCodeEnum.Warning, "当前查询数据为空");
+        }
+        else
+        {
+            await using var conn = dbConnectionFactory.CreateConnection();
+            var result = await conn.ExecuteScalarAsync<string>(sql, param);
+            return result ?? throw new NotFoundException(MsgCodeEnum.Warning, "当前查询数据为空");
+        }
     }
 
     /// <summary>
-    ///     查询分页查询
+    /// 查询分页查询
     /// </summary>
     /// <param name="page"></param>
     /// <param name="pageSize"></param>
     /// <param name="sql"></param>
     /// <param name="param"></param>
+    /// <param name="connection"></param>
     /// <param name="transaction"></param>
     /// <returns></returns>
     public async Task<(IEnumerable<TEntity> items, int total)> QueryPageAsync(
@@ -114,20 +162,31 @@ public class DapperExtensions<TEntity>(IDbConnectionFactory dbConnectionFactory)
         int pageSize,
         string sql,
         object? param = null,
+        DbConnection? connection = null,
         DbTransaction? transaction = null)
     {
-        await using var conn = dbConnectionFactory.CreateConnection();
-        // 在MySQL中通过 LIMIT 分页并获取总数
         var pagedSql = $"{sql} LIMIT @Offset, @PageSize; SELECT COUNT(*) FROM ({sql}) AS totalSub";
-        var multi = await conn.QueryMultipleAsync(pagedSql,
-            new { Offset = (page - 1) * pageSize, PageSize = pageSize, param }, transaction);
+        SqlMapper.GridReader multi;
+        if (connection != null && transaction != null)
+        {
+            multi = await connection.QueryMultipleAsync(pagedSql,
+                new { Offset = (page - 1) * pageSize, PageSize = pageSize, param }, transaction);
+        }
+        else
+        {
+            await using var conn = dbConnectionFactory.CreateConnection();
+            multi = await conn.QueryMultipleAsync(pagedSql,
+                new { Offset = (page - 1) * pageSize, PageSize = pageSize, param });
+        }
+
+        // 在MySQL中通过 LIMIT 分页并获取总数
         var items = await multi.ReadAsync<TEntity>();
         var total = await multi.ReadSingleAsync<int>();
         return (items, total);
     }
 
     /// <summary>
-    ///     执行sql
+    /// 执行sql
     /// </summary>
     /// <param name="connection"></param>
     /// <param name="transaction"></param>
@@ -142,10 +201,14 @@ public class DapperExtensions<TEntity>(IDbConnectionFactory dbConnectionFactory)
     {
         if (connection != null && transaction != null)
         {
-            return await connection.ExecuteAsync(sql, param, transaction);
+            var result = await connection.ExecuteAsync(sql, param, transaction);
+            return result;
         }
-
-        await using var conn = dbConnectionFactory.CreateConnection();
-        return await conn.ExecuteAsync(sql, param);
+        else
+        {
+            await using var conn = dbConnectionFactory.CreateConnection();
+            var result = await conn.ExecuteAsync(sql, param);
+            return result;
+        }
     }
 }

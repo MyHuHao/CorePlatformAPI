@@ -5,12 +5,40 @@ using Core.Interfaces.Repositories;
 
 namespace Infrastructure.Data.Repositories;
 
-public class AccountRepository(IDapperExtensions<Account> dapper, IUnitOfWork unitOfWork) : IAccountRepository
+public class AccountRepository(IDapperExtensions<Account?> dapper, IUnitOfWork unitOfWork) : IAccountRepository
 {
+    public async Task<Account?> GetByIdAsync(string id)
+    {
+        const string sql = """
+                                select 
+                                    id, 
+                                    account_name as AccountName,
+                                    user_id as UserId, 
+                                    password_hash as PasswordHash,
+                                    password_salt as PasswordSalt, 
+                                    role_id as RoleId,
+                                    login_attempts as LoginAttempts,
+                                    last_login_time as LastLoginTime,
+                                    created_by as CreatedBy, 
+                                    created_time as CreatedTime, 
+                                    modify_by as ModifyBy, 
+                                    modify_time as ModifyTime
+                                from 
+                                    account 
+                                where 
+                                    account_name = @account_name
+                           """;
+        return await dapper.QueryFirstOrDefaultAsync(
+            sql, 
+            new { account_name = id }, 
+            unitOfWork.CurrentConnection,
+            unitOfWork.CurrentTransaction);
+    }
+
     public async Task<int> AddAsync(CreateAccountRequest request)
     {
         const string sql = """
-                            insert into `account`
+                            insert into account
                                 (id, 
                                 account_name, 
                                 user_id, 

@@ -2,6 +2,7 @@
 using Application.Queries;
 using Core.Contracts.Requests;
 using Core.Contracts.Results;
+using Core.Entities;
 using Core.Enums;
 using Core.Exceptions;
 using Core.Interfaces.Repositories;
@@ -9,18 +10,26 @@ using Core.Interfaces.Services;
 
 namespace Application.Services;
 
-public class LoginService(IUnitOfWork unitOfWork, UserQuery userQuery, LoginCommand loginCommand) : ILoginService
+public class LoginService(IUnitOfWork unitOfWork, UserQuery userQuery, LoginQuery loginQuery, LoginCommand loginCommand)
+    : ILoginService
 {
     public async Task<ApiResult<string>> CreateAccount(CreateAccountRequest request)
     {
         try
         {
             await unitOfWork.BeginTransactionAsync();
-            // 检查账户是否存在
+            // 检查人员是否存在
             var userResult = await userQuery.GetByIdAsync(request.UserId);
-            if (string.IsNullOrEmpty(userResult.Id))
+            if (userResult == null)
             {
                 throw new ValidationException(MsgCodeEnum.Warning, "人员不存在，禁止创建");
+            }
+
+            // 检查账户是否存在
+            var accountResult = await loginQuery.GetByIdAsync(request.Account);
+            if (accountResult != null)
+            {
+                throw new ValidationException(MsgCodeEnum.Warning, "账户已存在，请重新输入");
             }
 
             // 创建账户
