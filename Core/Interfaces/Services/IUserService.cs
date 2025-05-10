@@ -3,7 +3,7 @@ using Core.Contracts.Results;
 using Core.DTOs;
 using Core.Entities;
 
-namespace Application.Interfaces;
+namespace Core.Interfaces.Services;
 
 public interface IUserService
 {

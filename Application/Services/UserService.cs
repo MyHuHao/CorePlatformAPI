@@ -1,12 +1,11 @@
-﻿using Application.Interfaces;
-using Application.Queries;
+﻿using Application.Queries;
 using AutoMapper;
 using Core.Contracts.Requests;
 using Core.Contracts.Results;
 using Core.DTOs;
 using Core.Entities;
 using Core.Enums;
-using Core.Exceptions;
+using Core.Interfaces.Services;
 
 namespace Application.Services;
 

@@ -1,6 +1,6 @@
 ﻿using Core.Contracts.Requests;
 
-namespace Infrastructure.Interfaces;
+namespace Core.Interfaces.Repositories;
 
 public interface IAccountRepository
 {

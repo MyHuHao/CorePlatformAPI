@@ -1,6 +1,6 @@
 ﻿using Core.Entities;
 
-namespace Application.Interfaces;
+namespace Core.Interfaces.Services;
 
 public interface IApiLogService
 {

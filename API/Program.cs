@@ -2,6 +2,7 @@ using System.Text;
 using System.Text.Json;
 using API.Filters;
 using API.Middlewares;
+using Application.DependencyInjection;
 using Application.Mappings;
 using Infrastructure.DependencyInjection;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -42,6 +43,7 @@ builder.Services.AddDistributedMemoryCache();
 
 // 注册服务
 builder.Services.AddScoped<GlobalExceptionFilter>();
+builder.Services.AddApplication();
 builder.Services.AddInfrastructure();
 
 // AutoMapper
@@ -61,9 +63,9 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateIssuerSigningKey = true,
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings["IssuerSigningKey"] ?? ""))
         };
-        
+
         // 自定义token过期事件
-        options.Events  = new JwtBearerEvents
+        options.Events = new JwtBearerEvents
         {
             OnAuthenticationFailed = context =>
             {
@@ -71,6 +73,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 {
                     context.Response.Headers.Append("Token-Expired", "true");
                 }
+
                 return Task.CompletedTask;
             }
         };

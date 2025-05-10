@@ -1,7 +1,7 @@
 ﻿using Core.Contracts.Requests;
 using Core.Contracts.Results;
 
-namespace Application.Interfaces;
+namespace Core.Interfaces.Services;
 
 public interface ILoginService
 {

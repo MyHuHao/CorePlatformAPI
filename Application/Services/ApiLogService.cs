@@ -1,6 +1,6 @@
 ﻿using Application.Commands;
-using Application.Interfaces;
 using Core.Entities;
+using Core.Interfaces.Services;
 
 namespace Application.Services;
 

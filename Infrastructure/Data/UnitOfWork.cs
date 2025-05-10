@@ -1,16 +1,17 @@
-﻿using Infrastructure.Interfaces;
+﻿using System.Data.Common;
+using Core.Interfaces.Repositories;
 using MySql.Data.MySqlClient;
 
 namespace Infrastructure.Data;
 
-public class UnitOfWork(IMySqlConnectionFactory connectionFactory) : IUnitOfWork
+public class UnitOfWork(IDbConnectionFactory connectionFactory) : IUnitOfWork
 {
     private MySqlConnection? _connection;
-    public MySqlTransaction? CurrentTransaction { get; private set; }
+    public DbTransaction? CurrentTransaction { get; private set; }
 
     public async Task BeginTransactionAsync()
     {
-        _connection = connectionFactory.CreateConnection();
+        _connection = connectionFactory.CreateConnection() as MySqlConnection;
         await _connection.OpenAsync();
         CurrentTransaction = await _connection.BeginTransactionAsync();
     }

@@ -1,11 +1,11 @@
 ﻿using Application.Commands;
-using Application.Interfaces;
 using Application.Queries;
 using Core.Contracts.Requests;
 using Core.Contracts.Results;
 using Core.Enums;
 using Core.Exceptions;
-using Core.Interfaces;
+using Core.Interfaces.Repositories;
+using Core.Interfaces.Services;
 
 namespace Application.Services;
 
@@ -14,19 +14,14 @@ public class LoginService(IUserRepository repository, UserQuery userQuery, Login
 {
     public async Task<ApiResult<string>> CreateAccount(CreateAccountRequest request)
     {
-        await using MySqlConnection con = dbConnectionFactory.CreateConnection();
-        await con.OpenAsync();
-        await using MySqlTransaction transaction = await con.BeginTransactionAsync();
         // 检查账户是否存在
-        var userResult = await userQuery.GetByIdAsync(con, transaction, request.UserId);
+        var userResult = await userQuery.GetByIdAsync(request.UserId);
         if (string.IsNullOrEmpty(userResult.Id))
         {
             throw new ValidationException(MsgCodeEnum.Error, "人员不存在，禁止创建");
         }
-
         // 创建账户
-        await loginCommand.CreateAccount(con, transaction, request);
-        await transaction.CommitAsync();
+        await loginCommand.CreateAccount(request);
         return new ApiResult<string> { MsgCode = MsgCodeEnum.Success, Msg = "创建成功" };
     }
 

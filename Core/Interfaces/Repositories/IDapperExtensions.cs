@@ -1,6 +1,6 @@
-﻿using MySql.Data.MySqlClient;
+﻿using System.Data.Common;
 
-namespace Infrastructure.Interfaces;
+namespace Core.Interfaces.Repositories;
 
 public interface IDapperExtensions<TEntity> where TEntity : class
 {
@@ -11,7 +11,7 @@ public interface IDapperExtensions<TEntity> where TEntity : class
     /// <param name="param"></param>
     /// <param name="transaction"></param>
     /// <returns></returns>
-    Task<IEnumerable<TEntity>> QueryAsync(string sql, object? param = null, MySqlTransaction? transaction = null);
+    Task<IEnumerable<TEntity>> QueryAsync(string sql, object? param = null, DbTransaction? transaction = null);
 
     /// <summary>
     ///     返回多数据第一条对象
@@ -20,7 +20,7 @@ public interface IDapperExtensions<TEntity> where TEntity : class
     /// <param name="param"></param>
     /// <param name="transaction"></param>
     /// <returns></returns>
-    Task<TEntity> QueryFirstOrDefaultAsync(string sql, object? param = null, MySqlTransaction? transaction = null);
+    Task<TEntity> QueryFirstOrDefaultAsync(string sql, object? param = null, DbTransaction? transaction = null);
 
     /// <summary>
     ///     只能有一个对象数据
@@ -29,7 +29,7 @@ public interface IDapperExtensions<TEntity> where TEntity : class
     /// <param name="param"></param>
     /// <param name="transaction"></param>
     /// <returns></returns>
-    Task<TEntity> QuerySingleOrDefaultAsync(string sql, object? param = null, MySqlTransaction? transaction = null);
+    Task<TEntity> QuerySingleOrDefaultAsync(string sql, object? param = null, DbTransaction? transaction = null);
 
     /// <summary>
     ///     返回第一行第一列数据
@@ -38,7 +38,7 @@ public interface IDapperExtensions<TEntity> where TEntity : class
     /// <param name="param"></param>
     /// <param name="transaction"></param>
     /// <returns></returns>
-    Task<int> ExecuteScalarAsync(string sql, object? param = null, MySqlTransaction? transaction = null);
+    Task<int> ExecuteScalarAsync(string sql, object? param = null, DbTransaction? transaction = null);
 
     /// <summary>
     ///     查询返回第一行第一列数据-字符串
@@ -47,7 +47,7 @@ public interface IDapperExtensions<TEntity> where TEntity : class
     /// <param name="param"></param>
     /// <param name="transaction"></param>
     /// <returns></returns>
-    Task<string> ExecuteScalarStringAsync(string sql, object? param = null, MySqlTransaction? transaction = null);
+    Task<string> ExecuteScalarStringAsync(string sql, object? param = null, DbTransaction? transaction = null);
 
     /// <summary>
     ///     分页查询
@@ -63,7 +63,7 @@ public interface IDapperExtensions<TEntity> where TEntity : class
         int pageSize,
         string sql,
         object? param = null,
-        MySqlTransaction? transaction = null);
+        DbTransaction? transaction = null);
 
     /// <summary>
     ///     执行sql
@@ -72,5 +72,5 @@ public interface IDapperExtensions<TEntity> where TEntity : class
     /// <param name="param"></param>
     /// <param name="transaction"></param>
     /// <returns></returns>
-    Task<int> ExecuteAsync(string sql, object? param = null, MySqlTransaction? transaction = null);
+    Task<int> ExecuteAsync(string sql, object? param = null, DbTransaction? transaction = null);
 }

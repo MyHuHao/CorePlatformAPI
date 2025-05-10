@@ -1,12 +1,12 @@
+using System.Data.Common;
 using Core.Enums;
 using Core.Exceptions;
+using Core.Interfaces.Repositories;
 using Dapper;
-using Infrastructure.Interfaces;
-using MySql.Data.MySqlClient;
 
 namespace Infrastructure.Data;
 
-public class DapperExtensions<TEntity>(IMySqlConnectionFactory dbConnectionFactory) : IDapperExtensions<TEntity>
+public class DapperExtensions<TEntity>(IDbConnectionFactory dbConnectionFactory) : IDapperExtensions<TEntity>
     where TEntity : class
 {
     /// <summary>
@@ -19,7 +19,7 @@ public class DapperExtensions<TEntity>(IMySqlConnectionFactory dbConnectionFacto
     public async Task<IEnumerable<TEntity>> QueryAsync(
         string sql,
         object? param = null,
-        MySqlTransaction? transaction = null)
+        DbTransaction? transaction = null)
     {
         await using var conn = dbConnectionFactory.CreateConnection();
         return await conn.QueryAsync<TEntity>(sql, param, transaction);
@@ -36,7 +36,7 @@ public class DapperExtensions<TEntity>(IMySqlConnectionFactory dbConnectionFacto
     public async Task<TEntity> QueryFirstOrDefaultAsync(
         string sql,
         object? param = null,
-        MySqlTransaction? transaction = null)
+        DbTransaction? transaction = null)
     {
         await using var conn = dbConnectionFactory.CreateConnection();
         return await conn.QueryFirstOrDefaultAsync<TEntity>(sql, param, transaction)
@@ -54,7 +54,7 @@ public class DapperExtensions<TEntity>(IMySqlConnectionFactory dbConnectionFacto
     public async Task<TEntity> QuerySingleOrDefaultAsync(
         string sql,
         object? param = null,
-        MySqlTransaction? transaction = null)
+        DbTransaction? transaction = null)
     {
         await using var conn = dbConnectionFactory.CreateConnection();
         return await conn.QuerySingleOrDefaultAsync<TEntity>(sql, param, transaction)
@@ -68,7 +68,7 @@ public class DapperExtensions<TEntity>(IMySqlConnectionFactory dbConnectionFacto
     /// <param name="param"></param>
     /// <param name="transaction"></param>
     /// <returns></returns>
-    public async Task<int> ExecuteScalarAsync(string sql, object? param = null, MySqlTransaction? transaction = null)
+    public async Task<int> ExecuteScalarAsync(string sql, object? param = null, DbTransaction? transaction = null)
     {
         await using var conn = dbConnectionFactory.CreateConnection();
         return await conn.ExecuteScalarAsync<int>(sql, param, transaction);
@@ -85,7 +85,7 @@ public class DapperExtensions<TEntity>(IMySqlConnectionFactory dbConnectionFacto
     public async Task<string> ExecuteScalarStringAsync(
         string sql,
         object? param = null,
-        MySqlTransaction? transaction = null)
+        DbTransaction? transaction = null)
     {
         await using var conn = dbConnectionFactory.CreateConnection();
         return await conn.ExecuteScalarAsync<string>(sql, param, transaction)
@@ -106,7 +106,7 @@ public class DapperExtensions<TEntity>(IMySqlConnectionFactory dbConnectionFacto
         int pageSize,
         string sql,
         object? param = null,
-        MySqlTransaction? transaction = null)
+        DbTransaction? transaction = null)
     {
         await using var conn = dbConnectionFactory.CreateConnection();
         // 在MySQL中通过 LIMIT 分页并获取总数
@@ -125,7 +125,7 @@ public class DapperExtensions<TEntity>(IMySqlConnectionFactory dbConnectionFacto
     /// <param name="sql"></param>
     /// <param name="param"></param>
     /// <returns></returns>
-    public async Task<int> ExecuteAsync(string sql, object? param = null, MySqlTransaction? transaction = null)
+    public async Task<int> ExecuteAsync(string sql, object? param = null, DbTransaction? transaction = null)
     {
         await using var conn = dbConnectionFactory.CreateConnection();
         return await conn.ExecuteAsync(sql, param, transaction);

@@ -1,7 +1,7 @@
 ﻿using Core.Contracts.Requests;
 using Core.Entities;
 
-namespace Infrastructure.Interfaces;
+namespace Core.Interfaces.Repositories;
 
 public interface IUserRepository
 {

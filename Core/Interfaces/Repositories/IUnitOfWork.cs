@@ -1,11 +1,11 @@
-﻿using MySql.Data.MySqlClient;
+﻿using System.Data.Common;
 
-namespace Infrastructure.Interfaces;
+namespace Core.Interfaces.Repositories;
 
 public interface IUnitOfWork : IDisposable
 {
     Task BeginTransactionAsync();
     Task CommitAsync();
     Task RollbackAsync();
-    MySqlTransaction? CurrentTransaction { get; }
+    DbTransaction? CurrentTransaction { get; }
 }

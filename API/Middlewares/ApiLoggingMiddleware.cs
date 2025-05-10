@@ -1,7 +1,7 @@
 ﻿using System.Text;
 using System.Text.Json;
-using Application.Interfaces;
 using Core.Entities;
+using Core.Interfaces.Services;
 
 namespace API.Middlewares;
 

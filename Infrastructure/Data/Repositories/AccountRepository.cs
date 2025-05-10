@@ -1,7 +1,7 @@
 ﻿using Core.Contracts.Requests;
 using Core.Entities;
 using Core.Helpers;
-using Infrastructure.Interfaces;
+using Core.Interfaces.Repositories;
 
 namespace Infrastructure.Data.Repositories;
 
