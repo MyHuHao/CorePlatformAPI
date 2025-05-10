@@ -1,8 +1,10 @@
 ﻿using Core.Interfaces.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("[controller]/[action]")]
 public class UserController(IUserService service) : Controller

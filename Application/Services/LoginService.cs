@@ -1,4 +1,7 @@
-﻿using Application.Commands;
+﻿using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
+using Application.Commands;
 using Application.Queries;
 using Core.Contracts.Requests;
 using Core.Contracts.Results;
@@ -6,10 +9,17 @@ using Core.Enums;
 using Core.Exceptions;
 using Core.Interfaces.Repositories;
 using Core.Interfaces.Services;
+using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
 
 namespace Application.Services;
 
-public class LoginService(IUnitOfWork unitOfWork, UserQuery userQuery, LoginQuery loginQuery, LoginCommand loginCommand)
+public class LoginService(
+    IConfiguration configuration,
+    IUnitOfWork unitOfWork,
+    UserQuery userQuery,
+    LoginQuery loginQuery,
+    LoginCommand loginCommand)
     : ILoginService
 {
     public async Task<ApiResult<string>> CreateAccount(CreateAccountRequest request)
@@ -42,17 +52,41 @@ public class LoginService(IUnitOfWork unitOfWork, UserQuery userQuery, LoginQuer
     public async Task<ApiResult<string>> Login(LoginRequest request)
     {
         // 验证账户，密码是否正确
+        var isValid = await loginQuery.IsValidAccountPassWord(request);
+        if (isValid == false)
+        {
+            throw new ValidationException(MsgCodeEnum.Warning, "账号密码错误，请重新输入");
+        }
 
         // 生成token
+        var token = CreateToken(request);
 
         // 获取当前登录账户信息
 
         // 返回数据
+        return new ApiResult<string> { MsgCode = MsgCodeEnum.Success, Msg = "登录成功", Data = token };
+    }
 
-        await Task.CompletedTask;
-        return new ApiResult<string>
+    private string CreateToken(LoginRequest request)
+    {
+        var key = Encoding.UTF8.GetBytes(configuration["JWT:IssuerSigningKey"] ?? "");
+        var tokenHandler = new JwtSecurityTokenHandler();
+        var tokenDescriptor = new SecurityTokenDescriptor
         {
-            Data = "2323", MsgCode = 0, Msg = "登录成功"
+            Subject = new ClaimsIdentity(
+            [
+                new Claim("Account", request.Account),
+                new Claim("Password", request.PassWord),
+                new Claim("Regions", request.LoginType.ToRegion()),
+                new Claim("DataBase", request.LoginType.ToDataBase()),
+                new Claim("Language", request.Language)
+            ]),
+            Expires = DateTime.Now.AddHours(8), // 令牌过期时间
+            SigningCredentials =
+                new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
         };
+        var token = tokenHandler.CreateToken(tokenDescriptor);
+        var tokenString = tokenHandler.WriteToken(token);
+        return tokenString;
     }
 }
