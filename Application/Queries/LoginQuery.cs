@@ -1,27 +1,17 @@
-﻿using Core.Contracts.Requests;
-using Core.Entities;
-using Core.Helpers;
+﻿using Core.Entities;
 using Core.Interfaces.Repositories;
 
 namespace Application.Queries;
 
-public class LoginQuery(IAccountRepository repository)
+public class LoginQuery(IAccountRepository repository, ILoginTokenRepository loginTokenRepository)
 {
     public async Task<Account?> GetByIdAsync(string id)
     {
         return await repository.GetByIdAsync(id);
     }
-
-    public async Task<bool> IsValidAccountPassWord(LoginRequest request)
+    
+    public async Task<LoginToken?> GetLoginTokeById(string userId)
     {
-        var result = await repository.GetByIdAsync(request.Account);
-        if (result == null)
-        {
-            return false;
-        }
-
-        // 验证密码
-        var decode = HashHelper.VerifyPassword(request.PassWord, result.PasswordHash, result.PasswordSalt);
-        return decode;
+        return await loginTokenRepository.GetByIdAsync(userId);
     }
 }

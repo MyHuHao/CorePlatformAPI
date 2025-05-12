@@ -85,4 +85,88 @@ public class AccountRepository(IDapperExtensions<Account> dapper, IUnitOfWork un
             unitOfWork.CurrentConnection,
             unitOfWork.CurrentTransaction);
     }
+
+    public async Task<int> InsertLoginToken(InsertLoginToken loginToken)
+    {
+        const string sql = """
+                               insert into login_token
+                               (id,
+                               user_Id,
+                               token,
+                               refresh_token,
+                               expire_time,
+                               device_id,
+                               is_active,
+                               created_by,
+                               created_time,
+                               modify_by,
+                               modify_time)
+                               values
+                               (@id,
+                               @user_Id,
+                               @token,
+                               @refresh_token,
+                               @expire_time,
+                               @device_id,
+                               @is_active,
+                               @created_by,
+                               @created_time,
+                               @modify_by,
+                               @modify_time)
+                           """;
+        return await dapper.ExecuteAsync(sql,
+            new
+            {
+                id = HashHelper.GetUuid(),
+                user_Id = loginToken.UserId,
+                token = loginToken.Token,
+                refresh_token = loginToken.RefreshToken,
+                expire_time = loginToken.ExpireTime,
+                device_id = loginToken.DeviceId,
+                is_active = 1,
+                created_by = loginToken.UserId,
+                created_time = DateTime.Now,
+                modify_by = loginToken.UserId,
+                modify_time = DateTime.Now
+            });
+    }
+
+    public async Task<int> InsertLogLog(InsertLoginToken loginToken)
+    {
+        const string sql = """
+                           insert into login_log
+                           (id,
+                           user_id,
+                           login_time,
+                           ip_address,
+                           device_info,
+                           created_by,
+                           created_time,
+                           modify_by,
+                           modify_time)
+                           values
+                           (@id,
+                           @user_id,
+                           @login_time,
+                           @ip_address,
+                           @device_info,
+                           @created_by,
+                           @created_time,
+                           @modify_by,
+                           @modify_time)
+                           """;
+        return await dapper.ExecuteAsync(sql,
+            new
+            {
+                id = HashHelper.GetUuid(),
+                user_id = loginToken.UserId,
+                login_time = DateTime.Now,
+                ip_address = loginToken.IpAddress,
+                device_info = loginToken.DeviceInfo,
+                created_by = loginToken.UserId,
+                created_time = DateTime.Now,
+                modify_by = loginToken.UserId,
+                modify_time = DateTime.Now
+            });
+    }
 }

@@ -1,27 +1,25 @@
-﻿using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
-using Application.Commands;
+﻿using Application.Commands;
 using Application.Queries;
 using Core.Contracts.Requests;
 using Core.Contracts.Results;
+using Core.Entities;
 using Core.Enums;
 using Core.Exceptions;
+using Core.Helpers;
 using Core.Interfaces.Repositories;
 using Core.Interfaces.Services;
-using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Tokens;
 
 namespace Application.Services;
 
-public class LoginService(
-    IConfiguration configuration,
-    IUnitOfWork unitOfWork,
-    UserQuery userQuery,
-    LoginQuery loginQuery,
-    LoginCommand loginCommand)
-    : ILoginService
+public class LoginService(IUnitOfWork unitOfWork, UserQuery userQuery, LoginQuery loginQuery, LoginCommand loginCommand) : ILoginService
 {
+    /// <summary>
+    /// 创建账号
+    /// </summary>
+    /// <param name="request"></param>
+    /// <returns></returns>
+    /// <exception cref="ValidationException"></exception>
+    /// <exception cref="BadRequestException"></exception>
     public async Task<ApiResult<string>> CreateAccount(CreateAccountRequest request)
     {
         try
@@ -49,44 +47,63 @@ public class LoginService(
         }
     }
 
+    /// <summary>
+    /// 登录接口
+    /// </summary>
+    /// <param name="request"></param>
+    /// <returns></returns>
+    /// <exception cref="ValidationException"></exception>
     public async Task<ApiResult<string>> Login(LoginRequest request)
     {
+        // 验证账号，获取账号信息
+        var accountResult = await loginQuery.GetByIdAsync(request.Account);
+        if (accountResult == null)
+        {
+            throw new ValidationException(MsgCodeEnum.Warning, "用户不存在，禁止创建");
+        }
+
         // 验证账户，密码是否正确
-        var isValid = await loginQuery.IsValidAccountPassWord(request);
+        var isValid = HashHelper.VerifyPassword(
+            request.PassWord,
+            accountResult.PasswordHash,
+            accountResult.PasswordSalt);
         if (isValid == false)
         {
             throw new ValidationException(MsgCodeEnum.Warning, "账号密码错误，请重新输入");
         }
 
-        // 生成token
-        var token = CreateToken(request);
-
-        // 获取当前登录账户信息
+        // 生成token 和  // 记录登录日志
+        var token = await CreateToken(accountResult, request);
 
         // 返回数据
         return new ApiResult<string> { MsgCode = MsgCodeEnum.Success, Msg = "登录成功", Data = token };
     }
 
-    private string CreateToken(LoginRequest request)
+    // 验证token是否合格
+    public async Task<bool> VerifyToken(string token)
     {
-        var key = Encoding.UTF8.GetBytes(configuration["JWT:IssuerSigningKey"] ?? "");
-        var tokenHandler = new JwtSecurityTokenHandler();
-        var tokenDescriptor = new SecurityTokenDescriptor
+        var result = await loginQuery.GetLoginTokeById(token);
+        return result != null;
+    }
+
+    private async Task<string> CreateToken(Account accountResult, LoginRequest request)
+    {
+        // 生成Token和RefreshToken
+        var token = HashHelper.GetUuid();
+        var refreshToken = HashHelper.GetUuid();
+        var device = HashHelper.GetUuid();
+
+        // 记录Token到数据库
+        var loginToken = new InsertLoginToken
         {
-            Subject = new ClaimsIdentity(
-            [
-                new Claim("Account", request.Account),
-                new Claim("Password", request.PassWord),
-                new Claim("Regions", request.LoginType.ToRegion()),
-                new Claim("DataBase", request.LoginType.ToDataBase()),
-                new Claim("Language", request.Language)
-            ]),
-            Expires = DateTime.Now.AddHours(8), // 令牌过期时间
-            SigningCredentials =
-                new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+            UserId = accountResult.UserId,
+            Token = token,
+            RefreshToken = refreshToken,
+            ExpireTime = DateTime.Now.AddHours(8),
+            DeviceId = device
         };
-        var token = tokenHandler.CreateToken(tokenDescriptor);
-        var tokenString = tokenHandler.WriteToken(token);
-        return tokenString;
+        await loginCommand.InsertLoginToken(loginToken);
+        await loginCommand.InsertLogLog(loginToken);
+        return token;
     }
 }

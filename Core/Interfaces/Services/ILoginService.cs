@@ -13,4 +13,6 @@ public interface ILoginService
     Task<ApiResult<string>> CreateAccount(CreateAccountRequest request);
 
     Task<ApiResult<string>> Login(LoginRequest request);
+
+    Task<bool> VerifyToken(string token);
 }

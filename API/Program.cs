@@ -100,5 +100,6 @@ app.UseRouting();
 app.UseCors("CorsPolicy");
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseMiddleware<TokenValidationMiddleware>();
 app.MapControllers();
 app.Run();

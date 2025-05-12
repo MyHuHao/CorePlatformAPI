@@ -15,3 +15,14 @@ public class CreateAccountRequest
     public required string UserId { get; set; }
     public required string AccId { get; set; }
 }
+
+public class InsertLoginToken
+{
+    public string IpAddress { get; set; } = "172.0.0.1";
+    public string DeviceInfo { get; set; } = "PC";
+    public required string UserId { get; set; }
+    public required string Token { get; set; }
+    public required string RefreshToken { get; set; }
+    public required DateTime ExpireTime { get; set; }
+    public required string DeviceId { get; set; }
+}

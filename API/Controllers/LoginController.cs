@@ -1,9 +1,11 @@
 ﻿using Core.Contracts.Requests;
 using Core.Interfaces.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("[controller]/[action]")]
 public class LoginController(ILoginService service) : Controller
@@ -21,6 +23,7 @@ public class LoginController(ILoginService service) : Controller
     }
 
     // 登录验证,获取Token
+    [AllowAnonymous]
     [HttpPost]
     public async Task<IActionResult> Login([FromBody] LoginRequest request)
     {
