@@ -1,9 +1,11 @@
+using System.IdentityModel.Tokens.Jwt;
 using System.Text;
 using System.Text.Json;
 using API.Filters;
 using API.Middlewares;
 using Application.DependencyInjection;
 using Application.Mappings;
+using Core.Interfaces.Services;
 using Infrastructure.DependencyInjection;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.HttpLogging;
@@ -62,18 +64,6 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateLifetime = true,
             ValidateIssuerSigningKey = true,
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings["IssuerSigningKey"] ?? ""))
-        };
-
-        // 自定义token过期事件
-        options.Events = new JwtBearerEvents
-        {
-            OnAuthenticationFailed = context =>
-            {
-                if (context.Exception.GetType() == typeof(SecurityTokenExpiredException))
-                    context.Response.Headers.Append("Token-Expired", "true");
-
-                return Task.CompletedTask;
-            }
         };
     });
 

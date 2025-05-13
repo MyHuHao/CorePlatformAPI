@@ -1,4 +1,7 @@
-﻿using Application.Commands;
+﻿using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
+using Application.Commands;
 using Application.Queries;
 using Core.Contracts.Requests;
 using Core.Contracts.Results;
@@ -8,10 +11,17 @@ using Core.Exceptions;
 using Core.Helpers;
 using Core.Interfaces.Repositories;
 using Core.Interfaces.Services;
+using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
 
 namespace Application.Services;
 
-public class LoginService(IUnitOfWork unitOfWork, UserQuery userQuery, LoginQuery loginQuery, LoginCommand loginCommand) : ILoginService
+public class LoginService(
+    IConfiguration configuration,
+    IUnitOfWork unitOfWork,
+    UserQuery userQuery,
+    LoginQuery loginQuery,
+    LoginCommand loginCommand) : ILoginService
 {
     /// <summary>
     /// 创建账号
@@ -72,10 +82,9 @@ public class LoginService(IUnitOfWork unitOfWork, UserQuery userQuery, LoginQuer
             throw new ValidationException(MsgCodeEnum.Warning, "账号密码错误，请重新输入");
         }
 
-        // 生成token 和  // 记录登录日志
-        var token = await CreateToken(accountResult, request);
-
-        // 返回数据
+        var jti = HashHelper.GetUuid();
+        var token = CreateToken(request, jti);
+        await StoreLoginToken(accountResult, jti);
         return new ApiResult<string> { MsgCode = MsgCodeEnum.Success, Msg = "登录成功", Data = token };
     }
 
@@ -86,10 +95,45 @@ public class LoginService(IUnitOfWork unitOfWork, UserQuery userQuery, LoginQuer
         return result != null;
     }
 
-    private async Task<string> CreateToken(Account accountResult, LoginRequest request)
+    /// <summary>
+    /// 生成token方法
+    /// </summary>
+    /// <param name="request"></param>
+    /// <param name="jti"></param>
+    /// <returns></returns>
+    private string CreateToken(LoginRequest request, string jti)
     {
-        // 生成Token和RefreshToken
-        var token = HashHelper.GetUuid();
+        var key = Encoding.UTF8.GetBytes(configuration["JWT:IssuerSigningKey"] ?? "");
+        var tokenHandler = new JwtSecurityTokenHandler();
+        var tokenDescriptor = new SecurityTokenDescriptor
+        {
+            Subject = new ClaimsIdentity(
+            [
+                new Claim(JwtRegisteredClaimNames.Jti, jti),
+                new Claim("Account", request.Account),
+                new Claim("Password", request.PassWord),
+                new Claim("Regions", request.LoginType.ToRegion()),
+                new Claim("DataBase", request.LoginType.ToDataBase()),
+                new Claim("Language", request.Language)
+            ]),
+            Expires = DateTime.Now.AddHours(8), // 令牌过期时间
+            SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key),
+                SecurityAlgorithms.HmacSha256Signature)
+        };
+        var token = tokenHandler.CreateToken(tokenDescriptor);
+        var tokenString = tokenHandler.WriteToken(token);
+        return tokenString;
+    }
+
+
+    /// <summary>
+    ///  把令牌信息写入数据库表中
+    /// </summary>
+    /// <param name="accountResult"></param>
+    /// <param name="jti"></param>
+    private async Task StoreLoginToken(Account accountResult, string jti)
+    {
+        // 生成device和RefreshToken
         var refreshToken = HashHelper.GetUuid();
         var device = HashHelper.GetUuid();
 
@@ -97,13 +141,12 @@ public class LoginService(IUnitOfWork unitOfWork, UserQuery userQuery, LoginQuer
         var loginToken = new InsertLoginToken
         {
             UserId = accountResult.UserId,
-            Token = token,
+            Token = jti,
             RefreshToken = refreshToken,
             ExpireTime = DateTime.Now.AddHours(8),
             DeviceId = device
         };
         await loginCommand.InsertLoginToken(loginToken);
         await loginCommand.InsertLogLog(loginToken);
-        return token;
     }
 }

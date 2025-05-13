@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using System.IdentityModel.Tokens.Jwt;
+using System.Text.Json;
 using Core.Interfaces.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Primitives;
@@ -29,6 +30,7 @@ public class TokenValidationMiddleware(
         }
 
         var token = authHeader.ToString().Split(' ').LastOrDefault() ?? "";
+
         if (string.IsNullOrEmpty(token))
         {
             await WriteErrorResponse(context, 401, "Token格式错误");
@@ -36,12 +38,36 @@ public class TokenValidationMiddleware(
             return;
         }
 
+        JwtSecurityToken jwtToken;
+        try
+        {
+            var handler = new JwtSecurityTokenHandler();
+            jwtToken = handler.ReadJwtToken(token);
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "无法解析JWT Token");
+            await WriteErrorResponse(context, 401, "Token解析失败");
+            return;
+        }
+
+        var jti = jwtToken.Claims
+            .FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Jti)
+            ?.Value;
+
+        if (string.IsNullOrEmpty(jti))
+        {
+            await WriteErrorResponse(context, 401, "Token中缺少jti声明");
+            return;
+        }
+
+
         // 验证Token有效性
         try
         {
             using var scope = scopeFactory.CreateScope();
             var loginService = scope.ServiceProvider.GetRequiredService<ILoginService>();
-            var isValid = await loginService.VerifyToken(token);
+            var isValid = await loginService.VerifyToken(jti);
 
             if (!isValid)
             {
