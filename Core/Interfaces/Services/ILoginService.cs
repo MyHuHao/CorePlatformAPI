@@ -15,4 +15,6 @@ public interface ILoginService
     Task<ApiResult<string>> Login(LoginRequest request);
 
     Task<bool> VerifyToken(string token);
+
+    ApiResult<List<LoginTypeResult>> GetLoginOptions();
 }

@@ -30,4 +30,13 @@ public class LoginController(ILoginService service) : Controller
         var result = await service.Login(request);
         return Ok(result);
     }
+
+    // 获取登录类型
+    [AllowAnonymous]
+    [HttpGet]
+    public IActionResult GetLoginOptions()
+    {
+        var result = service.GetLoginOptions();
+        return Ok(result);
+    }
 }

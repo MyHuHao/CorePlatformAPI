@@ -7,7 +7,9 @@ public static class LoginEnum
         return status switch
         {
             0 => "SZ",
-            1 => "SH",
+            1 => "SZ",
+            2 => "SH",
+            3 => "SH",
             _ => "SZ"
         };
     }
@@ -18,6 +20,8 @@ public static class LoginEnum
         {
             0 => "Test",
             1 => "Prod",
+            2 => "Test",
+            3 => "Prod",
             _ => "Test"
         };
     }

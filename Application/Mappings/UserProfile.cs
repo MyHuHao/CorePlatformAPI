@@ -10,12 +10,14 @@ public class UserProfile : Profile
     public UserProfile()
     {
         CreateMap<User, UserDto>()
+            .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.Id) )
+            .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.Name))
             .ForMember(dest => dest.Gender,
                 opt => opt.MapFrom(src => src.Gender.ToGenderString()))
             .ForMember(dest => dest.Status,
                 opt => opt.MapFrom(src => src.Status.ToStatusString()))
             .ForMember(dest => dest.Birthday,
-                opt => opt.MapFrom(src => src.Birthday.ToString("yyyy-MM-dd HH:mm:ss")))
+                opt => opt.MapFrom(src => src.Birthday.ToString("yyyy-MM-dd")))
             .ForMember(dest => dest.CreateTime,
                 opt => opt.MapFrom(src => src.CreateTime.ToString("yyyy-MM-dd HH:mm:ss")))
             .ForMember(dest => dest.ModifyTime,
