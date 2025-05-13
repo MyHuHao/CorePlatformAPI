@@ -23,10 +23,10 @@ public class UserRepository(IDapperExtensions<User> dapper, IUnitOfWork unitOfWo
                            gender,
                            birthday,
                            status,
-                           create_by as createBy,
-                           create_time as createTime,
-                           modify_by as modifyBy,
-                           modify_time as modifyTime
+                           create_by,
+                           create_time,
+                           modify_by,
+                           modify_time
                            from 
                            `user`
                            where 

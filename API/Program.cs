@@ -1,18 +1,20 @@
-using System.IdentityModel.Tokens.Jwt;
 using System.Text;
 using System.Text.Json;
 using API.Filters;
 using API.Middlewares;
 using Application.DependencyInjection;
 using Application.Mappings;
-using Core.Interfaces.Services;
 using Infrastructure.DependencyInjection;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.HttpLogging;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
+using Dapper;   
 
 var builder = WebApplication.CreateBuilder(args);
+
+// 启用 Dapper ORM 的自动列名映射功能
+DefaultTypeMap.MatchNamesWithUnderscores = true;
 
 // 获取JWT配置
 var configuration = builder.Configuration;

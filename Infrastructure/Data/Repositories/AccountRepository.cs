@@ -12,17 +12,17 @@ public class AccountRepository(IDapperExtensions<Account> dapper, IUnitOfWork un
         const string sql = """
                                 select 
                                     id, 
-                                    account_name as AccountName,
-                                    user_id as UserId, 
-                                    password_hash as PasswordHash,
-                                    password_salt as PasswordSalt, 
-                                    role_id as RoleId,
-                                    login_attempts as LoginAttempts,
-                                    last_login_time as LastLoginTime,
-                                    created_by as CreatedBy, 
-                                    created_time as CreatedTime, 
-                                    modify_by as ModifyBy, 
-                                    modify_time as ModifyTime
+                                    account_name,
+                                    user_id, 
+                                    password_hash,
+                                    password_salt, 
+                                    role_id,
+                                    login_attempts,
+                                    last_login_time,
+                                    created_by, 
+                                    created_time, 
+                                    modify_by, 
+                                    modify_time
                                 from 
                                     account 
                                 where 
