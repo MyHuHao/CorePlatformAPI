@@ -166,23 +166,27 @@ public class DapperExtensions<TEntity>(IDbConnectionFactory dbConnectionFactory)
         DbTransaction? transaction = null)
     {
         var pagedSql = $"{sql} LIMIT @Offset, @PageSize; SELECT COUNT(*) FROM ({sql}) AS totalSub";
-        SqlMapper.GridReader multi;
+
+
+        var parameters = new DynamicParameters(param);
+        parameters.Add("Offset", (page - 1) * pageSize);
+        parameters.Add("PageSize", pageSize);
+
         if (connection != null && transaction != null)
         {
-            multi = await connection.QueryMultipleAsync(pagedSql,
-                new { Offset = (page - 1) * pageSize, PageSize = pageSize, param }, transaction);
+            var multi = await connection.QueryMultipleAsync(pagedSql, parameters, transaction);
+            var items = await multi.ReadAsync<TEntity>();        // 读取分页数据
+            var total = await multi.ReadSingleAsync<int>(); 
+            return (items,total);
         }
         else
         {
             await using var conn = dbConnectionFactory.CreateConnection();
-            multi = await conn.QueryMultipleAsync(pagedSql,
-                new { Offset = (page - 1) * pageSize, PageSize = pageSize, param });
+            var multi = await conn.QueryMultipleAsync(pagedSql, parameters);
+            var items = await multi.ReadAsync<TEntity>();        // 读取分页数据
+            var total = await multi.ReadSingleAsync<int>(); 
+            return (items,total);
         }
-
-        // 在MySQL中通过 LIMIT 分页并获取总数
-        var items = await multi.ReadAsync<TEntity>();
-        var total = await multi.ReadSingleAsync<int>();
-        return (items, total);
     }
 
     /// <summary>
