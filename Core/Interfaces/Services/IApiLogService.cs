@@ -1,5 +1,6 @@
 ﻿using Core.Contracts.Requests;
 using Core.Contracts.Results;
+using Core.DTOs;
 using Core.Entities;
 
 namespace Core.Interfaces.Services;
@@ -13,5 +14,5 @@ public interface IApiLogService
     /// <returns></returns>
     Task InsertApiLog(ApiLog apiLog);
 
-    Task<ApiResult<PagedResult<ApiLog>>> GetApiLogByPage(ApiLogRequest request);
+    Task<ApiResult<PagedResult<ApiLogDto>>> GetApiLogByPage(ApiLogRequest request);
 }
