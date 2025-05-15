@@ -30,7 +30,8 @@ builder.Services.AddHttpLogging(logging =>
 {
     logging.LoggingFields = HttpLoggingFields.All;
     logging.RequestBodyLogLimit = 4096;
-    logging.ResponseBodyLogLimit = 4096;
+    logging.ResponseBodyLogLimit = 4194304;
+    logging.CombineLogs = true;
 });
 
 // 添加配置

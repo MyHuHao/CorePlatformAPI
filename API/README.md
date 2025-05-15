@@ -93,6 +93,7 @@ Infrastructure/
 - 角色管理
 - 字典管理
 - 通知管理（SignalR）
+- HttpLogging 
 
 
 

@@ -63,7 +63,7 @@ public class ApiLoggingMiddleware(
         var body = await reader.ReadToEndAsync();
         responseBody.Seek(0, SeekOrigin.Begin);
         await responseBody.CopyToAsync(originalBody);
-        return Truncate(body, 4096);
+        return Truncate(body, 4194304);
     }
 
     private async Task LogApiRequest(
