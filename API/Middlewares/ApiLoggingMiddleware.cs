@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using System.Text.Encodings.Web;
 using System.Text.Json;
 using Core.Entities;
 using Core.Interfaces.Services;
@@ -41,9 +42,14 @@ public class ApiLoggingMiddleware(
             var apiLogService = scope.ServiceProvider.GetRequiredService<IApiLogService>();
             var responseBody = await ReadResponseBodyAsync(responseBodyStream, originalResponseBody);
             var duration = (int)(DateTime.Now - startTime).TotalMilliseconds;
-            await LogApiRequest(apiLogService, context, startTime, duration, requestBody, responseBody, statusCode,
-                errorMessage);
-            await responseBodyStream.CopyToAsync(originalResponseBody);
+
+            var requestPath = context.Request.Path.Value;
+            if (!string.Equals(requestPath, "/ApiLog/GetApiLogByPage", StringComparison.OrdinalIgnoreCase))
+            {
+                await LogApiRequest(apiLogService, context, startTime, duration, requestBody, responseBody, statusCode,
+                    errorMessage);
+                await responseBodyStream.CopyToAsync(originalResponseBody);
+            }
         }
     }
 
@@ -56,14 +62,28 @@ public class ApiLoggingMiddleware(
         return Truncate(body, 4096);
     }
 
+    private static readonly JsonSerializerOptions JsonOptions = new JsonSerializerOptions
+    {
+        WriteIndented = false,
+        Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+    };
+
     private static async Task<string> ReadResponseBodyAsync(Stream responseBody, Stream originalBody)
     {
         responseBody.Seek(0, SeekOrigin.Begin);
-        using var reader = new StreamReader(responseBody, Encoding.UTF8, true, 4096, true);
+        using var reader = new StreamReader(responseBody, Encoding.UTF8, true, 4194304, true);
         var body = await reader.ReadToEndAsync();
         responseBody.Seek(0, SeekOrigin.Begin);
         await responseBody.CopyToAsync(originalBody);
-        return Truncate(body, 4194304);
+        try
+        {
+            var json = JsonDocument.Parse(body);
+            return JsonSerializer.Serialize(json, JsonOptions);
+        }
+        catch
+        {
+            return Truncate(body, 4194304);
+        }
     }
 
     private async Task LogApiRequest(
