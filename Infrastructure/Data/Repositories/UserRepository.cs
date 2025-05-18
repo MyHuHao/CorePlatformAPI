@@ -15,22 +15,33 @@ public class UserRepository(IDapperExtensions<User> dapper, IUnitOfWork unitOfWo
     {
         const string sql = """
                            select 
-                           id,
-                           name,
-                           phone,
-                           email,
-                           avatar,
-                           gender,
-                           birthday,
-                           status,
-                           create_by,
-                           create_time,
-                           modify_by,
-                           modify_time
+                               Id,
+                               CompanyId,
+                               EmpId,
+                               EmpName,
+                               EmpMobilePhone,
+                               EmpEmail,
+                               EmpEntryDate,
+                               EmpDepartureDate,
+                               UserType,
+                               DeptId,
+                               CostCenterId,
+                               JobCategoryId,
+                               Status,
+                               Direct,
+                               DeliveredDate,
+                               Birthday,
+                               Sex,
+                               WorkYear,
+                               EducationName,
+                               CreatedBy,
+                               CreatedTime,
+                               ModifiedBy,
+                               ModifiedTime
                            from 
-                           `user`
+                                Employee
                            where 
-                           id = @Id 
+                                id = @Id 
                            """;
         return await dapper.QuerySingleOrDefaultAsync(
             sql,
