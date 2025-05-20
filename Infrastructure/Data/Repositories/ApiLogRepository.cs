@@ -1,5 +1,6 @@
 ﻿using Core.Contracts.Requests;
 using Core.Entities;
+using Core.Helpers;
 using Core.Interfaces;
 using Core.Interfaces.Repositories;
 using Dapper;
@@ -40,7 +41,7 @@ public class ApiLogRepository(IDapperExtensions<ApiLog> dapper) : IApiLogReposit
     /// </summary>
     /// <param name="request"></param>
     /// <returns></returns>
-    public async Task<(IEnumerable<ApiLog> items, int total)> GetByAccountListAsync(ByApiLogListRequest request)
+    public async Task<(IEnumerable<ApiLog> items, int total)> GetByApiLogListAsync(ByApiLogListRequest request)
     {
         var conditions = new List<string>();
         var parameters = new DynamicParameters();
@@ -94,13 +95,13 @@ public class ApiLogRepository(IDapperExtensions<ApiLog> dapper) : IApiLogReposit
 
         return await dapper.QueryPageAsync(request.Page, request.PageSize, sql, parameters);
     }
-    
+
     /// <summary>
     /// 新增api接口日志
     /// </summary>
     /// <param name="request"></param>
     /// <returns></returns>
-    public async Task<int> AddAccountAsync(AddApiLogRequest request)
+    public async Task<int> AddApiLogAsync(AddApiLogRequest request)
     {
         const string sql = """
                             insert into ApiLog
@@ -130,6 +131,7 @@ public class ApiLogRepository(IDapperExtensions<ApiLog> dapper) : IApiLogReposit
                            """;
         return await dapper.ExecuteAsync(sql, new
         {
+            Id = HashHelper.GetUuid(),
             IpAddress = request.IpAddress == "::1" ? "127.0.0.1" : request.IpAddress,
             request.UserName,
             request.Path,

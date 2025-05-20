@@ -1,0 +1,22 @@
+﻿using Core.Contracts;
+using Core.Contracts.Requests;
+using Core.DTOs;
+
+namespace Core.Interfaces.Services;
+
+public interface IEmployeeService
+{
+    /// <summary>
+    /// 通过用户ID获取详情
+    /// </summary>
+    /// <param name="request"></param>
+    /// <returns></returns>
+    Task<ApiResult<EmployeeDto>> GetEmployeeById(ByEmployeeRequest request);
+    
+    /// <summary>
+    /// 验证是否有该人员
+    /// </summary>
+    /// <param name="request"></param>
+    /// <returns></returns>
+    Task<bool> VerifyEmployeeAsync(ByEmployeeRequest request);
+}

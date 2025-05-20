@@ -16,12 +16,12 @@ public interface IApiLogRepository
     /// </summary>
     /// <param name="request"></param>
     /// <returns></returns>
-    Task<(IEnumerable<ApiLog> items, int total)> GetByAccountListAsync(ByApiLogListRequest request);
+    Task<(IEnumerable<ApiLog> items, int total)> GetByApiLogListAsync(ByApiLogListRequest request);
 
     /// <summary>
     /// 新增api接口日志
     /// </summary>
     /// <param name="request"></param>
     /// <returns></returns>
-    Task<int> AddAccountAsync(AddApiLogRequest request);
+    Task<int> AddApiLogAsync(AddApiLogRequest request);
 }

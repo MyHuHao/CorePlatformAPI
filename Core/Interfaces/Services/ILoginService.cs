@@ -11,11 +11,25 @@ public interface ILoginService
     /// </summary>
     /// <param name="request"></param>
     /// <returns></returns>
-    Task<ApiResult<string>> CreateAccount(CreateAccountRequest request);
+    Task<ApiResult<string>> CreateAccount(AddAccountRequest request);
 
+    /// <summary>
+    /// 登录验证,获取Token
+    /// </summary>
+    /// <param name="request"></param>
+    /// <returns></returns>
     Task<ApiResult<string>> Login(LoginRequest request);
-
-    Task<bool> VerifyToken(string token);
-
+    
+    /// <summary>
+    /// 获取登录类型
+    /// </summary>
+    /// <returns></returns>
     ApiResult<List<LoginTypeResult>> GetLoginOptions();
+
+    /// <summary>
+    /// 验证token是否合格
+    /// </summary>
+    /// <param name="request"></param>
+    /// <returns></returns>
+    Task<bool> VerifyLoginTokenAsync(ByLoginTokenRequest request);
 }

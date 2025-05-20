@@ -4,7 +4,7 @@
 public class ByAccountRequest
 {
     public required string CompanyId { get; set; }
-    public required string DisplayName { get; set; }
+    public required string LoginName { get; set; }
 }
 
 // 获取账号列表
@@ -20,8 +20,9 @@ public class ByAccountListRequest
 public class AddAccountRequest
 {
     public required string CompanyId { get; set; }
-    public required string UserName { get; set; }
+    public required string LoginName { get; set; }
     public required string DisplayName { get; set; }
+    public required string EmpId { get; set; }
     public required string Password { get; set; }
     public sbyte IsActive { get; set; } = 1;
     public required sbyte AccountType { get; set; }

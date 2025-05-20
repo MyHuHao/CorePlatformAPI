@@ -37,7 +37,7 @@ public static class ServiceCollectionExtensions
     private static void AddQueries(this IServiceCollection services)
     {
         services.Scan(scan => scan
-            .FromAssemblyOf<UserQuery>()
+            .FromAssemblyOf<ApiLogQuery>()
             .AddClasses(classes => classes.InNamespaces("Application.Queries"))
             .AsSelf()
             .WithScopedLifetime());
@@ -46,7 +46,7 @@ public static class ServiceCollectionExtensions
     private static void AddCommands(this IServiceCollection services)
     {
         services.Scan(scan => scan
-            .FromAssemblyOf<UserCommand>()
+            .FromAssemblyOf<ApiLogCommand>()
             .AddClasses(classes => classes.InNamespaces("Application.Commands"))
             .AsSelf()
             .WithScopedLifetime());

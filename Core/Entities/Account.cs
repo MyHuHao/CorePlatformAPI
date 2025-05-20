@@ -5,7 +5,7 @@ public class Account
     /// <summary>
     /// 主键ID（唯一标识，支持UUID）
     /// </summary>
-    public string Id { get; set; } = ""; 
+    public string Id { get; set; } = "";
 
     /// <summary>
     /// 所属公司ID
@@ -15,12 +15,17 @@ public class Account
     /// <summary>
     /// 登录用户名（唯一，支持邮箱/手机号）
     /// </summary>
-    public string Username { get; set; } = "";
+    public string LoginName { get; set; } = "";
 
     /// <summary>
     /// 显示名称（昵称）
     /// </summary>
     public string DisplayName { get; set; } = "";
+
+    /// <summary>
+    /// 关联公司人员ID
+    /// </summary>
+    public string EmpId { get; set; } = "";
 
     /// <summary>
     /// 密码哈希（建议使用bcrypt/Argon2）
@@ -30,7 +35,7 @@ public class Account
     /// <summary>
     /// 密码盐值（如使用PBKDF2等算法）
     /// </summary>
-    public string? PasswordSalt { get; set; } // 可空字段
+    public string PasswordSalt { get; set; } = "";
 
     /// <summary>
     /// 账户类型（1-超级管理员，2-公司管理员，3-普通用户）
@@ -75,12 +80,12 @@ public class Account
     /// <summary>
     /// 连续登录失败次数
     /// </summary>
-    public byte FailedLoginAttempts { get; set; } = 0; 
+    public byte FailedLoginAttempts { get; set; } = 0;
 
     /// <summary>
     /// 是否锁定（1-是，0-否）
     /// </summary>
-    public byte IsLocked { get; set; } = 0; 
+    public byte IsLocked { get; set; } = 0;
 
     /// <summary>
     /// 创建人AccountId

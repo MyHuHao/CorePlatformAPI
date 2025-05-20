@@ -6,18 +6,12 @@ namespace Application.Commands;
 
 public class LoginCommand(IAccountRepository repository)
 {
-    public async Task CreateAccount(CreateAccountRequest request)
+    /// <summary>
+    /// 创建账户
+    /// </summary>
+    /// <param name="request"></param>
+    public async Task CreateAccount(AddAccountRequest request)
     {
-        await repository.AddAsync(request);
-    }
-
-    public async Task InsertLoginToken(InsertLoginToken loginToken)
-    {
-        await repository.InsertLoginToken(loginToken);
-    }
-
-    public async Task InsertLogLog(InsertLoginToken loginToken)
-    {
-        await repository.InsertLogLog(loginToken);
+        await repository.AddAccountAsync(request);
     }
 }

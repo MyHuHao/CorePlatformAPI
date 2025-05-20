@@ -1,7 +1,7 @@
 ﻿using System.Text;
 using System.Text.Encodings.Web;
 using System.Text.Json;
-using Core.Entities;
+using Core.Contracts.Requests;
 using Core.Interfaces.Services;
 
 namespace API.Middlewares;
@@ -97,9 +97,8 @@ public class ApiLoggingMiddleware(
         string errorMessage
     )
     {
-        var logData = new ApiLog
+        var logData = new AddApiLogRequest
         {
-            Id = "",
             IpAddress = context.Connection.RemoteIpAddress?.ToString() ?? "",
             UserName = context.User.Identity is { IsAuthenticated: true, Name: not null }
                 ? context.User.Identity.Name
@@ -115,12 +114,11 @@ public class ApiLoggingMiddleware(
         };
 
         // 使用 apiLogService 处理日志逻辑
-        await apiLogService.InsertApiLog(logData);
-
+        await apiLogService.AddApiLogAsync(logData);
         LogToConsole(logData);
     }
 
-    private void LogToConsole(ApiLog log)
+    private void LogToConsole(AddApiLogRequest log)
     {
         var logLevel = log.StatusCode >= 500 ? LogLevel.Error : LogLevel.Information;
         logger.Log(logLevel,

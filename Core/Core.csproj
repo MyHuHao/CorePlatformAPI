@@ -10,8 +10,4 @@
       <PackageReference Include="Minio" Version="6.0.4" />
       <PackageReference Include="NPOI" Version="2.7.3" />
     </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="DTOs\" />
-    </ItemGroup>
 </Project>

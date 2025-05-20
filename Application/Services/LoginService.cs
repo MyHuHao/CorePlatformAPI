@@ -11,7 +11,6 @@ using Core.Enums;
 using Core.Exceptions;
 using Core.Helpers;
 using Core.Interfaces;
-using Core.Interfaces.Repositories;
 using Core.Interfaces.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -21,7 +20,7 @@ namespace Application.Services;
 public class LoginService(
     IConfiguration configuration,
     IUnitOfWork unitOfWork,
-    UserQuery userQuery,
+    IEmployeeService employeeService,
     LoginQuery loginQuery,
     LoginCommand loginCommand) : ILoginService
 {
@@ -32,18 +31,28 @@ public class LoginService(
     /// <returns></returns>
     /// <exception cref="ValidationException"></exception>
     /// <exception cref="BadRequestException"></exception>
-    public async Task<ApiResult<string>> CreateAccount(CreateAccountRequest request)
+    public async Task<ApiResult<string>> CreateAccount(AddAccountRequest request)
     {
         try
         {
+            // 开始事务
             await unitOfWork.BeginTransactionAsync();
-            // 检查人员是否存在
-            var userResult = await userQuery.GetByIdAsync(request.UserId);
-            if (userResult == null) throw new ValidationException(MsgCodeEnum.Warning, "人员不存在，禁止创建");
 
-            // 检查账户是否存在
-            var accountResult = await loginQuery.GetByIdAsync(request.Account);
-            if (accountResult != null) throw new ValidationException(MsgCodeEnum.Warning, "账户已存在，请重新输入");
+            // 检查人员是否存在
+            var userResult = await employeeService.VerifyEmployeeAsync(new ByEmployeeRequest
+            {
+                CompanyId = request.CompanyId,
+                EmpId = request.EmpId
+            });
+            if (!userResult) throw new ValidationException(MsgCodeEnum.Warning, "人员不存在，禁止创建");
+
+            // 检查账户是否重复
+            var accountResult = await VerifyAccountAsync(new ByAccountRequest
+            {
+                CompanyId = request.CompanyId,
+                LoginName = request.LoginName
+            });
+            if (!accountResult) throw new ValidationException(MsgCodeEnum.Warning, "账户已存在，请重新输入");
 
             // 创建账户
             await loginCommand.CreateAccount(request);
@@ -59,6 +68,20 @@ public class LoginService(
         }
     }
 
+    /// <summary>
+    /// 验证当前账号是否存在
+    /// </summary>
+    /// <param name="request"></param>
+    /// <returns></returns>
+    private async Task<bool> VerifyAccountAsync(ByAccountRequest request)
+    {
+        return await loginQuery.GetAccountById(request) != null;
+    }
+
+    /// <summary>
+    /// 获取登录类型
+    /// </summary>
+    /// <returns></returns>
     public ApiResult<List<LoginTypeResult>> GetLoginOptions()
     {
         List<LoginTypeResult> list =
@@ -81,11 +104,12 @@ public class LoginService(
     public async Task<ApiResult<string>> Login(LoginRequest request)
     {
         // 验证账号，获取账号信息
-        var accountResult = await loginQuery.GetByIdAsync(request.Account);
-        if (accountResult == null)
+        var accountResult = await loginQuery.GetAccountById(new ByAccountRequest
         {
-            throw new ValidationException(MsgCodeEnum.Warning, "用户不存在，禁止创建");
-        }
+            CompanyId = request.LoginType.ToRegion(),
+            LoginName = request.Account
+        });
+        if (accountResult == null) throw new ValidationException(MsgCodeEnum.Warning, "账户已存在，请重新输入");
 
         // 验证账户，密码是否正确
         var isValid = HashHelper.VerifyPassword(
@@ -98,16 +122,9 @@ public class LoginService(
         }
 
         var jti = HashHelper.GetUuid();
-        var token = CreateToken(request, jti);
+        var token = CreateToken(request, jti, accountResult.EmpId);
         await StoreLoginToken(accountResult, jti);
         return new ApiResult<string> { MsgCode = MsgCodeEnum.Success, Msg = "登录成功", Data = token };
-    }
-
-    // 验证token是否合格
-    public async Task<bool> VerifyToken(string token)
-    {
-        var result = await loginQuery.GetLoginTokeById(token);
-        return result != null;
     }
 
     /// <summary>
@@ -116,7 +133,7 @@ public class LoginService(
     /// <param name="request"></param>
     /// <param name="jti"></param>
     /// <returns></returns>
-    private string CreateToken(LoginRequest request, string jti)
+    private string CreateToken(LoginRequest request, string jti, string empId)
     {
         var key = Encoding.UTF8.GetBytes(configuration["JWT:IssuerSigningKey"] ?? "");
         var tokenHandler = new JwtSecurityTokenHandler();
@@ -126,7 +143,7 @@ public class LoginService(
             [
                 new Claim(JwtRegisteredClaimNames.Jti, jti),
                 new Claim("Account", request.Account),
-                new Claim("Password", request.PassWord),
+                new Claim("UserId", empId),
                 new Claim("CompanyId", request.LoginType.ToRegion()),
                 new Claim("DataBase", request.LoginType.ToDataBase()),
                 new Claim("Language", request.Language)

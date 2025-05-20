@@ -20,8 +20,9 @@ public class AccountRepository(IDapperExtensions<Account> dapper, IUnitOfWork un
                             select 
                                 Id,
                                 CompanyId,
-                                UserName,
+                                LoginName,
                                 DisplayName,
+                                EmpId,
                                 PasswordHash,
                                 PasswordSalt,
                                 AccountType,
@@ -43,11 +44,11 @@ public class AccountRepository(IDapperExtensions<Account> dapper, IUnitOfWork un
                             WHERE
                                 CompanyId = @CompanyId;
                             AND
-                                DisplayName = @DisplayName
+                                LoginName = @LoginName
                            """;
         return await dapper.QueryFirstOrDefaultAsync(
             sql,
-            new { request.CompanyId, request.DisplayName },
+            new { request.CompanyId, request.LoginName },
             unitOfWork.CurrentConnection,
             unitOfWork.CurrentTransaction);
     }
@@ -81,8 +82,9 @@ public class AccountRepository(IDapperExtensions<Account> dapper, IUnitOfWork un
                     select 
                         Id,
                         CompanyId,
-                        UserName,
+                        LoginName,
                         DisplayName,
+                        EmpId,
                         PasswordHash,
                         PasswordSalt,
                         AccountType,
@@ -119,8 +121,9 @@ public class AccountRepository(IDapperExtensions<Account> dapper, IUnitOfWork un
                             INSERT INTO Account
                                (Id,
                                CompanyId,
-                               UserName,
+                               LoginName,
                                DisplayName,
+                               EmpId,
                                PasswordHash,
                                PasswordSalt,
                                AccountType,
@@ -140,8 +143,9 @@ public class AccountRepository(IDapperExtensions<Account> dapper, IUnitOfWork un
                            VALUES
                                (@Id,
                                @CompanyId,
-                               @UserName,
+                               @LoginName,
                                @DisplayName,
+                               @EmpId,
                                @PasswordHash,
                                @PasswordSalt,
                                @AccountType,
@@ -166,8 +170,9 @@ public class AccountRepository(IDapperExtensions<Account> dapper, IUnitOfWork un
             {
                 Id = HashHelper.GetUuid(),
                 request.CompanyId,
-                request.UserName,
+                request.LoginName,
                 request.DisplayName,
+                request.EmpId,
                 PasswordHash = passwordHash,
                 PasswordSalt = passwordSalt,
                 request.AccountType,
@@ -200,8 +205,9 @@ public class AccountRepository(IDapperExtensions<Account> dapper, IUnitOfWork un
                             INSERT INTO Account
                                (Id,
                                CompanyId,
-                               UserName,
+                               LoginName,
                                DisplayName,
+                               EmpId,
                                PasswordHash,
                                PasswordSalt,
                                AccountType,
@@ -221,8 +227,9 @@ public class AccountRepository(IDapperExtensions<Account> dapper, IUnitOfWork un
                            VALUES
                                (@Id,
                                @CompanyId,
-                               @UserName,
+                               @LoginName,
                                @DisplayName,
+                               @EmpId,
                                @PasswordHash,
                                @PasswordSalt,
                                @AccountType,
@@ -248,8 +255,9 @@ public class AccountRepository(IDapperExtensions<Account> dapper, IUnitOfWork un
             {
                 Id = HashHelper.GetUuid(),
                 item.CompanyId,
-                item.UserName,
+                item.LoginName,
                 item.DisplayName,
+                item.EmpId,
                 PasswordHash = passwordHash,
                 PasswordSalt = passwordSalt,
                 item.AccountType,
@@ -286,10 +294,10 @@ public class AccountRepository(IDapperExtensions<Account> dapper, IUnitOfWork un
                            WHERE 
                                CompanyId = @CompanyId
                            AND 
-                               DisplayName = @DisplayName;
+                               LoginName = @LoginName;
                            """;
         return await dapper.ExecuteAsync(sql,
-            new { request.CompanyId, request.DisplayName },
+            new { request.CompanyId, request.LoginName },
             unitOfWork.CurrentConnection,
             unitOfWork.CurrentTransaction);
     }

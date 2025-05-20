@@ -1,0 +1,39 @@
+﻿using Application.Queries;
+using AutoMapper;
+using Core.Contracts;
+using Core.Contracts.Requests;
+using Core.DTOs;
+using Core.Enums;
+using Core.Interfaces.Services;
+
+namespace Application.Services;
+
+public class EmployeeService(EmployeeQuery query, IMapper mapper) : IEmployeeService
+{
+    /// <summary>
+    /// 通过用户ID获取详情
+    /// </summary>
+    /// <param name="request"></param>
+    /// <returns></returns>
+    public async Task<ApiResult<EmployeeDto>> GetEmployeeById(ByEmployeeRequest request)
+    {
+        var employee = await query.GetEmployeeById(request);
+        if (employee == null)
+        {
+            return new ApiResult<EmployeeDto> { MsgCode = MsgCodeEnum.Warning, Msg = "查询数据为空" };
+        }
+
+        var employeeDto = mapper.Map<EmployeeDto>(employee);
+        return new ApiResult<EmployeeDto> { MsgCode = MsgCodeEnum.Success, Msg = "查询成功", Data = employeeDto };
+    }
+
+    /// <summary>
+    /// 验证是否有该人员
+    /// </summary>
+    /// <param name="request"></param>
+    /// <returns></returns>
+    public async Task<bool> VerifyEmployeeAsync(ByEmployeeRequest request)
+    {
+        return await query.GetEmployeeById(request) != null;
+    }
+}

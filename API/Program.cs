@@ -52,7 +52,7 @@ builder.Services.AddApplication();
 builder.Services.AddInfrastructure();
 
 // AutoMapper
-builder.Services.AddAutoMapper(typeof(UserProfile).Assembly);
+builder.Services.AddAutoMapper(typeof(ApiLogProfile).Assembly);
 
 // 认证
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)

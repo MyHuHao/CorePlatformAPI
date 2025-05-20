@@ -1,4 +1,4 @@
-using Core.Contracts.Requests;
+﻿using Core.Contracts.Requests;
 using Core.Interfaces.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -8,17 +8,17 @@ namespace API.Controllers;
 [Authorize]
 [ApiController]
 [Route("[controller]/[action]")]
-public class ApiLogController(IApiLogService service) : ControllerBase
+public class EmployeeController(IEmployeeService service) : Controller
 {
     /// <summary>
-    /// 分页查询-获取访问日志
+    ///     通过用户ID获取详情
     /// </summary>
     /// <param name="request"></param>
     /// <returns></returns>
     [HttpPost]
-    public async Task<IActionResult> GetByApiLogPage([FromBody] ByApiLogListRequest request)
+    public async Task<IActionResult> GetEmployeeById([FromBody] ByEmployeeRequest request)
     {
-        var result = await service.GetByApiLogPage(request);
+        var result = await service.GetEmployeeById(request);
         return Ok(result);
     }
 }

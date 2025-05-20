@@ -1,8 +1,6 @@
 ﻿using Core.Contracts;
 using Core.Contracts.Requests;
-using Core.Contracts.Results;
 using Core.DTOs;
-using Core.Entities;
 
 namespace Core.Interfaces.Services;
 
@@ -13,7 +11,12 @@ public interface IApiLogService
     /// </summary>
     /// <param name="apiLog"></param>
     /// <returns></returns>
-    Task InsertApiLog(ApiLog apiLog);
+    Task AddApiLogAsync(AddApiLogRequest apiLog);
 
-    Task<ApiResult<PagedResult<ApiLogDto>>> GetApiLogByPage(ApiLogRequest request);
+    /// <summary>
+    ///     分页查询-获取访问日志
+    /// </summary>
+    /// <param name="request"></param>
+    /// <returns></returns>
+    Task<ApiResult<PagedResult<ApiLogDto>>> GetByApiLogPage(ByApiLogListRequest request);
 }

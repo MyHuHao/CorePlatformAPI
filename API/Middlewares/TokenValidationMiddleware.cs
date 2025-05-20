@@ -1,5 +1,6 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Text.Json;
+using Core.Contracts.Requests;
 using Core.Interfaces.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Primitives;
@@ -51,23 +52,53 @@ public class TokenValidationMiddleware(
             return;
         }
 
+        // 获取本次请求的token
         var jti = jwtToken.Claims
             .FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Jti)
             ?.Value;
+        // 获取token中的UserId
+        var userId = jwtToken.Claims
+            .FirstOrDefault(c => c.Type == "userId")
+            ?.Value;
+        // 获取token中的CompanyId
+        var companyId = jwtToken.Claims
+            .FirstOrDefault(c => c.Type == "companyId")
+            ?.Value;
 
+        // 验证jti
         if (string.IsNullOrEmpty(jti))
         {
             await WriteErrorResponse(context, 401, "Token中缺少jti声明");
             return;
         }
 
+        // 验证userId
+        if (string.IsNullOrEmpty(userId))
+        {
+            await WriteErrorResponse(context, 401, "Token中缺少userId声明");
+            return;
+        }
+
+        // 验证companyId
+        if (string.IsNullOrEmpty(companyId))
+        {
+            await WriteErrorResponse(context, 401, "Token中缺少companyId声明");
+            return;
+        }
 
         // 验证Token有效性
         try
         {
             using var scope = scopeFactory.CreateScope();
             var loginService = scope.ServiceProvider.GetRequiredService<ILoginService>();
-            var isValid = await loginService.VerifyToken(jti);
+            var byLoginTokenRequest = new ByLoginTokenRequest
+            {
+                CompanyId = companyId,
+                IsActive = 1,
+                UserId = userId,
+                Token = jti
+            };
+            var isValid = await loginService.VerifyLoginTokenAsync(byLoginTokenRequest);
 
             if (!isValid)
             {
