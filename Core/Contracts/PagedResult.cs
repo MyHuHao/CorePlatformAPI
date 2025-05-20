@@ -1,4 +1,4 @@
-﻿namespace Core.Contracts.Results;
+﻿namespace Core.Contracts;
 
 public class PagedResult<T>
 {

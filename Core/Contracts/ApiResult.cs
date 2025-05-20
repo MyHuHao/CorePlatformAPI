@@ -1,6 +1,6 @@
 ﻿using Core.Enums;
 
-namespace Core.Contracts.Results;
+namespace Core.Contracts;
 
 public class ApiResult<T>
 {

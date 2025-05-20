@@ -1,5 +1,6 @@
 ﻿using Core.Contracts.Requests;
 using Core.Entities;
+using Core.Interfaces;
 using Core.Interfaces.Repositories;
 using Dapper;
 
@@ -8,15 +9,14 @@ namespace Infrastructure.Data.Repositories;
 public class ApiLogRepository(IDapperExtensions<ApiLog> dapper) : IApiLogRepository
 {
     /// <summary>
-    ///     插入数据
+    /// 通过Id查询api接口日志
     /// </summary>
-    /// <param name="apiLog"></param>
     /// <returns></returns>
-    public async Task<bool> AddAsync(ApiLog apiLog)
+    public async Task<ApiLog?> GetByApiLogAsync(string id)
     {
         const string sql = """
-                            insert into ApiLog
-                               (Id,
+                           SELECT
+                               Id,
                                IpAddress,
                                UserName,
                                Path,
@@ -26,37 +26,21 @@ public class ApiLogRepository(IDapperExtensions<ApiLog> dapper) : IApiLogReposit
                                StatusCode,
                                ErrorMessage,
                                RequestTime,
-                               Duration) 
-                            values
-                               (@Id,
-                               @IpAddress,
-                               @UserName,
-                               @Path,
-                               @Method,
-                               @RequestBody,
-                               @ResponseBody,
-                               @StatusCode,
-                               @ErrorMessage,
-                               @RequestTime,
-                               @Duration);
+                               Duration
+                           FROM
+                            ApiLog
+                           WHERE
+                            Id = @Id
                            """;
-        var rows = await dapper.ExecuteAsync(sql, new
-        {
-            IpAddress = apiLog.IpAddress == "::1" ? "127.0.0.1" : apiLog.IpAddress,
-            apiLog.UserName,
-            apiLog.Path,
-            apiLog.Method,
-            apiLog.RequestBody,
-            apiLog.ResponseBody,
-            apiLog.StatusCode,
-            apiLog.ErrorMessage,
-            apiLog.RequestTime,
-            apiLog.Duration
-        });
-        return rows > 0;
+        return await dapper.QueryFirstOrDefaultAsync(sql, new { id });
     }
 
-    public async Task<(IEnumerable<ApiLog> items, int total)> GetApiLogByPage(ApiLogRequest request)
+    /// <summary>
+    /// 查询api接口日志列表
+    /// </summary>
+    /// <param name="request"></param>
+    /// <returns></returns>
+    public async Task<(IEnumerable<ApiLog> items, int total)> GetByAccountListAsync(ByApiLogListRequest request)
     {
         var conditions = new List<string>();
         var parameters = new DynamicParameters();
@@ -86,7 +70,6 @@ public class ApiLogRepository(IDapperExtensions<ApiLog> dapper) : IApiLogReposit
             parameters.Add("Method", request.Method);
         }
 
-        // 构建动态WHERE子句
         var whereClause = conditions.Count > 0 ? $"WHERE {string.Join(" AND ", conditions)}" : string.Empty;
 
         var sql = $"""
@@ -108,6 +91,55 @@ public class ApiLogRepository(IDapperExtensions<ApiLog> dapper) : IApiLogReposit
                     order by
                         RequestTime desc
                    """;
+
         return await dapper.QueryPageAsync(request.Page, request.PageSize, sql, parameters);
+    }
+    
+    /// <summary>
+    /// 新增api接口日志
+    /// </summary>
+    /// <param name="request"></param>
+    /// <returns></returns>
+    public async Task<int> AddAccountAsync(AddApiLogRequest request)
+    {
+        const string sql = """
+                            insert into ApiLog
+                               (Id,
+                               IpAddress,
+                               UserName,
+                               Path,
+                               Method,
+                               RequestBody,
+                               ResponseBody,
+                               StatusCode,
+                               ErrorMessage,
+                               RequestTime,
+                               Duration) 
+                            values
+                               (@Id,
+                               @IpAddress,
+                               @UserName,
+                               @Path,
+                               @Method,
+                               @RequestBody,
+                               @ResponseBody,
+                               @StatusCode,
+                               @ErrorMessage,
+                               @RequestTime,
+                               @Duration);
+                           """;
+        return await dapper.ExecuteAsync(sql, new
+        {
+            IpAddress = request.IpAddress == "::1" ? "127.0.0.1" : request.IpAddress,
+            request.UserName,
+            request.Path,
+            request.Method,
+            request.RequestBody,
+            request.ResponseBody,
+            request.StatusCode,
+            request.ErrorMessage,
+            request.RequestTime,
+            request.Duration
+        });
     }
 }

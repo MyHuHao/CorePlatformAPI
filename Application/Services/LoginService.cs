@@ -3,12 +3,14 @@ using System.Security.Claims;
 using System.Text;
 using Application.Commands;
 using Application.Queries;
+using Core.Contracts;
 using Core.Contracts.Requests;
 using Core.Contracts.Results;
 using Core.Entities;
 using Core.Enums;
 using Core.Exceptions;
 using Core.Helpers;
+using Core.Interfaces;
 using Core.Interfaces.Repositories;
 using Core.Interfaces.Services;
 using Microsoft.Extensions.Configuration;
@@ -125,7 +127,7 @@ public class LoginService(
                 new Claim(JwtRegisteredClaimNames.Jti, jti),
                 new Claim("Account", request.Account),
                 new Claim("Password", request.PassWord),
-                new Claim("Regions", request.LoginType.ToRegion()),
+                new Claim("CompanyId", request.LoginType.ToRegion()),
                 new Claim("DataBase", request.LoginType.ToDataBase()),
                 new Claim("Language", request.Language)
             ]),

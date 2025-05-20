@@ -8,14 +8,6 @@ public class LoginRequest
     public required string Language { get; set; } = "Zh-cn";
 }
 
-public class CreateAccountRequest
-{
-    public required string Account { get; set; }
-    public required string PassWord { get; set; }
-    public required string UserId { get; set; }
-    public required string AccId { get; set; }
-}
-
 public class InsertLoginToken
 {
     public string IpAddress { get; set; } = "172.0.0.1";

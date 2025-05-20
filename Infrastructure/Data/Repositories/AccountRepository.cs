@@ -1,172 +1,296 @@
 ﻿using Core.Contracts.Requests;
 using Core.Entities;
 using Core.Helpers;
+using Core.Interfaces;
 using Core.Interfaces.Repositories;
+using Dapper;
 
 namespace Infrastructure.Data.Repositories;
 
 public class AccountRepository(IDapperExtensions<Account> dapper, IUnitOfWork unitOfWork) : IAccountRepository
 {
-    public async Task<Account?> GetByIdAsync(string id)
+    /// <summary>
+    /// 通过登录用户名查询账号信息
+    /// </summary>
+    /// <param name="request"></param>
+    /// <returns></returns>
+    public async Task<Account?> GetByAccountAsync(ByAccountRequest request)
     {
         const string sql = """
-                                select 
-                                    id, 
-                                    account_name,
-                                    user_id, 
-                                    password_hash,
-                                    password_salt, 
-                                    role_id,
-                                    login_attempts,
-                                    last_login_time,
-                                    created_by, 
-                                    created_time, 
-                                    modify_by, 
-                                    modify_time
-                                from 
-                                    account 
-                                where 
-                                    account_name = @account_name
+                            select 
+                                Id,
+                                CompanyId,
+                                UserName,
+                                DisplayName,
+                                PasswordHash,
+                                PasswordSalt,
+                                AccountType,
+                                IsActive,
+                                DeptId,
+                                Email,
+                                Phone,
+                                Language,
+                                LastLoginTime,
+                                LastLoginIp,
+                                FailedLoginAttempts,
+                                IsLocked,
+                                CreatedBy,
+                                CreatedTime,
+                                ModifiedBy,
+                                ModifiedTime
+                            FROM
+                                Account
+                            WHERE
+                                CompanyId = @CompanyId;
+                            AND
+                                DisplayName = @DisplayName
                            """;
         return await dapper.QueryFirstOrDefaultAsync(
             sql,
-            new { account_name = id },
+            new { request.CompanyId, request.DisplayName },
             unitOfWork.CurrentConnection,
             unitOfWork.CurrentTransaction);
     }
 
-    public async Task<int> AddAsync(CreateAccountRequest request)
+    /// <summary>
+    /// 获取账号列表
+    /// </summary>
+    /// <param name="request"></param>
+    /// <returns></returns>
+    public async Task<(IEnumerable<Account> items, int total)> GetByAccountListAsync(ByAccountListRequest request)
+    {
+        var conditions = new List<string>();
+        var parameters = new DynamicParameters();
+
+        if (!string.IsNullOrEmpty(request.CompanyId))
+        {
+            conditions.Add("CompanyId = @CompanyId");
+            parameters.Add("CompanyId", request.CompanyId);
+        }
+
+        if (!string.IsNullOrEmpty(request.DisplayName))
+        {
+            conditions.Add("DisplayName = @DisplayName");
+            parameters.Add("DisplayName", request.DisplayName);
+        }
+
+        // 构建动态WHERE子句
+        var whereClause = conditions.Count > 0 ? $"WHERE {string.Join(" AND ", conditions)}" : string.Empty;
+
+        var sql = $"""
+                    select 
+                        Id,
+                        CompanyId,
+                        UserName,
+                        DisplayName,
+                        PasswordHash,
+                        PasswordSalt,
+                        AccountType,
+                        IsActive,
+                        DeptId,
+                        Email,
+                        Phone,
+                        Language,
+                        LastLoginTime,
+                        LastLoginIp,
+                        FailedLoginAttempts,
+                        IsLocked,
+                        CreatedBy,
+                        CreatedTime,
+                        ModifiedBy,
+                        ModifiedTime
+                    FROM
+                        Account
+                    {whereClause}
+                    order by
+                       CreatedTime desc
+                   """;
+        return await dapper.QueryPageAsync(request.Page, request.PageSize, sql, parameters);
+    }
+
+    /// <summary>
+    /// 新增账号
+    /// </summary>
+    /// <param name="request"></param>
+    /// <returns></returns>
+    public async Task<int> AddAccountAsync(AddAccountRequest request)
     {
         const string sql = """
-                            insert into account
-                                (id, 
-                                account_name, 
-                                user_id, 
-                                password_hash,
-                                password_salt,
-                                role_id, 
-                                login_attempts,
-                                last_login_time, 
-                                created_by, 
-                                created_time,
-                                modify_by,
-                                modify_time) 
-                            values 
-                                (@id, 
-                                @account_name, 
-                                @user_id, 
-                                @password_hash,
-                                @password_salt,
-                                @role_id, 
-                                @login_attempts,
-                                @last_login_time, 
-                                @created_by, 
-                                @created_time,
-                                @modify_by,
-                                @modify_time)
+                            INSERT INTO Account
+                               (Id,
+                               CompanyId,
+                               UserName,
+                               DisplayName,
+                               PasswordHash,
+                               PasswordSalt,
+                               AccountType,
+                               IsActive,
+                               DeptId,
+                               Email,
+                               Phone,
+                               Language,
+                               LastLoginTime,
+                               LastLoginIp,
+                               FailedLoginAttempts,
+                               IsLocked,
+                               CreatedBy,
+                               CreatedTime,
+                               ModifiedBy,
+                               ModifiedTime)
+                           VALUES
+                               (@Id,
+                               @CompanyId,
+                               @UserName,
+                               @DisplayName,
+                               @PasswordHash,
+                               @PasswordSalt,
+                               @AccountType,
+                               @IsActive,
+                               @DeptId,
+                               @Email,
+                               @Phone,
+                               @Language,
+                               @LastLoginTime,
+                               @LastLoginIp,
+                               @FailedLoginAttempts,
+                               @IsLocked,
+                               @CreatedBy,
+                               @CreatedTime,
+                               @ModifiedBy,
+                               @ModifiedTime);
                            """;
-        var (passwordHash, passwordSalt) = HashHelper.GeneratePasswordHash(request.PassWord);
+        var currentTime = DateTime.Now;
+        var (passwordHash, passwordSalt) = HashHelper.GeneratePasswordHash(request.Password);
         return await dapper.ExecuteAsync(sql,
             new
             {
-                id = HashHelper.GetUuid(),
-                account_name = request.Account,
-                user_id = request.UserId,
-                password_hash = passwordHash,
-                password_salt = passwordSalt,
-                role_id = "",
-                login_attempts = 0,
-                last_login_time = DateTime.Now,
-                created_by = request.AccId,
-                created_time = DateTime.Now,
-                modify_by = request.AccId,
-                modify_time = DateTime.Now
+                Id = HashHelper.GetUuid(),
+                request.CompanyId,
+                request.UserName,
+                request.DisplayName,
+                PasswordHash = passwordHash,
+                PasswordSalt = passwordSalt,
+                request.AccountType,
+                request.IsActive,
+                request.DeptId,
+                request.Email,
+                request.Phone,
+                request.Language,
+                LastLoginTime = DBNull.Value,
+                LastLoginIp = DBNull.Value,
+                request.FailedLoginAttempts,
+                request.IsLocked,
+                CreatedBy = request.StaffId,
+                CreatedTime = currentTime,
+                ModifiedBy = request.StaffId,
+                ModifiedTime = currentTime
             },
             unitOfWork.CurrentConnection,
             unitOfWork.CurrentTransaction);
     }
 
-    public async Task<int> InsertLoginToken(InsertLoginToken loginToken)
+    /// <summary>
+    /// 批量新增账号
+    /// </summary>
+    /// <param name="list"></param>
+    /// <returns></returns>
+    public async Task<int> BatchAddAccountAsync(List<AddAccountRequest> list)
     {
         const string sql = """
-                               insert into login_token
-                               (id,
-                               user_Id,
-                               token,
-                               refresh_token,
-                               expire_time,
-                               device_id,
-                               is_active,
-                               created_by,
-                               created_time,
-                               modify_by,
-                               modify_time)
-                               values
-                               (@id,
-                               @user_Id,
-                               @token,
-                               @refresh_token,
-                               @expire_time,
-                               @device_id,
-                               @is_active,
-                               @created_by,
-                               @created_time,
-                               @modify_by,
-                               @modify_time)
+                            INSERT INTO Account
+                               (Id,
+                               CompanyId,
+                               UserName,
+                               DisplayName,
+                               PasswordHash,
+                               PasswordSalt,
+                               AccountType,
+                               IsActive,
+                               DeptId,
+                               Email,
+                               Phone,
+                               Language,
+                               LastLoginTime,
+                               LastLoginIp,
+                               FailedLoginAttempts,
+                               IsLocked,
+                               CreatedBy,
+                               CreatedTime,
+                               ModifiedBy,
+                               ModifiedTime)
+                           VALUES
+                               (@Id,
+                               @CompanyId,
+                               @UserName,
+                               @DisplayName,
+                               @PasswordHash,
+                               @PasswordSalt,
+                               @AccountType,
+                               @IsActive,
+                               @DeptId,
+                               @Email,
+                               @Phone,
+                               @Language,
+                               @LastLoginTime,
+                               @LastLoginIp,
+                               @FailedLoginAttempts,
+                               @IsLocked,
+                               @CreatedBy,
+                               @CreatedTime,
+                               @ModifiedBy,
+                               @ModifiedTime);
                            """;
-        return await dapper.ExecuteAsync(sql,
-            new
+        var currentTime = DateTime.Now;
+        var records = list.Select(item =>
+        {
+            var (passwordHash, passwordSalt) = HashHelper.GeneratePasswordHash(item.Password);
+            return new
             {
-                id = HashHelper.GetUuid(),
-                user_Id = loginToken.UserId,
-                token = loginToken.Token,
-                refresh_token = loginToken.RefreshToken,
-                expire_time = loginToken.ExpireTime,
-                device_id = loginToken.DeviceId,
-                is_active = 1,
-                created_by = loginToken.UserId,
-                created_time = DateTime.Now,
-                modify_by = loginToken.UserId,
-                modify_time = DateTime.Now
-            });
+                Id = HashHelper.GetUuid(),
+                item.CompanyId,
+                item.UserName,
+                item.DisplayName,
+                PasswordHash = passwordHash,
+                PasswordSalt = passwordSalt,
+                item.AccountType,
+                item.IsActive,
+                item.DeptId,
+                item.Email,
+                item.Phone,
+                item.Language,
+                LastLoginTime = DBNull.Value,
+                LastLoginIp = DBNull.Value,
+                item.FailedLoginAttempts,
+                item.IsLocked,
+                CreatedBy = item.StaffId,
+                CreatedTime = currentTime,
+                ModifiedBy = item.StaffId,
+                ModifiedTime = currentTime
+            };
+        });
+        return await dapper.ExecuteAsync(sql,
+            records,
+            unitOfWork.CurrentConnection,
+            unitOfWork.CurrentTransaction);
     }
 
-    public async Task<int> InsertLogLog(InsertLoginToken loginToken)
+    /// <summary>
+    /// 删除账号
+    /// </summary>
+    /// <param name="request"></param>
+    /// <returns></returns>
+    public async Task<int> DeleteAccountAsync(ByAccountRequest request)
     {
         const string sql = """
-                           insert into login_log
-                           (id,
-                           user_id,
-                           login_time,
-                           ip_address,
-                           device_info,
-                           created_by,
-                           created_time,
-                           modify_by,
-                           modify_time)
-                           values
-                           (@id,
-                           @user_id,
-                           @login_time,
-                           @ip_address,
-                           @device_info,
-                           @created_by,
-                           @created_time,
-                           @modify_by,
-                           @modify_time)
+                           DELETE FROM Account  
+                           WHERE 
+                               CompanyId = @CompanyId
+                           AND 
+                               DisplayName = @DisplayName;
                            """;
         return await dapper.ExecuteAsync(sql,
-            new
-            {
-                id = HashHelper.GetUuid(),
-                user_id = loginToken.UserId,
-                login_time = DateTime.Now,
-                ip_address = loginToken.IpAddress,
-                device_info = loginToken.DeviceInfo,
-                created_by = loginToken.UserId,
-                created_time = DateTime.Now,
-                modify_by = loginToken.UserId,
-                modify_time = DateTime.Now
-            });
+            new { request.CompanyId, request.DisplayName },
+            unitOfWork.CurrentConnection,
+            unitOfWork.CurrentTransaction);
     }
 }

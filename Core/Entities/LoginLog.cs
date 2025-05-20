@@ -3,47 +3,52 @@
 public class LoginLog
 {
     /// <summary>
-    /// ID主键
+    /// 唯一标识（支持UUID）
     /// </summary>
     public string Id { get; set; } = "";
 
     /// <summary>
-    /// 用户ID
+    /// 所属公司ID
+    /// </summary>
+    public string CompanyId { get; set; } = "";
+
+    /// <summary>
+    /// 关联用户ID
     /// </summary>
     public string UserId { get; set; } = "";
 
     /// <summary>
-    /// 登录时间
+    /// 登录操作时间
     /// </summary>
-    public string LoginTime { get; set; } = "";
+    public DateTime LoginTime { get; set; }
 
     /// <summary>
-    /// ip地址
+    /// 登录IP地址
     /// </summary>
     public string IpAddress { get; set; } = "";
 
     /// <summary>
-    /// 设备信息
+    /// 设备信息（如浏览器/操作系统）
     /// </summary>
     public string DeviceInfo { get; set; } = "";
-    
+
     /// <summary>
-    ///     创建人ID（记录操作者身份）
+    /// 创建人AccountId
     /// </summary>
     public string CreatedBy { get; set; } = "";
 
     /// <summary>
-    ///     创建日期（记录账户创建时间）
+    /// 创建时间
     /// </summary>
     public DateTime CreatedTime { get; set; }
 
     /// <summary>
-    ///     修改人ID（记录最近修改者身份）
+    /// 修改人AccountId
     /// </summary>
-    public string ModifyBy { get; set; } = "";
+    public string ModifiedBy { get; set; } = "";
 
     /// <summary>
-    ///     修改日期（记录最近修改时间）
+    /// 修改时间
     /// </summary>
-    public DateTime ModifyTime { get; set; }
+    public DateTime ModifiedTime { get; set; }
 }

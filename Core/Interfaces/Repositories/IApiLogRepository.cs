@@ -6,11 +6,22 @@ namespace Core.Interfaces.Repositories;
 public interface IApiLogRepository
 {
     /// <summary>
-    ///     插入数据
+    /// 通过Id查询api接口日志
     /// </summary>
-    /// <param name="apiLog"></param>
     /// <returns></returns>
-    Task<bool> AddAsync(ApiLog apiLog);
-    
-    Task<(IEnumerable<ApiLog> items, int total)> GetApiLogByPage(ApiLogRequest request);
+    Task<ApiLog?> GetByApiLogAsync(string id);
+
+    /// <summary>
+    /// 查询api接口日志列表
+    /// </summary>
+    /// <param name="request"></param>
+    /// <returns></returns>
+    Task<(IEnumerable<ApiLog> items, int total)> GetByAccountListAsync(ByApiLogListRequest request);
+
+    /// <summary>
+    /// 新增api接口日志
+    /// </summary>
+    /// <param name="request"></param>
+    /// <returns></returns>
+    Task<int> AddAccountAsync(AddApiLogRequest request);
 }

@@ -1,6 +1,6 @@
 ﻿using System.Data;
 using System.Data.Common;
-using Core.Interfaces.Repositories;
+using Core.Interfaces;
 
 namespace Infrastructure.Data;
 

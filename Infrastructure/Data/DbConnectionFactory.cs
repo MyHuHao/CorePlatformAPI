@@ -1,5 +1,5 @@
 using System.Data.Common;
-using Core.Interfaces.Repositories;
+using Core.Interfaces;
 using Microsoft.Extensions.Configuration;
 using MySql.Data.MySqlClient;
 

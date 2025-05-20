@@ -1,7 +1,7 @@
 using System.Data.Common;
 using Core.Enums;
 using Core.Exceptions;
-using Core.Interfaces.Repositories;
+using Core.Interfaces;
 using Dapper;
 
 namespace Infrastructure.Data;
@@ -100,7 +100,7 @@ public class DapperExtensions<TEntity>(IDbConnectionFactory dbConnectionFactory)
     /// <param name="connection"></param>
     /// <param name="transaction"></param>
     /// <returns></returns>
-    public async Task<int> ExecuteScalarAsync(
+    public async Task<int> QueryScalarAsync(
         string sql,
         object? param = null,
         DbConnection? connection = null,
@@ -128,7 +128,7 @@ public class DapperExtensions<TEntity>(IDbConnectionFactory dbConnectionFactory)
     /// <param name="transaction"></param>
     /// <returns></returns>
     /// <exception cref="NotFoundException"></exception>
-    public async Task<string> ExecuteScalarStringAsync(
+    public async Task<string> QueryScalarStringAsync(
         string sql,
         object? param = null,
         DbConnection? connection = null,
@@ -175,17 +175,17 @@ public class DapperExtensions<TEntity>(IDbConnectionFactory dbConnectionFactory)
         if (connection != null && transaction != null)
         {
             var multi = await connection.QueryMultipleAsync(pagedSql, parameters, transaction);
-            var items = await multi.ReadAsync<TEntity>();        // 读取分页数据
-            var total = await multi.ReadSingleAsync<int>(); 
-            return (items,total);
+            var items = await multi.ReadAsync<TEntity>(); // 读取分页数据
+            var total = await multi.ReadSingleAsync<int>();
+            return (items, total);
         }
         else
         {
             await using var conn = dbConnectionFactory.CreateConnection();
             var multi = await conn.QueryMultipleAsync(pagedSql, parameters);
-            var items = await multi.ReadAsync<TEntity>();        // 读取分页数据
-            var total = await multi.ReadSingleAsync<int>(); 
-            return (items,total);
+            var items = await multi.ReadAsync<TEntity>(); // 读取分页数据
+            var total = await multi.ReadSingleAsync<int>();
+            return (items, total);
         }
     }
 

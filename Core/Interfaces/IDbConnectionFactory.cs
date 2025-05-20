@@ -1,6 +1,6 @@
 ﻿using System.Data.Common;
 
-namespace Core.Interfaces.Repositories;
+namespace Core.Interfaces;
 
 public interface IDbConnectionFactory
 {

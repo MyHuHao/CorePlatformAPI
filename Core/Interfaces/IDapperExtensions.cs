@@ -1,6 +1,6 @@
 ﻿using System.Data.Common;
 
-namespace Core.Interfaces.Repositories;
+namespace Core.Interfaces;
 
 public interface IDapperExtensions<TEntity> where TEntity : class
 {
@@ -54,7 +54,7 @@ public interface IDapperExtensions<TEntity> where TEntity : class
     /// <param name="connection"></param>
     /// <param name="transaction"></param>
     /// <returns></returns>
-    Task<int> ExecuteScalarAsync(
+    Task<int> QueryScalarAsync(
         string sql,
         object? param = null,
         DbConnection? connection = null,
@@ -68,7 +68,7 @@ public interface IDapperExtensions<TEntity> where TEntity : class
     /// <param name="connection"></param>
     /// <param name="transaction"></param>
     /// <returns></returns>
-    Task<string> ExecuteScalarStringAsync(
+    Task<string> QueryScalarStringAsync(
         string sql,
         object? param = null,
         DbConnection? connection = null,

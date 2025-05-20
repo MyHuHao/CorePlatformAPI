@@ -1,4 +1,5 @@
-﻿using Core.Contracts.Requests;
+﻿using Core.Contracts;
+using Core.Contracts.Requests;
 using Core.Contracts.Results;
 
 namespace Core.Interfaces.Services;
