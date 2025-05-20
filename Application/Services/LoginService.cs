@@ -126,12 +126,23 @@ public class LoginService(
         await StoreLoginToken(accountResult, jti);
         return new ApiResult<string> { MsgCode = MsgCodeEnum.Success, Msg = "登录成功", Data = token };
     }
+    
+    /// <summary>
+    /// 验证token是否合格
+    /// </summary>
+    /// <param name="request"></param>
+    /// <returns></returns>
+    public async Task<bool> VerifyLoginTokenAsync(ByLoginTokenRequest request)
+    {
+        return await loginQuery.VerifyLoginTokenAsync(request);
+    }
 
     /// <summary>
     /// 生成token方法
     /// </summary>
     /// <param name="request"></param>
     /// <param name="jti"></param>
+    /// <param name="empId"></param>
     /// <returns></returns>
     private string CreateToken(LoginRequest request, string jti, string empId)
     {
@@ -169,16 +180,16 @@ public class LoginService(
         var refreshToken = HashHelper.GetUuid();
         var device = HashHelper.GetUuid();
 
-        // 记录Token到数据库
-        var loginToken = new InsertLoginToken
-        {
-            UserId = accountResult.UserId,
-            Token = jti,
-            RefreshToken = refreshToken,
-            ExpireTime = DateTime.Now.AddHours(8),
-            DeviceId = device
-        };
-        await loginCommand.InsertLoginToken(loginToken);
-        await loginCommand.InsertLogLog(loginToken);
+        // // 记录Token到数据库
+        // var loginToken = new InsertLoginToken
+        // {
+        //     UserId = accountResult.UserId,
+        //     Token = jti,
+        //     RefreshToken = refreshToken,
+        //     ExpireTime = DateTime.Now.AddHours(8),
+        //     DeviceId = device
+        // };
+        // await loginCommand.InsertLoginToken(loginToken);
+        // await loginCommand.InsertLogLog(loginToken);
     }
 }
