@@ -6,6 +6,7 @@ using Application.Queries;
 using Core.Contracts;
 using Core.Contracts.Requests;
 using Core.Contracts.Results;
+using Core.DTOs;
 using Core.Entities;
 using Core.Enums;
 using Core.Exceptions;
@@ -101,7 +102,7 @@ public class LoginService(
     /// <param name="request"></param>
     /// <returns></returns>
     /// <exception cref="ValidationException"></exception>
-    public async Task<ApiResult<string>> Login(LoginRequest request)
+    public async Task<ApiResult<LoginResult>> Login(LoginRequest request)
     {
         // 验证账号，获取账号信息
         var accountResult = await loginQuery.GetAccountById(new ByAccountRequest
@@ -124,7 +125,20 @@ public class LoginService(
         var jti = HashHelper.GetUuid();
         var token = CreateToken(request, jti, accountResult.EmpId);
         await AddLoginToken(request, accountResult, jti);
-        return new ApiResult<string> { MsgCode = MsgCodeEnum.Success, Msg = "登录成功", Data = token };
+
+
+        var userResult = await employeeService.GetEmployeeById(new ByEmployeeRequest
+        {
+            CompanyId = request.LoginType.ToRegion(),
+            EmpId = accountResult.EmpId
+        });
+        
+        var result = new LoginResult
+        {
+            Token = token,
+            Employee = userResult.Data ?? new EmployeeDto()
+        };
+        return new ApiResult<LoginResult> { MsgCode = MsgCodeEnum.Success, Msg = "登录成功", Data = result };
     }
 
     /// <summary>

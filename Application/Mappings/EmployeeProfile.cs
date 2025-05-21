@@ -10,8 +10,6 @@ public class EmployeeProfile : Profile
     public EmployeeProfile()
     {
         CreateMap<Employee, EmployeeDto>()
-            .ForMember(dest => dest.Status,
-                opt => opt.MapFrom(src => src.Status.ToStatusString()))
             .ForMember(dest => dest.Birthday,
                 opt =>
                     opt.MapFrom(src =>

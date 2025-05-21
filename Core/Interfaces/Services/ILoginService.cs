@@ -18,7 +18,7 @@ public interface ILoginService
     /// </summary>
     /// <param name="request"></param>
     /// <returns></returns>
-    Task<ApiResult<string>> Login(LoginRequest request);
+    Task<ApiResult<LoginResult>> Login(LoginRequest request);
     
     /// <summary>
     /// 获取登录类型
