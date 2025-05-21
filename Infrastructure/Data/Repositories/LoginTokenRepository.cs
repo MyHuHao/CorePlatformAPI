@@ -143,8 +143,8 @@ public class LoginTokenRepository(IDapperExtensions<LoginToken> dapper) : ILogin
                 request.ExpireTime,
                 request.DeviceId,
                 request.IsActive,
-                request.CreatedBy,
-                request.ModifiedBy,
+                CreatedBy = request.StaffId,
+                ModifiedBy = request.StaffId,
             });
     }
 

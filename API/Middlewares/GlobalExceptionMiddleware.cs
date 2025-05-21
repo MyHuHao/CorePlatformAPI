@@ -1,7 +1,6 @@
 ﻿using System.Net;
 using System.Text.Json;
 using Core.Contracts;
-using Core.Contracts.Results;
 using Core.Enums;
 
 namespace API.Middlewares;
@@ -21,10 +20,15 @@ public class GlobalExceptionMiddleware(RequestDelegate next, ILogger<GlobalExcep
         }
     }
 
-    private static Task HandleSystemExceptionAsync(HttpContext context, Exception exception)
+    private static readonly JsonSerializerOptions JsonOptions = new(JsonSerializerDefaults.Web);
+
+    private static async Task HandleSystemExceptionAsync(HttpContext context, Exception exception)
     {
-        context.Response.ContentType = "application/json";
-        context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+        if (!context.Response.HasStarted)
+        {
+            context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+            context.Response.ContentType = "application/json";
+        }
 
         var result = new ApiResult<object>
         {
@@ -32,7 +36,6 @@ public class GlobalExceptionMiddleware(RequestDelegate next, ILogger<GlobalExcep
             Msg = exception.Message
         };
 
-        var json = JsonSerializer.Serialize(result);
-        return context.Response.WriteAsync(json);
+        await context.Response.WriteAsJsonAsync(result, JsonOptions);
     }
 }

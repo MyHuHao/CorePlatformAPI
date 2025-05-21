@@ -62,7 +62,7 @@ public class ApiLoggingMiddleware(
         return Truncate(body, 4096);
     }
 
-    private static readonly JsonSerializerOptions JsonOptions = new JsonSerializerOptions
+    private static readonly JsonSerializerOptions JsonOptions = new()
     {
         WriteIndented = false,
         Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
@@ -78,7 +78,7 @@ public class ApiLoggingMiddleware(
         try
         {
             var json = JsonDocument.Parse(body);
-            return JsonSerializer.Serialize(json, JsonOptions);
+            return JsonSerializer.Serialize(json.RootElement, JsonOptions);
         }
         catch
         {

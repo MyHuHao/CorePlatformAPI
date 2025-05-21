@@ -6,11 +6,11 @@ public static class LoginEnum
     {
         return status switch
         {
-            0 => "SZ",
-            1 => "SZ",
-            2 => "SH",
-            3 => "SH",
-            _ => "SZ"
+            0 => "COMP1001",
+            1 => "COMP1001",
+            2 => "COMP3003",
+            3 => "COMP3003",
+            _ => "COMP1001"
         };
     }
 

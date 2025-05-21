@@ -123,10 +123,10 @@ public class LoginService(
 
         var jti = HashHelper.GetUuid();
         var token = CreateToken(request, jti, accountResult.EmpId);
-        await StoreLoginToken(accountResult, jti);
+        await AddLoginToken(request, accountResult, jti);
         return new ApiResult<string> { MsgCode = MsgCodeEnum.Success, Msg = "登录成功", Data = token };
     }
-    
+
     /// <summary>
     /// 验证token是否合格
     /// </summary>
@@ -172,24 +172,34 @@ public class LoginService(
     /// <summary>
     ///  把令牌信息写入数据库表中
     /// </summary>
+    /// <param name="request"></param>
     /// <param name="accountResult"></param>
     /// <param name="jti"></param>
-    private async Task StoreLoginToken(Account accountResult, string jti)
+    private async Task AddLoginToken(LoginRequest request, Account accountResult, string jti)
     {
         // 生成device和RefreshToken
         var refreshToken = HashHelper.GetUuid();
         var device = HashHelper.GetUuid();
-
-        // // 记录Token到数据库
-        // var loginToken = new InsertLoginToken
-        // {
-        //     UserId = accountResult.UserId,
-        //     Token = jti,
-        //     RefreshToken = refreshToken,
-        //     ExpireTime = DateTime.Now.AddHours(8),
-        //     DeviceId = device
-        // };
-        // await loginCommand.InsertLoginToken(loginToken);
-        // await loginCommand.InsertLogLog(loginToken);
+        var currentTime = DateTime.Now;
+        await loginCommand.AddLoginTokenAsync(new AddLoginTokenRequest
+        {
+            CompanyId = request.LoginType.ToRegion(),
+            UserId = accountResult.EmpId,
+            Token = jti,
+            RefreshToken = refreshToken,
+            ExpireTime = currentTime.AddHours(8),
+            DeviceId = device,
+            IsActive = 1,
+            StaffId = accountResult.EmpId
+        });
+        await loginCommand.AddLoginLog(new AddLoginLogRequest
+        {
+            CompanyId = request.LoginType.ToRegion(),
+            UserId = accountResult.EmpId,
+            LoginTime = currentTime,
+            IpAddress = "172.0.0.0",
+            DeviceInfo = "PC",
+            StaffId = accountResult.EmpId
+        });
     }
 }

@@ -19,7 +19,6 @@ public class ByLoginTokenListRequest
 
 public class AddLoginTokenRequest
 {
-    public required string Id { get; set; }
     public required string CompanyId { get; set; }
     public required string UserId { get; set; }
     public required string Token { get; set; }
@@ -27,6 +26,5 @@ public class AddLoginTokenRequest
     public required DateTime ExpireTime { get; set; }
     public required string DeviceId { get; set; }
     public required byte IsActive { get; set; }
-    public required string CreatedBy { get; set; }
-    public required string ModifiedBy { get; set; }
+    public required string StaffId { get; set; }
 }
