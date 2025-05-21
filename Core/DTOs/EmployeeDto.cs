@@ -3,7 +3,7 @@
 public class EmployeeDto
 {
     public string Id { get; set; } = "";
-    public string CompanyId { get; set; }
+    public string CompanyId { get; set; } = "";
     public string EmpId { get; set; } = "";
     public string EmpName { get; set; } = "";
     public string EmpMobilePhone { get; set; } = "";

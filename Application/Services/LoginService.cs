@@ -132,7 +132,7 @@ public class LoginService(
             CompanyId = request.LoginType.ToRegion(),
             EmpId = accountResult.EmpId
         });
-        
+
         var result = new LoginResult
         {
             Token = token,

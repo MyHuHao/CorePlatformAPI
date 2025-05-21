@@ -58,11 +58,11 @@ public class TokenValidationMiddleware(
             ?.Value;
         // 获取token中的UserId
         var userId = jwtToken.Claims
-            .FirstOrDefault(c => c.Type == "userId")
+            .FirstOrDefault(c => c.Type == "UserId")
             ?.Value;
         // 获取token中的CompanyId
         var companyId = jwtToken.Claims
-            .FirstOrDefault(c => c.Type == "companyId")
+            .FirstOrDefault(c => c.Type == "CompanyId")
             ?.Value;
 
         // 验证jti

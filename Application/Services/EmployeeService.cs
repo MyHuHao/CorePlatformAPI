@@ -4,6 +4,7 @@ using Core.Contracts;
 using Core.Contracts.Requests;
 using Core.DTOs;
 using Core.Enums;
+using Core.Exceptions;
 using Core.Interfaces.Services;
 
 namespace Application.Services;
@@ -18,10 +19,7 @@ public class EmployeeService(EmployeeQuery query, IMapper mapper) : IEmployeeSer
     public async Task<ApiResult<EmployeeDto>> GetEmployeeById(ByEmployeeRequest request)
     {
         var employee = await query.GetEmployeeById(request);
-        if (employee == null)
-        {
-            return new ApiResult<EmployeeDto> { MsgCode = MsgCodeEnum.Warning, Msg = "查询数据为空" };
-        }
+        if (employee == null) throw new ValidationException(MsgCodeEnum.Warning, "用户不存在");
 
         var employeeDto = mapper.Map<EmployeeDto>(employee);
         return new ApiResult<EmployeeDto> { MsgCode = MsgCodeEnum.Success, Msg = "查询成功", Data = employeeDto };
