@@ -46,7 +46,7 @@ public class RoleGroupRepository(IDapperExtensions<RoleGroup> dapper, IUnitOfWor
             {
                 Id = HashHelper.GetUuid(),
                 request.CompanyId,
-                request.RoleGroupId,
+                RoleGroupId = HashHelper.GetUuid(),
                 request.RoleGroupName,
                 request.RoleGroupDesc,
                 request.Status,
@@ -179,10 +179,10 @@ public class RoleGroupRepository(IDapperExtensions<RoleGroup> dapper, IUnitOfWor
             parameters.Add("CompanyId", request.CompanyId);
         }
 
-        if (!string.IsNullOrEmpty(request.RoleGroupId))
+        if (!string.IsNullOrEmpty(request.RoleGroupName))
         {
-            conditions.Add("RoleGroupId = @RoleGroupId");
-            parameters.Add("RoleGroupId", request.RoleGroupId);
+            conditions.Add("RoleGroupName = @RoleGroupName");
+            parameters.Add("RoleGroupName", request.RoleGroupName);
         }
 
         conditions.Add("Status = @Status");

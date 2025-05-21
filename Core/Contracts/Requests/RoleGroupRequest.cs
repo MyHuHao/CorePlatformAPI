@@ -3,7 +3,6 @@
 public class AddRoleGroupRequest
 {
     public required string CompanyId { get; set; } 
-    public required string RoleGroupId { get; set; } 
     public required  string RoleGroupName { get; set; } 
     public string RoleGroupDesc { get; set; } = "";
     public required string Status { get; set; }
@@ -29,6 +28,6 @@ public class ByRoleGroupRequest
 public class ValidRoleGroupRequest
 {
     public string CompanyId { get; set; } = "";
-    public string RoleGroupId { get; set; } = "";
+    public string RoleGroupName { get; set; } = "";
     public byte Status { get; set; }
 }

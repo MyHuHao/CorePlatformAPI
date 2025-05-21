@@ -22,8 +22,8 @@ public class RoleGroupService(
         var validRole = await query.ValidRoleGroup(new ValidRoleGroupRequest
         {
             CompanyId = request.CompanyId,
+            RoleGroupName = request.RoleGroupName,
             Status = 1,
-            RoleGroupId = request.RoleGroupId
         });
         if (validRole) throw new ValidationException(MsgCodeEnum.Warning, "角色组已存在");
 
