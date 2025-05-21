@@ -59,7 +59,7 @@ public class ApiLoggingMiddleware(
         using var reader = new StreamReader(request.Body, Encoding.UTF8, true, 4096, true);
         var body = await reader.ReadToEndAsync();
         request.Body.Position = 0;
-        return Truncate(body, 4096);
+        return string.IsNullOrWhiteSpace(body) ? "{}" : Truncate(body, 4096);
     }
 
     private static readonly JsonSerializerOptions JsonOptions = new()
@@ -75,6 +75,11 @@ public class ApiLoggingMiddleware(
         var body = await reader.ReadToEndAsync();
         responseBody.Seek(0, SeekOrigin.Begin);
         await responseBody.CopyToAsync(originalBody);
+        if (string.IsNullOrWhiteSpace(body))
+        {
+            return "{}";
+        }
+
         try
         {
             var json = JsonDocument.Parse(body);

@@ -16,7 +16,7 @@ public class ByEmployeeListRequest
 
 public class AddEmployeeRequest
 {
-    public required int CompanyId { get; set; }
+    public required string CompanyId { get; set; }
     public required string EmpId { get; set; } = "";
     public required string EmpName { get; set; } = "";
     public string EmpMobilePhone { get; set; } = "";

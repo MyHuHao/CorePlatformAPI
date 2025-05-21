@@ -10,7 +10,7 @@ public class Employee
     /// <summary>
     /// 公司ID
     /// </summary>
-    public int CompanyId { get; set; }
+    public string CompanyId { get; set; }
 
     /// <summary>
     /// 员工ID

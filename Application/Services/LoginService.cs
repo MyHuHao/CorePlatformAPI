@@ -52,7 +52,7 @@ public class LoginService(
                 CompanyId = request.CompanyId,
                 LoginName = request.LoginName
             });
-            if (!accountResult) throw new ValidationException(MsgCodeEnum.Warning, "账户已存在，请重新输入");
+            if (accountResult) throw new ValidationException(MsgCodeEnum.Warning, "账户已存在，请重新输入");
 
             // 创建账户
             await loginCommand.CreateAccount(request);

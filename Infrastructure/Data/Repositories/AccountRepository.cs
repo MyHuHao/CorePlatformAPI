@@ -42,7 +42,7 @@ public class AccountRepository(IDapperExtensions<Account> dapper, IUnitOfWork un
                             FROM
                                 Account
                             WHERE
-                                CompanyId = @CompanyId;
+                                CompanyId = @CompanyId
                             AND
                                 LoginName = @LoginName
                            """;
@@ -181,8 +181,8 @@ public class AccountRepository(IDapperExtensions<Account> dapper, IUnitOfWork un
                 request.Email,
                 request.Phone,
                 request.Language,
-                LastLoginTime = DBNull.Value,
-                LastLoginIp = DBNull.Value,
+                LastLoginTime = (DateTime?)null,
+                LastLoginIp = (string?)null,
                 request.FailedLoginAttempts,
                 request.IsLocked,
                 CreatedBy = request.StaffId,
