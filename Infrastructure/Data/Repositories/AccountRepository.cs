@@ -54,6 +54,48 @@ public class AccountRepository(IDapperExtensions<Account> dapper, IUnitOfWork un
     }
 
     /// <summary>
+    /// 通过ID查询账号详情
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
+    public async Task<Account?> GetAccountByIdAsync(string id)
+    {
+        const string sql = """
+                            select 
+                                Id,
+                                CompanyId,
+                                LoginName,
+                                DisplayName,
+                                EmpId,
+                                PasswordHash,
+                                PasswordSalt,
+                                AccountType,
+                                IsActive,
+                                DeptId,
+                                Email,
+                                Phone,
+                                Language,
+                                LastLoginTime,
+                                LastLoginIp,
+                                FailedLoginAttempts,
+                                IsLocked,
+                                CreatedBy,
+                                CreatedTime,
+                                ModifiedBy,
+                                ModifiedTime
+                            FROM
+                                Account
+                            WHERE
+                                Id = @Id
+                           """;
+        return await dapper.QueryFirstOrDefaultAsync(
+            sql,
+            new { Id = id },
+            unitOfWork.CurrentConnection,
+            unitOfWork.CurrentTransaction);
+    }
+
+    /// <summary>
     /// 获取账号列表
     /// </summary>
     /// <param name="request"></param>
@@ -285,20 +327,32 @@ public class AccountRepository(IDapperExtensions<Account> dapper, IUnitOfWork un
     /// <summary>
     /// 删除账号
     /// </summary>
-    /// <param name="request"></param>
     /// <returns></returns>
-    public async Task<int> DeleteAccountAsync(ByAccountRequest request)
+    public async Task<int> DeleteAccountAsync(string id)
     {
         const string sql = """
                            DELETE FROM Account  
                            WHERE 
-                               CompanyId = @CompanyId
-                           AND 
-                               LoginName = @LoginName;
+                               Id = @Id
                            """;
         return await dapper.ExecuteAsync(sql,
-            new { request.CompanyId, request.LoginName },
+            new { Id = id },
             unitOfWork.CurrentConnection,
             unitOfWork.CurrentTransaction);
+    }
+
+    public async Task<Account?> IsExistAccountAsync(string companyId, string loginName)
+    {
+        const string sql = """
+                               SELECT *
+                               FROM Account
+                               WHERE CompanyId = @CompanyId
+                               AND LoginName = @LoginName;
+                           """;
+        return await dapper.QueryFirstOrDefaultAsync(sql,
+            new { CompanyId = companyId, LoginName = loginName },
+            unitOfWork.CurrentConnection,
+            unitOfWork.CurrentTransaction
+        );
     }
 }

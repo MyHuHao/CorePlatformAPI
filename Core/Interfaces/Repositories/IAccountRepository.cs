@@ -36,7 +36,21 @@ public interface IAccountRepository
     /// <summary>
     /// 删除账号
     /// </summary>
-    /// <param name="request"></param>
     /// <returns></returns>
-    Task<int> DeleteAccountAsync(ByAccountRequest request);
+    Task<int> DeleteAccountAsync(string id);
+    
+    /// <summary>
+    /// 验证账号是否存在
+    /// </summary>
+    /// <param name="companyId"></param>
+    /// <param name="loginName"></param>
+    /// <returns></returns>
+    Task<Account?> IsExistAccountAsync(string companyId, string loginName);
+    
+    /// <summary>
+    /// 通过ID查询账号详情
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
+    Task<Account?> GetAccountByIdAsync(string id);
 }
