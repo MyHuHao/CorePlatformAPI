@@ -89,8 +89,6 @@ public class ApiLogRepository(IDapperExtensions<ApiLog> dapper) : IApiLogReposit
                     FROM
                         ApiLog
                     {whereClause}
-                    order by
-                        RequestTime desc
                    """;
 
         return await dapper.QueryPageAsync(request.Page, request.PageSize, sql, parameters);

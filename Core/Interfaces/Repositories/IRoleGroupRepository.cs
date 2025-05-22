@@ -39,4 +39,11 @@ public interface IRoleGroupRepository
     /// <param name="request"></param>
     /// <returns></returns>
     Task<RoleGroup?> ValidRoleGroup(ValidRoleGroupRequest request);
+
+    /// <summary>
+    /// 修改角色组
+    /// </summary>
+    /// <param name="request"></param>
+    /// <returns></returns>
+    Task<int> UpdateRoleGroupAsync(UpdateRoleGroupRequest request);
 }

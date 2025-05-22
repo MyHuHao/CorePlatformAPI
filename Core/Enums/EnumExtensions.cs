@@ -24,4 +24,15 @@ public static class EnumExtensions
             _ => "未知"
         };
     }
+
+    //  启用，禁用枚举扩展
+    public static string ToEnableString(this byte status)
+    {
+        return status switch
+        {
+            0 => "禁用",
+            1 => "启用",
+            _ => "未知"
+        };
+    }
 }

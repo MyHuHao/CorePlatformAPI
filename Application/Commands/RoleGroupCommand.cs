@@ -16,4 +16,10 @@ public class RoleGroupCommand(IRoleGroupRepository repository)
     {
         await repository.DeleteRoleGroupAsync(id);
     }
+    
+    // 修改角色组
+    public async Task UpdateRoleGroupAsync(UpdateRoleGroupRequest request)
+    {
+        await repository.UpdateRoleGroupAsync(request);
+    }
 }

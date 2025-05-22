@@ -57,4 +57,16 @@ public class RoleGroupController(IRoleGroupService service) : Controller
         var result = await service.GetRoleGroupByIdAsync(id);
         return Ok(result);
     }
+    
+    /// <summary>
+    /// 修改角色组
+    /// </summary>
+    /// <param name="request"></param>
+    /// <returns></returns>
+    [HttpPost]
+    public async Task<IActionResult> UpdateRoleGroup([FromBody] UpdateRoleGroupRequest request)
+    {
+        var result = await service.UpdateRoleGroupAsync(request);
+        return Ok(result);
+    }
 }

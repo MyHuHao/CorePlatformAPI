@@ -22,8 +22,7 @@ public class RoleGroupService(
         var validRole = await query.ValidRoleGroup(new ValidRoleGroupRequest
         {
             CompanyId = request.CompanyId,
-            RoleGroupName = request.RoleGroupName,
-            Status = 1,
+            RoleGroupName = request.RoleGroupName
         });
         if (validRole) throw new ValidationException(MsgCodeEnum.Warning, "角色组已存在");
 
@@ -64,5 +63,22 @@ public class RoleGroupService(
     {
         await command.DeleteRoleGroupAsync(id);
         return new ApiResult<string> { MsgCode = MsgCodeEnum.Success, Msg = "删除成功" };
+    }
+
+    //修改角色组
+    public async Task<ApiResult<string>> UpdateRoleGroupAsync(UpdateRoleGroupRequest request)
+    {
+        // 验证是否存在
+        var validRole = await query.ValidRoleGroup(new ValidRoleGroupRequest
+        {
+            CompanyId = request.CompanyId,
+            RoleGroupId = request.RoleGroupId
+        });
+        if (!validRole) throw new ValidationException(MsgCodeEnum.Warning, "角色组不存在");
+
+        // 开始修改
+        await command.UpdateRoleGroupAsync(request);
+
+        return new ApiResult<string> { MsgCode = MsgCodeEnum.Success, Msg = "修改成功" };
     }
 }

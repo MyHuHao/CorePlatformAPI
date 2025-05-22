@@ -179,14 +179,25 @@ public class RoleGroupRepository(IDapperExtensions<RoleGroup> dapper, IUnitOfWor
             parameters.Add("CompanyId", request.CompanyId);
         }
 
+        if (!string.IsNullOrEmpty(request.RoleGroupId))
+        {
+            conditions.Add("RoleGroupId = @RoleGroupId");
+            parameters.Add("RoleGroupId", request.RoleGroupId);
+        }
+
         if (!string.IsNullOrEmpty(request.RoleGroupName))
         {
             conditions.Add("RoleGroupName = @RoleGroupName");
             parameters.Add("RoleGroupName", request.RoleGroupName);
         }
-
-        conditions.Add("Status = @Status");
-        parameters.Add("Status", request.Status);
+        
+        
+        if (!string.IsNullOrEmpty(request.Status))
+        {
+            conditions.Add("Status = @Status");
+            parameters.Add("Status", request.Status);
+        }
+        
 
         var whereClause = conditions.Count > 0 ? $"WHERE {string.Join(" AND ", conditions)}" : string.Empty;
 
@@ -208,6 +219,38 @@ public class RoleGroupRepository(IDapperExtensions<RoleGroup> dapper, IUnitOfWor
                    """;
         return await dapper.QuerySingleOrDefaultAsync(sql,
             parameters,
+            unitOfWork.CurrentConnection,
+            unitOfWork.CurrentTransaction
+        );
+    }
+
+    // 修改角色组
+    public async Task<int> UpdateRoleGroupAsync(UpdateRoleGroupRequest request)
+    {
+        const string sql = """
+                           UPDATE RoleGroup
+                           SET
+                               RoleGroupName = @RoleGroupName,
+                               RoleGroupDesc = @RoleGroupDesc,
+                               Status = @Status,
+                               ModifiedBy = @ModifiedBy,
+                               ModifiedTime = @ModifiedTime
+                           WHERE
+                               RoleGroupId = @RoleGroupId
+                           AND 
+                               CompanyId = @CompanyId;
+                           """;
+        return await dapper.ExecuteAsync(sql,
+            new
+            {
+                request.RoleGroupName,
+                request.RoleGroupDesc,
+                request.Status,
+                request.RoleGroupId,
+                request.CompanyId,
+                ModifiedBy = request.StaffId,
+                ModifiedTime = DateTime.Now
+            },
             unitOfWork.CurrentConnection,
             unitOfWork.CurrentTransaction
         );
