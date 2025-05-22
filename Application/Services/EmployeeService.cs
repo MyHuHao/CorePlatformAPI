@@ -34,4 +34,24 @@ public class EmployeeService(EmployeeQuery query, IMapper mapper) : IEmployeeSer
     {
         return await query.GetEmployeeById(request) != null;
     }
+
+    /// <summary>
+    /// 分页查询
+    /// </summary>
+    /// <param name="request"></param>
+    /// <returns></returns>
+    public async Task<ApiResult<PagedResult<EmployeeDto>>> GetEmployeePageAsync(ByEmployeeListRequest request)
+    {
+        var result = await query.GetEmployeePageAsync(request);
+        var employeeDto = mapper.Map<List<EmployeeDto>>(result.items);
+        PagedResult<EmployeeDto> pagedResult = new()
+        {
+            Records = employeeDto,
+            Page = request.Page,
+            PageSize = request.PageSize,
+            Total = result.total
+        };
+        return new ApiResult<PagedResult<EmployeeDto>>
+            { MsgCode = MsgCodeEnum.Success, Msg = "查询成功", Data = pagedResult };
+    }
 }

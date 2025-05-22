@@ -21,4 +21,16 @@ public class EmployeeController(IEmployeeService service) : Controller
         var result = await service.GetEmployeeById(request);
         return Ok(result);
     }
+    
+    /// <summary>
+    /// 分页查询
+    /// </summary>
+    /// <param name="request"></param>
+    /// <returns></returns>
+    [HttpPost]
+    public async Task<IActionResult> GetEmployeePage([FromBody] ByEmployeeListRequest request)
+    {
+        var result = await service.GetEmployeePageAsync(request);
+        return Ok(result);
+    }
 }

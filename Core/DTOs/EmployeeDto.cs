@@ -10,11 +10,11 @@ public class EmployeeDto
     public string EmpEmail { get; set; } = "";
     public string EmpEntryDate { get; set; } = "";
     public string EmpDepartureDate { get; set; } = "";
-    public int UserType { get; set; }
+    public string UserType { get; set; } = "";
     public string DeptId { get; set; } = "";
     public string CostCenterId { get; set; } = "";
     public string JobCategoryId { get; set; } = "";
-    public int Status { get; set; }
+    public string Status { get; set; } = "";
     public string Direct { get; set; } = "";
     public string DeliveredDate { get; set; } = "";
     public string Birthday { get; set; } = "";

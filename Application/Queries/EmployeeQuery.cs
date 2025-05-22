@@ -15,4 +15,14 @@ public class EmployeeQuery(IEmployeeRepository repository)
     {
         return await repository.GetByEmployeeAsync(request);
     }
+    
+    /// <summary>
+    /// 分页查询
+    /// </summary>
+    /// <param name="request"></param>
+    /// <returns></returns>
+    public async Task<(IEnumerable<Employee> items, int total)> GetEmployeePageAsync(ByEmployeeListRequest request)
+    {
+        return await repository.GetByEmployeeListAsync(request);
+    }
 }

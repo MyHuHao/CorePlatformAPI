@@ -107,7 +107,7 @@ public class EmployeeRepository(IDapperExtensions<Employee> dapper, IUnitOfWork 
                        Employee
                    {whereClause}   
                    ORDER BY 
-                       CreatedTime DESC;
+                       CreatedTime DESC
                    """;
         return await dapper.QueryPageAsync(
             request.Page,

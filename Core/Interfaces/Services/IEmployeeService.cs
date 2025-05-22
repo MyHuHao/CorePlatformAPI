@@ -19,4 +19,11 @@ public interface IEmployeeService
     /// <param name="request"></param>
     /// <returns></returns>
     Task<bool> VerifyEmployeeAsync(ByEmployeeRequest request);
+    
+    /// <summary>
+    /// 分页查询
+    /// </summary>
+    /// <param name="request"></param>
+    /// <returns></returns>
+    Task<ApiResult<PagedResult<EmployeeDto>>> GetEmployeePageAsync(ByEmployeeListRequest request);
 }
