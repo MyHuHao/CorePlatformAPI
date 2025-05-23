@@ -12,4 +12,7 @@ public interface IWebMenuService
     
     // 新增菜单
     Task<ApiResult<string>> AddWebMenuAsync(AddWebMenuRequest request);
+    
+    // 获取所有父级菜单
+    Task<ApiResult<List<ParentWebMenuListResult>>> GetParentWebMenuListAsync();
 }

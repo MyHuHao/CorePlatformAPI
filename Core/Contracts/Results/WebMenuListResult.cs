@@ -22,3 +22,12 @@ public class WebMenuListResult
     public string Remark { get; set; } = "";
     public List<WebMenuListResult> Children { get; set; } = [];
 }
+
+public class ParentWebMenuListResult
+{
+    public string Value { get; set; } = "";
+    public string Label { get; set; } = "";
+    public string ParentWebMenuId { get; set; } = "";
+    public string Sequence { get; set; } = "";
+    public List<ParentWebMenuListResult> Children { get; set; } = [];
+}

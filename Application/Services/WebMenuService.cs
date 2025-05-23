@@ -1,4 +1,5 @@
-﻿using Application.Queries;
+﻿using Application.Commands;
+using Application.Queries;
 using AutoMapper;
 using Core.Contracts;
 using Core.Contracts.Requests;
@@ -9,7 +10,7 @@ using Core.Interfaces.Services;
 
 namespace Application.Services;
 
-public class WebMenuService(IMapper mapper, WebMenuQuery query) : IWebMenuService
+public class WebMenuService(IMapper mapper, WebMenuQuery query, WebMenuCommand command) : IWebMenuService
 {
     // 菜单分页查询
     public async Task<ApiResult<PagedResult<WebMenuListResult>>> GetWebMenuByPageAsync(ByWebMenuListRequest request)
@@ -27,14 +28,53 @@ public class WebMenuService(IMapper mapper, WebMenuQuery query) : IWebMenuServic
             { MsgCode = MsgCodeEnum.Success, Msg = "查询成功", Data = pagedResult };
     }
 
+    // 获取所有父级菜单
+    public async Task<ApiResult<List<ParentWebMenuListResult>>> GetParentWebMenuListAsync()
+    {
+        // 获取所有的数据
+        var result = await query.GetWebMenuPageAsync(new ByWebMenuListRequest
+        {
+            Name = "",
+            Page = 1,
+            PageSize = 2000
+        });
+        var webMenuDto = mapper.Map<List<WebMenuDto>>(result.items);
+
+        // 格式化数据格式
+        return new ApiResult<List<ParentWebMenuListResult>>
+        {
+            MsgCode = MsgCodeEnum.Success,
+            Msg = "查询成功",
+            Data = FormatParentWebMenuListResult(webMenuDto)
+        };
+    }
+
     // 新增菜单
     public async Task<ApiResult<string>> AddWebMenuAsync(AddWebMenuRequest request)
     {
-        // 延时1s
-        await Task.Delay(1000);
+        await command.AddWebMenuAsync(request);
         return new ApiResult<string>() { MsgCode = MsgCodeEnum.Success, Msg = "创建成功" };
     }
 
+    // 格式化 webMenuDto 为 树形数组
+    private static List<ParentWebMenuListResult> FormatParentWebMenuListResult(List<WebMenuDto> webMenuDto)
+    {
+        return BuildTree(string.Empty);
+
+        List<ParentWebMenuListResult> BuildTree(string parentId)
+        {
+            return webMenuDto
+                .Where(dto => dto.ParentWebMenuId == parentId)
+                .Select(dto => new ParentWebMenuListResult
+                {
+                    Value = dto.WebMenuId,
+                    ParentWebMenuId = dto.ParentWebMenuId,
+                    Sequence = dto.Sequence,
+                    Label = dto.Title,
+                    Children = BuildTree(dto.WebMenuId)
+                }).OrderBy(m => m.Sequence).ToList();
+        }
+    }
 
     // 格式化 webMenuDto 为 树形数组
     private static List<WebMenuListResult> FormatWebMenuListResult(List<WebMenuDto> webMenuDto)

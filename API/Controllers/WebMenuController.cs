@@ -25,4 +25,12 @@ public class WebMenuController(IWebMenuService service) : Controller
         var result = await service.AddWebMenuAsync(request);
         return Ok(result);
     }
+    
+    // 获取父菜单列表
+    [HttpGet]
+    public async Task<IActionResult> GetParentWebMenuList()
+    {
+        var result = await service.GetParentWebMenuListAsync();
+        return Ok(result);
+    }
 }
