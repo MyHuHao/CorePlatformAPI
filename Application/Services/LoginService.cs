@@ -87,10 +87,10 @@ public class LoginService(
     {
         List<LoginTypeResult> list =
         [
-            new() { Label = "深圳-测试数据库", Value = 0 },
-            new() { Label = "深圳-正式数据库", Value = 1 },
-            new() { Label = "上海-测试数据库", Value = 2 },
-            new() { Label = "上海-正式数据库", Value = 3 },
+            new() { Label = "东莞-测试数据库", Value = 0 },
+            new() { Label = "东莞-正式数据库", Value = 1 },
+            new() { Label = "曼谷-测试数据库", Value = 2 },
+            new() { Label = "曼谷-正式数据库", Value = 3 },
         ];
         return new ApiResult<List<LoginTypeResult>> { MsgCode = MsgCodeEnum.Success, Msg = "查询成功", Data = list };
     }

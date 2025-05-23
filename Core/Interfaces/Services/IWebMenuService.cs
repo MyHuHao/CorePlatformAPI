@@ -1,0 +1,15 @@
+﻿using Core.Contracts;
+using Core.Contracts.Requests;
+using Core.Contracts.Results;
+using Core.DTOs;
+
+namespace Core.Interfaces.Services;
+
+public interface IWebMenuService
+{
+    // 菜单分页查询
+    Task<ApiResult<PagedResult<WebMenuListResult>>> GetWebMenuByPageAsync(ByWebMenuListRequest request);
+    
+    // 新增菜单
+    Task<ApiResult<string>> AddWebMenuAsync(AddWebMenuRequest request);
+}
