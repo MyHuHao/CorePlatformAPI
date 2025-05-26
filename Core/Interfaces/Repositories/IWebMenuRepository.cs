@@ -10,4 +10,14 @@ public interface IWebMenuRepository
     
     // 新增菜单
     Task<int> AddWebMenuAsync(AddWebMenuRequest request);
+    
+    // 修改菜单
+    Task<int> UpdateWebMenuAsync(UpdateWebMenuRequest request);
+    
+    // 删除菜单
+    Task<int> DeleteWebMenuById(string id);
+    
+    
+    // 验证菜单是否合格
+    Task<WebMenu?> VerifyWebMenuAsync(VerifyWebMenuRequest request);
 }

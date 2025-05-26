@@ -14,7 +14,7 @@ public class WebMenuRepository(IDapperExtensions<WebMenu> dapper, IUnitOfWork un
     {
         var conditions = new List<string>();
         var parameters = new DynamicParameters();
-        
+
         if (!string.IsNullOrEmpty(request.Name))
         {
             conditions.Add("Name = @Name");
@@ -60,7 +60,7 @@ public class WebMenuRepository(IDapperExtensions<WebMenu> dapper, IUnitOfWork un
             unitOfWork.CurrentTransaction
         );
     }
-    
+
     // 新增菜单
     public async Task<int> AddWebMenuAsync(AddWebMenuRequest request)
     {
@@ -139,6 +139,105 @@ public class WebMenuRepository(IDapperExtensions<WebMenu> dapper, IUnitOfWork un
                 ModifiedBy = request.StaffId,
                 ModifiedTime = currentTime
             },
+            unitOfWork.CurrentConnection,
+            unitOfWork.CurrentTransaction);
+    }
+
+    // 修改菜单
+    public async Task<int> UpdateWebMenuAsync(UpdateWebMenuRequest request)
+    {
+        const string sql = """
+                           UPDATE WebMenu SET
+                               ParentWebMenuId = @ParentWebMenuId,
+                               Name = @Name,
+                               Path = @Path,
+                               Component = @Component,
+                               Title = @Title,
+                               Icon = @Icon,
+                               Redirect = @Redirect,
+                               Sequence = @Sequence,
+                               IsFrame = @IsFrame,
+                               FrameSrc = @FrameSrc,
+                               IsCache = @IsCache,
+                               IsVisible = @IsVisible,
+                               Permission = @Permission,
+                               MenuType = @MenuType,
+                               Status = @Status,
+                               Remark = @Remark,
+                               ModifiedBy = @ModifiedBy,
+                               ModifiedTime = @ModifiedTime
+                           WHERE
+                               Id = @Id
+                           """;
+        return await dapper.ExecuteAsync(sql,
+            new
+            {
+                request.Id,
+                request.ParentWebMenuId,
+                request.Name,
+                request.Path,
+                request.Component,
+                request.Title,
+                request.Icon,
+                request.Redirect,
+                request.Sequence,
+                request.IsFrame,
+                request.FrameSrc,
+                request.IsCache,
+                request.IsVisible,
+                request.Permission,
+                request.MenuType,
+                request.Status,
+                request.Remark,
+                ModifiedBy = request.StaffId,
+                ModifiedTime = DateTime.Now
+            },
+            unitOfWork.CurrentConnection,
+            unitOfWork.CurrentTransaction);
+    }
+
+    // 删除菜单
+    public async Task<int> DeleteWebMenuById(string id)
+    {
+        const string sql = """
+                           DELETE FROM WebMenu
+                           WHERE
+                               Id = @Id
+                           """;
+        return await dapper.ExecuteAsync(sql,
+            new { Id = id },
+            unitOfWork.CurrentConnection,
+            unitOfWork.CurrentTransaction);
+    }
+
+    // 验证菜单
+    public async Task<WebMenu?> VerifyWebMenuAsync(VerifyWebMenuRequest request)
+    {
+        var conditions = new List<string>();
+        var parameters = new DynamicParameters();
+
+        if (!string.IsNullOrEmpty(request.Sequence))
+        {
+            conditions.Add("Sequence = @Sequence");
+            parameters.Add("Sequence", request.Sequence);
+            
+            conditions.Add("ParentWebMenuId = @ParentWebMenuId");
+            parameters.Add("ParentWebMenuId", request.ParentWebMenuId);
+        }
+
+        if (!string.IsNullOrEmpty(request.Name))
+        {
+            conditions.Add("Name = @Name");
+            parameters.Add("Name", request.Name);
+        }
+        
+        var whereClause = conditions.Count > 0 ? $"WHERE {string.Join(" AND ", conditions)}" : string.Empty;
+
+        var sql = $"""
+                    SELECT * FROM WebMenu
+                    {whereClause}
+                   """;
+        return await dapper.QueryFirstOrDefaultAsync(sql, parameters,
             unitOfWork.CurrentConnection,
             unitOfWork.CurrentTransaction);
     }

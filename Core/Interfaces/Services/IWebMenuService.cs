@@ -15,4 +15,10 @@ public interface IWebMenuService
     
     // 获取所有父级菜单
     Task<ApiResult<List<ParentWebMenuListResult>>> GetParentWebMenuListAsync();
+    
+    // 修改菜单
+    Task<ApiResult<string>> UpdateWebMenuAsync(UpdateWebMenuRequest request);
+    
+    // 删除菜单
+    Task<ApiResult<string>> DeleteWebMenuByIdAsync(string id);
 }

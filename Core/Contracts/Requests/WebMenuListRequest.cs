@@ -27,3 +27,15 @@ public class AddWebMenuRequest
     public string Remark { get; set; } = "";
     public string StaffId { get; set; } = "";
 }
+
+public class UpdateWebMenuRequest : AddWebMenuRequest
+{
+    public string Id { get; set; } = "";
+}
+
+public class VerifyWebMenuRequest
+{
+    public string Sequence { get; set; } = "";
+    public string Name { get; set; } = "";
+    public string ParentWebMenuId { get; set; } = "";
+}

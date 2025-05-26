@@ -6,6 +6,7 @@ using Core.Contracts.Requests;
 using Core.Contracts.Results;
 using Core.DTOs;
 using Core.Enums;
+using Core.Exceptions;
 using Core.Interfaces.Services;
 
 namespace Application.Services;
@@ -52,8 +53,53 @@ public class WebMenuService(IMapper mapper, WebMenuQuery query, WebMenuCommand c
     // 新增菜单
     public async Task<ApiResult<string>> AddWebMenuAsync(AddWebMenuRequest request)
     {
+        // 新增的时候验证 在当前父节点下 序号是否已存在
+        var verifySequence = await query.VerifyWebMenuAsync(new VerifyWebMenuRequest
+        {
+            ParentWebMenuId = request.ParentWebMenuId,
+            Sequence = request.Sequence
+        });
+        if (verifySequence) throw new ValidationException(MsgCodeEnum.Warning, "当前父级菜单下显示顺序已存在");
+
+        // 验证名称是否已经在菜单中存在
+        var verifyName = await query.VerifyWebMenuAsync(new VerifyWebMenuRequest
+        {
+            Name = request.Name
+        });
+        if (verifyName) throw new ValidationException(MsgCodeEnum.Warning, "菜单名称已存在");
+        
         await command.AddWebMenuAsync(request);
-        return new ApiResult<string>() { MsgCode = MsgCodeEnum.Success, Msg = "创建成功" };
+        return new ApiResult<string> { MsgCode = MsgCodeEnum.Success, Msg = "创建成功" };
+    }
+
+    // 修改菜单
+    public async Task<ApiResult<string>> UpdateWebMenuAsync(UpdateWebMenuRequest request)
+    {
+        // 新增的时候验证 在当前父节点下 序号是否已存在
+        var verifySequence = await query.VerifyWebMenuAsync(new VerifyWebMenuRequest
+        {
+            ParentWebMenuId = request.ParentWebMenuId,
+            Sequence = request.Sequence
+        });
+        if (verifySequence == false) throw new ValidationException(MsgCodeEnum.Warning, "当前父级菜单下序号已存在");
+
+        // 验证名称是否已经在菜单中存在
+        var verifyName = await query.VerifyWebMenuAsync(new VerifyWebMenuRequest
+        {
+            Name = request.Name
+        });
+        if (verifyName == false) throw new ValidationException(MsgCodeEnum.Warning, "名称已存在");
+        
+        await command.UpdateWebMenuAsync(request);
+        return new ApiResult<string> { MsgCode = MsgCodeEnum.Success, Msg = "修改成功" };
+    }
+
+    // 删除菜单
+    public async Task<ApiResult<string>> DeleteWebMenuByIdAsync(string id)
+    {
+        // 删除菜单
+        await command.DeleteWebMenuByIdAsync(id);
+        return new ApiResult<string> { MsgCode = MsgCodeEnum.Success, Msg = "删除成功" };
     }
 
     // 格式化 webMenuDto 为 树形数组
@@ -72,7 +118,7 @@ public class WebMenuService(IMapper mapper, WebMenuQuery query, WebMenuCommand c
                     Sequence = dto.Sequence,
                     Label = dto.Title,
                     Children = BuildTree(dto.WebMenuId)
-                }).OrderBy(m => m.Sequence).ToList();
+                }).OrderBy(m => Convert.ToInt32(m.Sequence)).ToList();
         }
     }
 
@@ -106,7 +152,7 @@ public class WebMenuService(IMapper mapper, WebMenuQuery query, WebMenuCommand c
                     Status = dto.Status,
                     Remark = dto.Remark,
                     Children = BuildTree(dto.WebMenuId)
-                }).OrderBy(m => m.Sequence).ToList();
+                }).OrderBy(m => Convert.ToInt32(m.Sequence)).ToList();
         }
     }
 }
