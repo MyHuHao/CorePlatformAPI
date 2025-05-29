@@ -10,7 +10,7 @@ public class AccountCommand(IAccountRepository repository)
     {
         await repository.AddAccountAsync(request);
     }
-    
+
     // 删除账号
     public async Task DeleteAccountAsync(string id)
     {

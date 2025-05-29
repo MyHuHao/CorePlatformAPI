@@ -10,7 +10,7 @@ namespace Infrastructure.Data.Repositories;
 public class ApiLogRepository(IDapperExtensions<ApiLog> dapper) : IApiLogRepository
 {
     /// <summary>
-    /// 通过Id查询api接口日志
+    ///     通过Id查询api接口日志
     /// </summary>
     /// <returns></returns>
     public async Task<ApiLog?> GetByApiLogAsync(string id)
@@ -37,7 +37,7 @@ public class ApiLogRepository(IDapperExtensions<ApiLog> dapper) : IApiLogReposit
     }
 
     /// <summary>
-    /// 查询api接口日志列表
+    ///     查询api接口日志列表
     /// </summary>
     /// <param name="request"></param>
     /// <returns></returns>
@@ -95,7 +95,7 @@ public class ApiLogRepository(IDapperExtensions<ApiLog> dapper) : IApiLogReposit
     }
 
     /// <summary>
-    /// 新增api接口日志
+    ///     新增api接口日志
     /// </summary>
     /// <param name="request"></param>
     /// <returns></returns>

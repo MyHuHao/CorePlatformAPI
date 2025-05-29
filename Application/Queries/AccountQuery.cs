@@ -11,13 +11,13 @@ public class AccountQuery(IAccountRepository repository)
     {
         return await repository.GetByAccountListAsync(request);
     }
-    
+
     // 验证账号是否存在
     public async Task<bool> IsExistAccountAsync(string companyId, string loginName)
     {
         return await repository.IsExistAccountAsync(companyId, loginName) != null;
     }
-    
+
     // 根据账号ID查询账号
     public async Task<Account?> GetAccountByIdAsync(string id)
     {

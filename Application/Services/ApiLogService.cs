@@ -3,9 +3,7 @@ using Application.Queries;
 using AutoMapper;
 using Core.Contracts;
 using Core.Contracts.Requests;
-using Core.Contracts.Results;
 using Core.DTOs;
-using Core.Entities;
 using Core.Enums;
 using Core.Interfaces.Services;
 
@@ -23,7 +21,7 @@ public class ApiLogService(IMapper mapper, ApiLogCommand command, ApiLogQuery qu
     }
 
     /// <summary>
-    /// 分页查询-获取访问日志
+    ///     分页查询-获取访问日志
     /// </summary>
     /// <param name="request"></param>
     /// <returns></returns>

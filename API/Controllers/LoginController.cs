@@ -11,7 +11,7 @@ namespace API.Controllers;
 public class LoginController(ILoginService service) : Controller
 {
     /// <summary>
-    /// 获取登录类型
+    ///     获取登录类型
     /// </summary>
     /// <returns></returns>
     [AllowAnonymous]
@@ -35,7 +35,7 @@ public class LoginController(ILoginService service) : Controller
     }
 
     /// <summary>
-    /// 登录验证,获取Token
+    ///     登录验证,获取Token
     /// </summary>
     /// <param name="request"></param>
     /// <returns></returns>

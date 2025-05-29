@@ -7,7 +7,7 @@ namespace Application.Queries;
 public class EmployeeQuery(IEmployeeRepository repository)
 {
     /// <summary>
-    /// 通过用户ID获取详情
+    ///     通过用户ID获取详情
     /// </summary>
     /// <param name="request"></param>
     /// <returns></returns>
@@ -15,9 +15,9 @@ public class EmployeeQuery(IEmployeeRepository repository)
     {
         return await repository.GetByEmployeeAsync(request);
     }
-    
+
     /// <summary>
-    /// 分页查询
+    ///     分页查询
     /// </summary>
     /// <param name="request"></param>
     /// <returns></returns>

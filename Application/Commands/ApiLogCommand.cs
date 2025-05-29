@@ -6,7 +6,7 @@ namespace Application.Commands;
 public class ApiLogCommand(IApiLogRepository repository)
 {
     /// <summary>
-    /// 插入api日志
+    ///     插入api日志
     /// </summary>
     /// <param name="apiLog"></param>
     public async Task AddAsync(AddApiLogRequest apiLog)

@@ -49,7 +49,7 @@ public class AccountService(
         await command.DeleteAccountAsync(id);
         return new ApiResult<string> { MsgCode = MsgCodeEnum.Success, Msg = "删除成功" };
     }
-    
+
     // 通过id查询详情
     public async Task<ApiResult<AccountDto>> GetAccountByIdAsync(string id)
     {

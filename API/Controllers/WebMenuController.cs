@@ -14,10 +14,10 @@ public class WebMenuController(IWebMenuService service) : Controller
     [HttpPost]
     public async Task<IActionResult> GetWebMenuByPage([FromBody] ByWebMenuListRequest request)
     {
-         var result = await service.GetWebMenuByPageAsync(request);
-         return Ok(result);
+        var result = await service.GetWebMenuByPageAsync(request);
+        return Ok(result);
     }
-    
+
     // 新增菜单
     [HttpPost]
     public async Task<IActionResult> AddWebMenu([FromBody] AddWebMenuRequest request)
@@ -25,7 +25,7 @@ public class WebMenuController(IWebMenuService service) : Controller
         var result = await service.AddWebMenuAsync(request);
         return Ok(result);
     }
-    
+
     // 获取父菜单列表
     [HttpGet]
     public async Task<IActionResult> GetParentWebMenuList()
@@ -33,7 +33,7 @@ public class WebMenuController(IWebMenuService service) : Controller
         var result = await service.GetParentWebMenuListAsync();
         return Ok(result);
     }
-    
+
     // 修改菜单
     [HttpPost]
     public async Task<IActionResult> UpdateWebMenu([FromBody] UpdateWebMenuRequest request)
@@ -41,7 +41,7 @@ public class WebMenuController(IWebMenuService service) : Controller
         var result = await service.UpdateWebMenuAsync(request);
         return Ok(result);
     }
-    
+
     // 通过ID删除菜单
     [HttpGet("{id}")]
     public async Task<IActionResult> DeleteWebMenuById(string id)

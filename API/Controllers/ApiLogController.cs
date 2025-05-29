@@ -11,7 +11,7 @@ namespace API.Controllers;
 public class ApiLogController(IApiLogService service) : ControllerBase
 {
     /// <summary>
-    /// 分页查询-获取访问日志
+    ///     分页查询-获取访问日志
     /// </summary>
     /// <param name="request"></param>
     /// <returns></returns>

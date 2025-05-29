@@ -11,6 +11,12 @@ public class ApiLoggingMiddleware(
     ILogger<ApiLoggingMiddleware> logger,
     IServiceScopeFactory scopeFactory)
 {
+    private static readonly JsonSerializerOptions JsonOptions = new()
+    {
+        WriteIndented = false,
+        Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+    };
+
     public async Task InvokeAsync(HttpContext context)
     {
         var startTime = DateTime.Now;
@@ -62,12 +68,6 @@ public class ApiLoggingMiddleware(
         return string.IsNullOrWhiteSpace(body) ? "{}" : Truncate(body, 4096);
     }
 
-    private static readonly JsonSerializerOptions JsonOptions = new()
-    {
-        WriteIndented = false,
-        Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
-    };
-
     private static async Task<string> ReadResponseBodyAsync(Stream responseBody, Stream originalBody)
     {
         responseBody.Seek(0, SeekOrigin.Begin);
@@ -75,10 +75,7 @@ public class ApiLoggingMiddleware(
         var body = await reader.ReadToEndAsync();
         responseBody.Seek(0, SeekOrigin.Begin);
         await responseBody.CopyToAsync(originalBody);
-        if (string.IsNullOrWhiteSpace(body))
-        {
-            return "{}";
-        }
+        if (string.IsNullOrWhiteSpace(body)) return "{}";
 
         try
         {

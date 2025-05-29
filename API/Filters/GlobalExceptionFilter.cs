@@ -1,5 +1,4 @@
 ﻿using Core.Contracts;
-using Core.Contracts.Results;
 using Core.Enums;
 using Core.Exceptions;
 using Microsoft.AspNetCore.Mvc;

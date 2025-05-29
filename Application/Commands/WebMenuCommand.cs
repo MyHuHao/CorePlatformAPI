@@ -10,13 +10,13 @@ public class WebMenuCommand(IWebMenuRepository repository)
     {
         await repository.AddWebMenuAsync(request);
     }
-    
+
     // 修改菜单
     public async Task UpdateWebMenuAsync(UpdateWebMenuRequest request)
     {
         await repository.UpdateWebMenuAsync(request);
     }
-    
+
     // 删除菜单
     public async Task DeleteWebMenuByIdAsync(string id)
     {

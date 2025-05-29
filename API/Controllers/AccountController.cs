@@ -36,7 +36,7 @@ public class AccountController(IAccountService service) : ControllerBase
 
     // 通过ID查询详细
     [HttpPost]
-    public async Task<IActionResult> GetAccountById([FromBody] string  id)
+    public async Task<IActionResult> GetAccountById([FromBody] string id)
     {
         var result = await service.GetAccountByIdAsync(id);
         return Ok(result);

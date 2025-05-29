@@ -26,7 +26,7 @@ public class LoginService(
     LoginCommand loginCommand) : ILoginService
 {
     /// <summary>
-    /// 创建账号
+    ///     创建账号
     /// </summary>
     /// <param name="request"></param>
     /// <returns></returns>
@@ -70,17 +70,7 @@ public class LoginService(
     }
 
     /// <summary>
-    /// 验证当前账号是否存在
-    /// </summary>
-    /// <param name="request"></param>
-    /// <returns></returns>
-    private async Task<bool> VerifyAccountAsync(ByAccountRequest request)
-    {
-        return await loginQuery.GetAccountById(request) != null;
-    }
-
-    /// <summary>
-    /// 获取登录类型
+    ///     获取登录类型
     /// </summary>
     /// <returns></returns>
     public ApiResult<List<LoginTypeResult>> GetLoginOptions()
@@ -90,14 +80,14 @@ public class LoginService(
             new() { Label = "东莞-测试数据库", Value = 0 },
             new() { Label = "东莞-正式数据库", Value = 1 },
             new() { Label = "曼谷-测试数据库", Value = 2 },
-            new() { Label = "曼谷-正式数据库", Value = 3 },
+            new() { Label = "曼谷-正式数据库", Value = 3 }
         ];
         return new ApiResult<List<LoginTypeResult>> { MsgCode = MsgCodeEnum.Success, Msg = "查询成功", Data = list };
     }
 
 
     /// <summary>
-    /// 登录接口
+    ///     登录接口
     /// </summary>
     /// <param name="request"></param>
     /// <returns></returns>
@@ -117,10 +107,7 @@ public class LoginService(
             request.PassWord,
             accountResult.PasswordHash,
             accountResult.PasswordSalt);
-        if (isValid == false)
-        {
-            throw new ValidationException(MsgCodeEnum.Warning, "账号密码错误，请重新输入");
-        }
+        if (isValid == false) throw new ValidationException(MsgCodeEnum.Warning, "账号密码错误，请重新输入");
 
         var jti = HashHelper.GetUuid();
         var token = CreateToken(request, jti, accountResult.EmpId);
@@ -142,7 +129,7 @@ public class LoginService(
     }
 
     /// <summary>
-    /// 验证token是否合格
+    ///     验证token是否合格
     /// </summary>
     /// <param name="request"></param>
     /// <returns></returns>
@@ -152,7 +139,17 @@ public class LoginService(
     }
 
     /// <summary>
-    /// 生成token方法
+    ///     验证当前账号是否存在
+    /// </summary>
+    /// <param name="request"></param>
+    /// <returns></returns>
+    private async Task<bool> VerifyAccountAsync(ByAccountRequest request)
+    {
+        return await loginQuery.GetAccountById(request) != null;
+    }
+
+    /// <summary>
+    ///     生成token方法
     /// </summary>
     /// <param name="request"></param>
     /// <param name="jti"></param>
@@ -184,7 +181,7 @@ public class LoginService(
 
 
     /// <summary>
-    ///  把令牌信息写入数据库表中
+    ///     把令牌信息写入数据库表中
     /// </summary>
     /// <param name="request"></param>
     /// <param name="accountResult"></param>

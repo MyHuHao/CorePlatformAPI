@@ -7,7 +7,7 @@ namespace Application.Queries;
 public class RoleGroupQuery(IRoleGroupRepository repository)
 {
     /// <summary>
-    /// 通过id查询角色组详细
+    ///     通过id查询角色组详细
     /// </summary>
     /// <param name="id"></param>
     /// <returns></returns>
@@ -17,7 +17,7 @@ public class RoleGroupQuery(IRoleGroupRepository repository)
     }
 
     /// <summary>
-    /// 验证是否有该角色组
+    ///     验证是否有该角色组
     /// </summary>
     /// <param name="request"></param>
     /// <returns></returns>

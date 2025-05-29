@@ -220,7 +220,7 @@ public class WebMenuRepository(IDapperExtensions<WebMenu> dapper, IUnitOfWork un
         {
             conditions.Add("Sequence = @Sequence");
             parameters.Add("Sequence", request.Sequence);
-            
+
             conditions.Add("ParentWebMenuId = @ParentWebMenuId");
             parameters.Add("ParentWebMenuId", request.ParentWebMenuId);
         }
@@ -230,7 +230,7 @@ public class WebMenuRepository(IDapperExtensions<WebMenu> dapper, IUnitOfWork un
             conditions.Add("Name = @Name");
             parameters.Add("Name", request.Name);
         }
-        
+
         var whereClause = conditions.Count > 0 ? $"WHERE {string.Join(" AND ", conditions)}" : string.Empty;
 
         var sql = $"""

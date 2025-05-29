@@ -8,7 +8,7 @@
 
     <ItemGroup>
         <Folder Include="Logging\"/>
-        <Folder Include="Resources\" />
+        <Folder Include="Resources\"/>
         <Folder Include="Security\"/>
     </ItemGroup>
 

@@ -11,7 +11,7 @@ namespace API.Controllers;
 public class RoleGroupController(IRoleGroupService service) : Controller
 {
     /// <summary>
-    /// 新增角色组
+    ///     新增角色组
     /// </summary>
     /// <param name="request"></param>
     /// <returns></returns>
@@ -23,7 +23,7 @@ public class RoleGroupController(IRoleGroupService service) : Controller
     }
 
     /// <summary>
-    /// 分页查询角色组
+    ///     分页查询角色组
     /// </summary>
     /// <param name="request"></param>
     /// <returns></returns>
@@ -35,7 +35,7 @@ public class RoleGroupController(IRoleGroupService service) : Controller
     }
 
     /// <summary>
-    /// 删除角色组
+    ///     删除角色组
     /// </summary>
     /// <param name="id"></param>
     /// <returns></returns>
@@ -47,7 +47,7 @@ public class RoleGroupController(IRoleGroupService service) : Controller
     }
 
     /// <summary>
-    /// 通过id查询角色组详细
+    ///     通过id查询角色组详细
     /// </summary>
     /// <param name="id"></param>
     /// <returns></returns>
@@ -57,9 +57,9 @@ public class RoleGroupController(IRoleGroupService service) : Controller
         var result = await service.GetRoleGroupByIdAsync(id);
         return Ok(result);
     }
-    
+
     /// <summary>
-    /// 修改角色组
+    ///     修改角色组
     /// </summary>
     /// <param name="request"></param>
     /// <returns></returns>

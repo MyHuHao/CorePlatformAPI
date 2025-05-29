@@ -17,7 +17,7 @@ public interface IRoleGroupService
 
     // 通过id查询角色组详细
     Task<ApiResult<RoleGroupDto>> GetRoleGroupByIdAsync(string id);
-    
+
     // 修改角色组
     Task<ApiResult<string>> UpdateRoleGroupAsync(UpdateRoleGroupRequest request);
 }

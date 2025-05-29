@@ -10,7 +10,7 @@ namespace Infrastructure.Data.Repositories;
 public class RoleGroupRepository(IDapperExtensions<RoleGroup> dapper, IUnitOfWork unitOfWork) : IRoleGroupRepository
 {
     /// <summary>
-    /// 新增角色组
+    ///     新增角色组
     /// </summary>
     /// <param name="request"></param>
     /// <returns></returns>
@@ -60,7 +60,7 @@ public class RoleGroupRepository(IDapperExtensions<RoleGroup> dapper, IUnitOfWor
     }
 
     /// <summary>
-    /// 分页查询角色组
+    ///     分页查询角色组
     /// </summary>
     /// <param name="request"></param>
     /// <returns></returns>
@@ -118,7 +118,7 @@ public class RoleGroupRepository(IDapperExtensions<RoleGroup> dapper, IUnitOfWor
     }
 
     /// <summary>
-    /// 删除角色组
+    ///     删除角色组
     /// </summary>
     /// <param name="id"></param>
     /// <returns></returns>
@@ -133,7 +133,7 @@ public class RoleGroupRepository(IDapperExtensions<RoleGroup> dapper, IUnitOfWor
     }
 
     /// <summary>
-    /// 通过id查询角色组详细
+    ///     通过id查询角色组详细
     /// </summary>
     /// <param name="id"></param>
     /// <returns></returns>
@@ -164,7 +164,7 @@ public class RoleGroupRepository(IDapperExtensions<RoleGroup> dapper, IUnitOfWor
     }
 
     /// <summary>
-    /// 验证是否重复
+    ///     验证是否重复
     /// </summary>
     /// <param name="request"></param>
     /// <returns></returns>
@@ -190,14 +190,14 @@ public class RoleGroupRepository(IDapperExtensions<RoleGroup> dapper, IUnitOfWor
             conditions.Add("RoleGroupName = @RoleGroupName");
             parameters.Add("RoleGroupName", request.RoleGroupName);
         }
-        
-        
+
+
         if (!string.IsNullOrEmpty(request.Status))
         {
             conditions.Add("Status = @Status");
             parameters.Add("Status", request.Status);
         }
-        
+
 
         var whereClause = conditions.Count > 0 ? $"WHERE {string.Join(" AND ", conditions)}" : string.Empty;
 

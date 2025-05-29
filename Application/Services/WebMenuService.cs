@@ -67,7 +67,7 @@ public class WebMenuService(IMapper mapper, WebMenuQuery query, WebMenuCommand c
             Name = request.Name
         });
         if (verifyName) throw new ValidationException(MsgCodeEnum.Warning, "菜单名称已存在");
-        
+
         await command.AddWebMenuAsync(request);
         return new ApiResult<string> { MsgCode = MsgCodeEnum.Success, Msg = "创建成功" };
     }
@@ -89,7 +89,7 @@ public class WebMenuService(IMapper mapper, WebMenuQuery query, WebMenuCommand c
             Name = request.Name
         });
         if (verifyName == false) throw new ValidationException(MsgCodeEnum.Warning, "名称已存在");
-        
+
         await command.UpdateWebMenuAsync(request);
         return new ApiResult<string> { MsgCode = MsgCodeEnum.Success, Msg = "修改成功" };
     }

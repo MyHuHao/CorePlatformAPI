@@ -32,7 +32,7 @@ public class RoleGroupService(
     }
 
     /// <summary>
-    /// 分页查询角色组
+    ///     分页查询角色组
     /// </summary>
     /// <param name="request"></param>
     /// <returns></returns>

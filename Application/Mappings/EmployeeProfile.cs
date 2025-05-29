@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using Core.DTOs;
 using Core.Entities;
-using Core.Enums;
 
 namespace Application.Mappings;
 

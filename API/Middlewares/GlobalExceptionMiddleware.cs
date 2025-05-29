@@ -7,6 +7,8 @@ namespace API.Middlewares;
 
 public class GlobalExceptionMiddleware(RequestDelegate next, ILogger<GlobalExceptionMiddleware> logger)
 {
+    private static readonly JsonSerializerOptions JsonOptions = new(JsonSerializerDefaults.Web);
+
     public async Task InvokeAsync(HttpContext context)
     {
         try
@@ -19,8 +21,6 @@ public class GlobalExceptionMiddleware(RequestDelegate next, ILogger<GlobalExcep
             await HandleSystemExceptionAsync(context, ex);
         }
     }
-
-    private static readonly JsonSerializerOptions JsonOptions = new(JsonSerializerDefaults.Web);
 
     private static async Task HandleSystemExceptionAsync(HttpContext context, Exception exception)
     {

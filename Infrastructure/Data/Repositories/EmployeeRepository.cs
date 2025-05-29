@@ -10,7 +10,7 @@ namespace Infrastructure.Data.Repositories;
 public class EmployeeRepository(IDapperExtensions<Employee> dapper, IUnitOfWork unitOfWork) : IEmployeeRepository
 {
     /// <summary>
-    /// 通过人员id查询人员信息
+    ///     通过人员id查询人员信息
     /// </summary>
     /// <param name="request"></param>
     /// <returns></returns>
@@ -55,7 +55,7 @@ public class EmployeeRepository(IDapperExtensions<Employee> dapper, IUnitOfWork 
     }
 
     /// <summary>
-    /// 获取人员列表
+    ///     获取人员列表
     /// </summary>
     /// <param name="request"></param>
     /// <returns></returns>
@@ -119,7 +119,7 @@ public class EmployeeRepository(IDapperExtensions<Employee> dapper, IUnitOfWork 
     }
 
     /// <summary>
-    /// 新增人员
+    ///     新增人员
     /// </summary>
     /// <param name="request"></param>
     /// <returns></returns>
@@ -208,7 +208,7 @@ public class EmployeeRepository(IDapperExtensions<Employee> dapper, IUnitOfWork 
     }
 
     /// <summary>
-    /// 批量新增账号
+    ///     批量新增账号
     /// </summary>
     /// <param name="list"></param>
     /// <returns></returns>
@@ -297,7 +297,7 @@ public class EmployeeRepository(IDapperExtensions<Employee> dapper, IUnitOfWork 
     }
 
     /// <summary>
-    /// 删除账号
+    ///     删除账号
     /// </summary>
     /// <param name="request"></param>
     public async Task DeleteEmployeeAsync(ByEmployeeRequest request)

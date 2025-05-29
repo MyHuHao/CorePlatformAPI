@@ -12,7 +12,7 @@ namespace Application.Services;
 public class EmployeeService(EmployeeQuery query, IMapper mapper) : IEmployeeService
 {
     /// <summary>
-    /// 通过用户ID获取详情
+    ///     通过用户ID获取详情
     /// </summary>
     /// <param name="request"></param>
     /// <returns></returns>
@@ -26,7 +26,7 @@ public class EmployeeService(EmployeeQuery query, IMapper mapper) : IEmployeeSer
     }
 
     /// <summary>
-    /// 验证是否有该人员
+    ///     验证是否有该人员
     /// </summary>
     /// <param name="request"></param>
     /// <returns></returns>
@@ -36,7 +36,7 @@ public class EmployeeService(EmployeeQuery query, IMapper mapper) : IEmployeeSer
     }
 
     /// <summary>
-    /// 分页查询
+    ///     分页查询
     /// </summary>
     /// <param name="request"></param>
     /// <returns></returns>

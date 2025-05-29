@@ -30,7 +30,7 @@ public class AddEmployeeRequest
     public int Status { get; set; }
     public string Direct { get; set; } = "";
     public DateTime? DeliveredDate { get; set; }
-    public DateTime? Birthday { get; set; }  
+    public DateTime? Birthday { get; set; }
     public string Sex { get; set; } = "";
     public int WorkYear { get; set; }
     public string EducationName { get; set; } = "";

@@ -19,7 +19,5 @@ public class WebMenuProfile : Profile
                 opt => opt.MapFrom(src => src.IsVisible.ToString()))
             .ForMember(dest => dest.Status,
                 opt => opt.MapFrom(src => src.Status.ToString()));
-
-
     }
 }

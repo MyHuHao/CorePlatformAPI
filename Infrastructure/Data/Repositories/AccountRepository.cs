@@ -10,7 +10,7 @@ namespace Infrastructure.Data.Repositories;
 public class AccountRepository(IDapperExtensions<Account> dapper, IUnitOfWork unitOfWork) : IAccountRepository
 {
     /// <summary>
-    /// 通过登录用户名查询账号信息
+    ///     通过登录用户名查询账号信息
     /// </summary>
     /// <param name="request"></param>
     /// <returns></returns>
@@ -54,7 +54,7 @@ public class AccountRepository(IDapperExtensions<Account> dapper, IUnitOfWork un
     }
 
     /// <summary>
-    /// 通过ID查询账号详情
+    ///     通过ID查询账号详情
     /// </summary>
     /// <param name="id"></param>
     /// <returns></returns>
@@ -96,7 +96,7 @@ public class AccountRepository(IDapperExtensions<Account> dapper, IUnitOfWork un
     }
 
     /// <summary>
-    /// 获取账号列表
+    ///     获取账号列表
     /// </summary>
     /// <param name="request"></param>
     /// <returns></returns>
@@ -153,7 +153,7 @@ public class AccountRepository(IDapperExtensions<Account> dapper, IUnitOfWork un
     }
 
     /// <summary>
-    /// 新增账号
+    ///     新增账号
     /// </summary>
     /// <param name="request"></param>
     /// <returns></returns>
@@ -237,7 +237,7 @@ public class AccountRepository(IDapperExtensions<Account> dapper, IUnitOfWork un
     }
 
     /// <summary>
-    /// 批量新增账号
+    ///     批量新增账号
     /// </summary>
     /// <param name="list"></param>
     /// <returns></returns>
@@ -325,7 +325,7 @@ public class AccountRepository(IDapperExtensions<Account> dapper, IUnitOfWork un
     }
 
     /// <summary>
-    /// 删除账号
+    ///     删除账号
     /// </summary>
     /// <returns></returns>
     public async Task<int> DeleteAccountAsync(string id)

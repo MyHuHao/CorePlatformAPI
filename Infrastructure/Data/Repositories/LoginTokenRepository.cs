@@ -10,7 +10,7 @@ namespace Infrastructure.Data.Repositories;
 public class LoginTokenRepository(IDapperExtensions<LoginToken> dapper) : ILoginTokenRepository
 {
     /// <summary>
-    /// 通过登录用户名查询登录用户信息
+    ///     通过登录用户名查询登录用户信息
     /// </summary>
     /// <param name="request"></param>
     /// <returns></returns>
@@ -51,7 +51,7 @@ public class LoginTokenRepository(IDapperExtensions<LoginToken> dapper) : ILogin
     }
 
     /// <summary>
-    /// 获取登录用户列表
+    ///     获取登录用户列表
     /// </summary>
     /// <param name="request"></param>
     /// <returns></returns>
@@ -102,7 +102,7 @@ public class LoginTokenRepository(IDapperExtensions<LoginToken> dapper) : ILogin
     }
 
     /// <summary>
-    /// 新增登录用户
+    ///     新增登录用户
     /// </summary>
     /// <param name="request"></param>
     /// <returns></returns>
@@ -144,12 +144,12 @@ public class LoginTokenRepository(IDapperExtensions<LoginToken> dapper) : ILogin
                 request.DeviceId,
                 request.IsActive,
                 CreatedBy = request.StaffId,
-                ModifiedBy = request.StaffId,
+                ModifiedBy = request.StaffId
             });
     }
 
     /// <summary>
-    /// 验证登录用户
+    ///     验证登录用户
     /// </summary>
     /// <param name="request"></param>
     /// <returns></returns>
@@ -175,7 +175,7 @@ public class LoginTokenRepository(IDapperExtensions<LoginToken> dapper) : ILogin
     }
 
     /// <summary>
-    /// 停用登录用户
+    ///     停用登录用户
     /// </summary>
     /// <param name="id"></param>
     public async Task DisableLoginTokenAsync(string id)

@@ -7,7 +7,7 @@ namespace Application.Queries;
 public class ApiLogQuery(IApiLogRepository repository)
 {
     /// <summary>
-    /// 分页查询-获取访问日志
+    ///     分页查询-获取访问日志
     /// </summary>
     /// <param name="request"></param>
     /// <returns></returns>

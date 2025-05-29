@@ -14,4 +14,4 @@ public class ApiLogProfile : Profile
             .ForMember(dest => dest.RequestTime,
                 opt => opt.MapFrom(src => src.RequestTime.ToString("yyyy-MM-dd HH:mm:ss")));
     }
-}   
+}

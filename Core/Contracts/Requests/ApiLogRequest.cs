@@ -12,12 +12,12 @@ public class ByApiLogListRequest
 
 public class AddApiLogRequest
 {
-    public required string IpAddress { get; set; } 
+    public required string IpAddress { get; set; }
     public required string UserName { get; set; }
     public required string Path { get; set; }
     public required string Method { get; set; }
     public required string RequestBody { get; set; }
-    public required string ResponseBody { get; set; } 
+    public required string ResponseBody { get; set; }
     public required short StatusCode { get; set; }
     public required string ErrorMessage { get; set; }
     public required DateTime RequestTime { get; set; }

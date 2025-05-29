@@ -9,7 +9,7 @@ namespace Infrastructure.Data.Repositories;
 public class LoginLogRepository(IDapperExtensions<LoginLog> dapper, IUnitOfWork unitOfWork) : ILoginLogRepository
 {
     /// <summary>
-    /// 新增登录日志
+    ///     新增登录日志
     /// </summary>
     /// <param name="request"></param>
     /// <returns></returns>
