@@ -39,6 +39,7 @@ public class UpdateResourceRequest
 
 public class ValidResourceCodeRequest
 {
+    public string? ResourceId { get; set; }
     public string CompanyId { get; set; } = "";
     public string WebMenuId { get; set; } = "";
     public string ResCode { get; set; } = "";

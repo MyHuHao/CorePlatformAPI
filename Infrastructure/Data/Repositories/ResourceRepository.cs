@@ -229,6 +229,12 @@ public class ResourceRepository(IDapperExtensions<Resource> dapper, IUnitOfWork 
 
         conditions.Add("WebMenuId = @WebMenuId");
         parameters.Add("WebMenuId", request.WebMenuId);
+        
+        if (!string.IsNullOrEmpty(request.ResourceId))
+        {
+            conditions.Add("Id != @ResourceId");
+            parameters.Add("ResourceId", request.ResourceId);
+        }
 
         if (!string.IsNullOrEmpty(request.ResCode))
         {

@@ -56,6 +56,7 @@ public class ResourceService(ResourceQuery query, ResourceCommand command, IMapp
         // 验证是否重复
         var validResourceCode = await query.ValidResourceAsync(new ValidResourceCodeRequest
         {
+            ResourceId = request.Id,
             CompanyId = request.CompanyId,
             WebMenuId = request.WebMenuId,
             ResCode = request.ResCode
@@ -65,6 +66,7 @@ public class ResourceService(ResourceQuery query, ResourceCommand command, IMapp
         // 验证排序是否重复
         var validResourceSequence = await query.ValidResourceAsync(new ValidResourceCodeRequest
         {
+            ResourceId = request.Id,
             CompanyId = request.CompanyId,
             WebMenuId = request.WebMenuId,
             ResSequence = request.ResSequence
