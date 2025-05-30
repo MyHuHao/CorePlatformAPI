@@ -29,6 +29,13 @@ public class ResourceService(ResourceQuery query, ResourceCommand command, IMapp
 
     public async Task<ApiResult<string>> AddResourceAsync(AddResourceRequest request)
     {
+        // 公司和菜单ID不能为空
+        if (string.IsNullOrEmpty(request.CompanyId))
+            throw new ValidationException(MsgCodeEnum.Warning, "所属公司不能为空");
+        
+        if (string.IsNullOrEmpty(request.WebMenuId))
+            throw new ValidationException(MsgCodeEnum.Warning, "所属菜单不能为空");
+
         // 验证是否重复
         var validResourceCode = await query.ValidResourceCodeAsync(new ValidResourceCodeRequest
         {
@@ -36,7 +43,7 @@ public class ResourceService(ResourceQuery query, ResourceCommand command, IMapp
             WebMenuId = request.WebMenuId,
             ResCode = request.ResCode
         });
-        if (!validResourceCode) throw new ValidationException(MsgCodeEnum.Warning, "资源编码已存在");
+        if (validResourceCode) throw new ValidationException(MsgCodeEnum.Warning, "资源编码已存在");
 
         // 新增数据
         await command.AddResourceAsync(request);

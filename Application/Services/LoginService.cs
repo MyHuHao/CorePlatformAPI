@@ -100,7 +100,7 @@ public class LoginService(
             CompanyId = request.LoginType.ToRegion(),
             LoginName = request.Account
         });
-        if (accountResult == null) throw new ValidationException(MsgCodeEnum.Warning, "账户已存在，请重新输入");
+        if (accountResult == null) throw new ValidationException(MsgCodeEnum.Warning, "账户不存在，请重新输入");
 
         // 验证账户，密码是否正确
         var isValid = HashHelper.VerifyPassword(
