@@ -219,7 +219,7 @@ public class ResourceRepository(IDapperExtensions<Resource> dapper, IUnitOfWork 
     /// </summary>
     /// <param name="request"></param>
     /// <returns></returns>
-    public async Task<Resource?> ValidResourceCodeAsync(ValidResourceCodeRequest request)
+    public async Task<Resource?> ValidResourceAsync(ValidResourceCodeRequest request)
     {
         var conditions = new List<string>();
         var parameters = new DynamicParameters();
@@ -234,6 +234,12 @@ public class ResourceRepository(IDapperExtensions<Resource> dapper, IUnitOfWork 
         {
             conditions.Add("ResCode = @ResCode");
             parameters.Add("ResCode", request.ResCode);
+        }
+        
+        if (request.ResSequence != null)
+        {
+            conditions.Add("ResSequence = @ResSequence");
+            parameters.Add("ResSequence", request.ResSequence);
         }
 
         var whereClause = conditions.Count > 0 ? $"WHERE {string.Join(" AND ", conditions)}" : string.Empty;

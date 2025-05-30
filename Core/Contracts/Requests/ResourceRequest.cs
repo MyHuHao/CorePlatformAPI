@@ -42,4 +42,5 @@ public class ValidResourceCodeRequest
     public string CompanyId { get; set; } = "";
     public string WebMenuId { get; set; } = "";
     public string ResCode { get; set; } = "";
+    public int? ResSequence { get; set; }
 }

@@ -45,5 +45,5 @@ public interface IResourceRepository
     /// </summary>
     /// <param name="request"></param>
     /// <returns></returns>
-    Task<Resource?> ValidResourceCodeAsync(ValidResourceCodeRequest request);
+    Task<Resource?> ValidResourceAsync(ValidResourceCodeRequest request);
 }

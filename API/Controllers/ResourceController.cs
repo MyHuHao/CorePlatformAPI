@@ -39,16 +39,16 @@ public class ResourceController(IResourceService service) : Controller
     }
 
     // 删除资源
-    [HttpPost]
-    public async Task<IActionResult> DeleteResourceById([FromBody] string id)
+    [HttpGet("{id}")]
+    public async Task<IActionResult> DeleteResourceById(string id)
     {
         var result = await service.DeleteResourceByIdAsync(id);
         return Ok(result);
     }
 
     // 通过ID查询资源详细
-    [HttpPost]
-    public async Task<IActionResult> GetResourceById([FromBody] string id)
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetResourceById(string id)
     {
         var result = await service.GetResourceByIdAsync(id);
         return Ok(result);

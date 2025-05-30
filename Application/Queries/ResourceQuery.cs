@@ -11,9 +11,9 @@ public class ResourceQuery(IResourceRepository repository)
         return await repository.GetResourceByPageAsync(request);
     }
     
-    public async Task<bool> ValidResourceCodeAsync(ValidResourceCodeRequest request)
+    public async Task<bool> ValidResourceAsync(ValidResourceCodeRequest request)
     {
-        return await repository.ValidResourceCodeAsync(request) != null;
+        return await repository.ValidResourceAsync(request) != null;
     }
     
     // 通过ID查询资源详细
