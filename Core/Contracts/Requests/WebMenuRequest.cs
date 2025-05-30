@@ -1,9 +1,14 @@
-﻿namespace Core.Contracts.Results;
+﻿namespace Core.Contracts.Requests;
 
-public class WebMenuListResult
+public class ByWebMenuListRequest
 {
-    public string Id { get; set; } = "";
-    public string WebMenuId { get; set; } = "";
+    public string Name { get; set; } = "";
+    public int Page { get; set; } = 1;
+    public int PageSize { get; set; } = 20;
+}
+
+public class AddWebMenuRequest
+{
     public string ParentWebMenuId { get; set; } = "";
     public string Name { get; set; } = "";
     public string Path { get; set; } = "";
@@ -20,14 +25,22 @@ public class WebMenuListResult
     public string MenuType { get; set; } = "";
     public string Status { get; set; } = "";
     public string Remark { get; set; } = "";
-    public List<WebMenuListResult> Children { get; set; } = [];
+    public string StaffId { get; set; } = "";
 }
 
-public class ParentWebMenuListResult
+public class UpdateWebMenuRequest : AddWebMenuRequest
 {
-    public string Value { get; set; } = "";
-    public string Label { get; set; } = "";
-    public string ParentWebMenuId { get; set; } = "";
+    public string Id { get; set; } = "";
+}
+
+public class VerifyWebMenuRequest
+{
     public string Sequence { get; set; } = "";
-    public List<ParentWebMenuListResult> Children { get; set; } = [];
+    public string Name { get; set; } = "";
+    public string ParentWebMenuId { get; set; } = "";
+}
+
+public class ByWebMenuResourceRequest
+{
+    public string CompanyId { get; set; } = "";
 }

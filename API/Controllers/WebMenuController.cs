@@ -49,4 +49,12 @@ public class WebMenuController(IWebMenuService service) : Controller
         var result = await service.DeleteWebMenuByIdAsync(id);
         return Ok(result);
     }
+
+    // 获取菜单资源列表
+    [HttpPost]
+    public async Task<IActionResult> GetWebMenuResourceList([FromBody] ByWebMenuResourceRequest request)
+    {
+        var result = await service.GetWebMenuResourceListAsync(request);
+        return Ok(result);
+    }
 }

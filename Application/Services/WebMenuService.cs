@@ -11,21 +11,22 @@ using Core.Interfaces.Services;
 
 namespace Application.Services;
 
-public class WebMenuService(IMapper mapper, WebMenuQuery query, WebMenuCommand command) : IWebMenuService
+public class WebMenuService(IMapper mapper, WebMenuQuery query, WebMenuCommand command, ResourceQuery resourceQuery)
+    : IWebMenuService
 {
     // 菜单分页查询
-    public async Task<ApiResult<PagedResult<WebMenuListResult>>> GetWebMenuByPageAsync(ByWebMenuListRequest request)
+    public async Task<ApiResult<PagedResult<WebMenuResult>>> GetWebMenuByPageAsync(ByWebMenuListRequest request)
     {
         var result = await query.GetWebMenuPageAsync(request);
         var webMenuDto = mapper.Map<List<WebMenuDto>>(result.items);
-        PagedResult<WebMenuListResult> pagedResult = new()
+        PagedResult<WebMenuResult> pagedResult = new()
         {
             Records = FormatWebMenuListResult(webMenuDto),
             Page = request.Page,
             PageSize = request.PageSize,
             Total = result.total
         };
-        return new ApiResult<PagedResult<WebMenuListResult>>
+        return new ApiResult<PagedResult<WebMenuResult>>
             { MsgCode = MsgCodeEnum.Success, Msg = "查询成功", Data = pagedResult };
     }
 
@@ -102,6 +103,57 @@ public class WebMenuService(IMapper mapper, WebMenuQuery query, WebMenuCommand c
         return new ApiResult<string> { MsgCode = MsgCodeEnum.Success, Msg = "删除成功" };
     }
 
+    public async Task<ApiResult<List<WebMenuResourceListResult>>> GetWebMenuResourceListAsync(
+        ByWebMenuResourceRequest request)
+    {
+        // 获取所有的数据
+        var result = await query.GetWebMenuPageAsync(new ByWebMenuListRequest
+        {
+            Name = "",
+            Page = 1,
+            PageSize = 2000
+        });
+        var webMenuDto = mapper.Map<List<WebMenuDto>>(result.items);
+
+        // 格式化数据格式
+        var list = FormatWebMenuResourceListResult(webMenuDto);
+
+        foreach (var item in list)
+        {
+            item.ResourceList = await resourceQuery.GetResourceListAsync(request.CompanyId, item.WebMenuId);
+        }
+
+        return new ApiResult<List<WebMenuResourceListResult>>
+        {
+            MsgCode = MsgCodeEnum.Success,
+            Msg = "查询成功",
+            Data = list
+        };
+    }
+
+    // 格式化 webMenuDto 为 树形数组 FormatWebMenuResourceListResult
+    private static List<WebMenuResourceListResult> FormatWebMenuResourceListResult(List<WebMenuDto> webMenuDto)
+    {
+        return BuildTree(string.Empty);
+
+        List<WebMenuResourceListResult> BuildTree(string parentId)
+        {
+            return webMenuDto
+                .Where(dto => dto.ParentWebMenuId == parentId)
+                .Select(dto => new WebMenuResourceListResult
+                {
+                    Id = dto.Id,
+                    WebMenuId = dto.WebMenuId,
+                    ParentWebMenuId = dto.ParentWebMenuId,
+                    Name = dto.Name,
+                    Title = dto.Title,
+                    Sequence = dto.Sequence,
+                    ResourceList = [],
+                    Children = BuildTree(dto.WebMenuId)
+                }).OrderBy(m => Convert.ToInt32(m.Sequence)).ToList();
+        }
+    }
+
     // 格式化 webMenuDto 为 树形数组
     private static List<ParentWebMenuListResult> FormatParentWebMenuListResult(List<WebMenuDto> webMenuDto)
     {
@@ -123,15 +175,15 @@ public class WebMenuService(IMapper mapper, WebMenuQuery query, WebMenuCommand c
     }
 
     // 格式化 webMenuDto 为 树形数组
-    private static List<WebMenuListResult> FormatWebMenuListResult(List<WebMenuDto> webMenuDto)
+    private static List<WebMenuResult> FormatWebMenuListResult(List<WebMenuDto> webMenuDto)
     {
         return BuildTree(string.Empty);
 
-        List<WebMenuListResult> BuildTree(string parentId)
+        List<WebMenuResult> BuildTree(string parentId)
         {
             return webMenuDto
                 .Where(dto => dto.ParentWebMenuId == parentId)
-                .Select(dto => new WebMenuListResult
+                .Select(dto => new WebMenuResult
                 {
                     Id = dto.Id,
                     WebMenuId = dto.WebMenuId,

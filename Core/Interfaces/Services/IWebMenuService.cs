@@ -7,7 +7,7 @@ namespace Core.Interfaces.Services;
 public interface IWebMenuService
 {
     // 菜单分页查询
-    Task<ApiResult<PagedResult<WebMenuListResult>>> GetWebMenuByPageAsync(ByWebMenuListRequest request);
+    Task<ApiResult<PagedResult<WebMenuResult>>> GetWebMenuByPageAsync(ByWebMenuListRequest request);
 
     // 新增菜单
     Task<ApiResult<string>> AddWebMenuAsync(AddWebMenuRequest request);
@@ -20,4 +20,7 @@ public interface IWebMenuService
 
     // 删除菜单
     Task<ApiResult<string>> DeleteWebMenuByIdAsync(string id);
+    
+    //  获取菜单资源列表
+    Task<ApiResult<List<WebMenuResourceListResult>>> GetWebMenuResourceListAsync(ByWebMenuResourceRequest request);
 }
