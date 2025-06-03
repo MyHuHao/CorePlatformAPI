@@ -1,4 +1,5 @@
 ﻿using Core.Contracts.Requests;
+using Core.Contracts.Results;
 using Core.Entities;
 using Core.Helpers;
 using Core.Interfaces;
@@ -7,7 +8,11 @@ using Dapper;
 
 namespace Infrastructure.Data.Repositories;
 
-public class RoleGroupRepository(IDapperExtensions<RoleGroup> dapper, IUnitOfWork unitOfWork) : IRoleGroupRepository
+public class RoleGroupRepository(
+    IDapperExtensions<RoleGroup> dapper,
+    IDapperExtensions<RoleGroupResResult> dapperRoleGroupRes,
+    IDapperExtensions<RoleGroupMenuResult> dapperRoleGroupMenu,
+    IUnitOfWork unitOfWork) : IRoleGroupRepository
 {
     /// <summary>
     ///     新增角色组
@@ -254,5 +259,41 @@ public class RoleGroupRepository(IDapperExtensions<RoleGroup> dapper, IUnitOfWor
             unitOfWork.CurrentConnection,
             unitOfWork.CurrentTransaction
         );
+    }
+
+    public async Task<IEnumerable<RoleGroupResResult>> GetRoleGroupResByIdAsync(string companyId, string roleGroupId)
+    {
+        const string sql = """
+                           select a.CompanyId,a.RoleGroupId,a.ResId,b.ResName,b.WebMenuId from RoleGroupResource as a
+                           left join Resource as b on a.CompanyId = b.CompanyId and a.ResId = b.Id
+                           where a.CompanyId = @CompanyId and a.RoleGroupId = @RoleGroupId
+                           """;
+        var result = await dapperRoleGroupRes.QueryAsync(sql,
+            new
+            {
+                CompanyId = companyId,
+                RoleGroupId = roleGroupId
+            },
+            unitOfWork.CurrentConnection,
+            unitOfWork.CurrentTransaction);
+        return result;
+    }
+
+    public async Task<IEnumerable<RoleGroupMenuResult>> GetRoleGroupMenuByIdAsync(string companyId, string roleGroupId)
+    {
+        const string sql = """
+                           select a.CompanyId,a.RoleGroupId,a.WebMenuId,b.Title from RoleGroupWebMenu as a
+                           left join WebMenu as b on a.WebMenuId = b.WebMenuId
+                           where a.CompanyId = @CompanyId and a.RoleGroupId = @RoleGroupId
+                           """;
+        var result = await dapperRoleGroupMenu.QueryAsync(sql,
+            new
+            {
+                CompanyId = companyId,
+                RoleGroupId = roleGroupId
+            },
+            unitOfWork.CurrentConnection,
+            unitOfWork.CurrentTransaction);
+        return result;
     }
 }

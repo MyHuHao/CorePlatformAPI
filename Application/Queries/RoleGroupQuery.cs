@@ -1,4 +1,5 @@
 ﻿using Core.Contracts.Requests;
+using Core.Contracts.Results;
 using Core.Entities;
 using Core.Interfaces.Repositories;
 
@@ -63,6 +64,31 @@ public class RoleGroupQuery(
             CreatedTime = r.CreatedTime,
             ModifiedBy = r.ModifiedBy,
             ModifiedTime = r.ModifiedTime
+        }).ToList();
+    }
+
+    public async Task<List<RoleGroupMenuResult>> GetRoleGroupMenuByIdAsync(string companyId, string roleGroupId)
+    {
+        var result = await repository.GetRoleGroupMenuByIdAsync(companyId, roleGroupId);
+        return result.Select(r => new RoleGroupMenuResult
+        {
+            CompanyId = r.CompanyId,
+            RoleGroupId = r.RoleGroupId,
+            WebMenuId = r.WebMenuId,
+            Title = r.Title
+        }).ToList();
+    }
+
+    public async Task<IEnumerable<RoleGroupResResult>> GetRoleGroupResByIdAsync(string companyId, string roleGroupId)
+    {
+        var result = await repository.GetRoleGroupResByIdAsync(companyId, roleGroupId);
+        return result.Select(r => new RoleGroupResResult
+        {
+            CompanyId = r.CompanyId,
+            RoleGroupId = r.RoleGroupId,
+            ResId = r.ResId,
+            ResName = r.ResName,
+            WebMenuId = r.WebMenuId
         }).ToList();
     }
 }

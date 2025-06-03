@@ -1,4 +1,5 @@
 ﻿using Core.Contracts.Requests;
+using Core.Contracts.Results;
 using Core.Entities;
 
 namespace Core.Interfaces.Repositories;
@@ -46,4 +47,10 @@ public interface IRoleGroupRepository
     /// <param name="request"></param>
     /// <returns></returns>
     Task<int> UpdateRoleGroupAsync(UpdateRoleGroupRequest request);
+    
+    // 通过ID查询资源
+    Task<IEnumerable<RoleGroupResResult>> GetRoleGroupResByIdAsync(string companyId, string roleGroupId);
+    
+    // 通过ID查询菜单
+    Task<IEnumerable<RoleGroupMenuResult>> GetRoleGroupMenuByIdAsync(string companyId, string roleGroupId);
 }

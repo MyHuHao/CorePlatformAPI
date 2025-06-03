@@ -3,7 +3,6 @@ using Application.Queries;
 using AutoMapper;
 using Core.Contracts;
 using Core.Contracts.Requests;
-using Core.Contracts.Results;
 using Core.DTOs;
 using Core.Enums;
 using Core.Exceptions;
@@ -105,13 +104,34 @@ public class RoleGroupService(
     // 通过ID获取已经授权的菜单和资源
     public async Task<ApiResult<List<string>>> GetRoleGroupAuthorizeByIdAsync(ByRoleGroupRequest request)
     {
-        // 获取该角色组的菜单
+        var menusTask = query.GetRoleGroupMenuByIdAsync(request.CompanyId, request.RoleGroupId);
+        var resourcesTask = query.GetRoleGroupResByIdAsync(request.CompanyId, request.RoleGroupId);
+        await Task.WhenAll(menusTask, resourcesTask);
 
-        // 获取该角色组的资源
+        var menus = await menusTask;
+        var resources = (await resourcesTask).ToList();
+
+        var idSet = new HashSet<string>();
+
+        foreach (var menu in menus)
+        {
+            idSet.Add(menu.WebMenuId);
+        }
+
+        // 添加资源ID和关联的WebMenuId
+        // 如果res.WebMenuId 和 menu.WebMenuId 相等，就请删除掉menu.WebMenuId
+        foreach (var res in resources)
+        {
+            idSet.Add(res.ResId);
+            if (idSet.Contains(res.WebMenuId))
+            {
+                idSet.Remove(res.WebMenuId);
+            }
+        }
 
         return new ApiResult<List<string>>
         {
-            Data = [],
+            Data = idSet.ToList(),
             MsgCode = MsgCodeEnum.Success,
             Msg = "获取成功"
         };
