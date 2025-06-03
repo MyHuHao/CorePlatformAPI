@@ -77,4 +77,12 @@ public class RoleGroupController(IRoleGroupService service) : Controller
         var result = await service.RoleGroupAuthorizeAsync(request);
         return Ok(result);
     }
+    
+    // 通过ID获取已经授权的菜单和资源
+    [HttpPost]
+    public async Task<IActionResult> GetRoleGroupAuthorizeById([FromBody] ByRoleGroupRequest request)
+    {
+        var result = await service.GetRoleGroupAuthorizeByIdAsync(request);
+        return Ok(result);
+    }
 }

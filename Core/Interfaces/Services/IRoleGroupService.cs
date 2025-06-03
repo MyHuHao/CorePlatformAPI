@@ -1,5 +1,6 @@
 ﻿using Core.Contracts;
 using Core.Contracts.Requests;
+using Core.Contracts.Results;
 using Core.DTOs;
 
 namespace Core.Interfaces.Services;
@@ -23,4 +24,7 @@ public interface IRoleGroupService
 
     // 角色组授权菜单和资源
     Task<ApiResult<string>> RoleGroupAuthorizeAsync(RoleGroupAuthorizeRequest request);
+    
+    // 通过ID获取已经授权的菜单和资源
+    Task<ApiResult<List<string>>> GetRoleGroupAuthorizeByIdAsync(ByRoleGroupRequest request);
 }

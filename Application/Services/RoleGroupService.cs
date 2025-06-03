@@ -3,6 +3,7 @@ using Application.Queries;
 using AutoMapper;
 using Core.Contracts;
 using Core.Contracts.Requests;
+using Core.Contracts.Results;
 using Core.DTOs;
 using Core.Enums;
 using Core.Exceptions;
@@ -99,6 +100,21 @@ public class RoleGroupService(
             await unitOfWork.RollbackAsync();
             throw new BadRequestException(MsgCodeEnum.Error, exception.Message);
         }
+    }
+
+    // 通过ID获取已经授权的菜单和资源
+    public async Task<ApiResult<List<string>>> GetRoleGroupAuthorizeByIdAsync(ByRoleGroupRequest request)
+    {
+        // 获取该角色组的菜单
+
+        // 获取该角色组的资源
+
+        return new ApiResult<List<string>>
+        {
+            Data = [],
+            MsgCode = MsgCodeEnum.Success,
+            Msg = "获取成功"
+        };
     }
 
     private async Task ProcessResourcesAsync(RoleGroupAuthorizeRequest request)
