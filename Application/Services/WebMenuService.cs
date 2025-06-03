@@ -116,12 +116,7 @@ public class WebMenuService(IMapper mapper, WebMenuQuery query, WebMenuCommand c
         var webMenuDto = mapper.Map<List<WebMenuDto>>(result.items);
 
         // 格式化数据格式
-        var list = FormatWebMenuResourceListResult(webMenuDto);
-
-        foreach (var item in list)
-        {
-            item.ResourceList = await resourceQuery.GetResourceListAsync(request.CompanyId, item.WebMenuId);
-        }
+        var list = await FormatWebMenuResourceListResult(request.CompanyId, webMenuDto);
 
         return new ApiResult<List<WebMenuResourceListResult>>
         {
@@ -131,26 +126,35 @@ public class WebMenuService(IMapper mapper, WebMenuQuery query, WebMenuCommand c
         };
     }
 
-    // 格式化 webMenuDto 为 树形数组 FormatWebMenuResourceListResult
-    private static List<WebMenuResourceListResult> FormatWebMenuResourceListResult(List<WebMenuDto> webMenuDto)
+    private async Task<List<WebMenuResourceListResult>> GetResourceListAsync(string companyId, string webMenuId)
     {
-        return BuildTree(string.Empty);
+        return await resourceQuery.GetResourceListAsync(companyId, webMenuId);
+    }
 
-        List<WebMenuResourceListResult> BuildTree(string parentId)
+    // 格式化 webMenuDto 为 树形数组 FormatWebMenuResourceListResult
+    private async Task<List<WebMenuResourceListResult>> FormatWebMenuResourceListResult(string companyId,
+        List<WebMenuDto> webMenuDto)
+    {
+        return await BuildTree(string.Empty);
+
+        async Task<List<WebMenuResourceListResult>> BuildTree(string parentId)
         {
-            return webMenuDto
+            var tasks = webMenuDto
                 .Where(dto => dto.ParentWebMenuId == parentId)
-                .Select(dto => new WebMenuResourceListResult
+                .Select(async dto =>
                 {
-                    Id = dto.Id,
-                    WebMenuId = dto.WebMenuId,
-                    ParentWebMenuId = dto.ParentWebMenuId,
-                    Name = dto.Name,
-                    Title = dto.Title,
-                    Sequence = dto.Sequence,
-                    ResourceList = [],
-                    Children = BuildTree(dto.WebMenuId)
-                }).OrderBy(m => Convert.ToInt32(m.Sequence)).ToList();
+                    var resourceList = await GetResourceListAsync(companyId, dto.WebMenuId);
+                    return new WebMenuResourceListResult
+                    {
+                        Id = dto.WebMenuId,
+                        Label = dto.Title,
+                        Sequence = dto.Sequence,
+                        IsPenultimate = resourceList.Count > 0,
+                        Children = resourceList.Count > 0 ? resourceList : await BuildTree(dto.WebMenuId)
+                    };
+                }).ToList();
+            var nodes = await Task.WhenAll(tasks);
+            return nodes.OrderBy(m => Convert.ToInt32(m.Sequence)).ToList();
         }
     }
 

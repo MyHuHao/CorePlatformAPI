@@ -35,11 +35,8 @@ public class ParentWebMenuListResult
 public class WebMenuResourceListResult
 {
     public string Id { get; set; } = "";
-    public string WebMenuId { get; set; } = "";
-    public string ParentWebMenuId { get; set; } = "";
-    public string Name { get; set; } = "";
-    public string Title { get; set; } = "";
+    public string Label { get; set; } = "";
     public string Sequence { get; set; } = "";
-    public List<ResourceList> ResourceList { get; set; } = [];
+    public bool IsPenultimate { get; set; }
     public List<WebMenuResourceListResult> Children { get; set; } = [];
 }

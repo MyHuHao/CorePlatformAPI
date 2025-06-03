@@ -13,7 +13,7 @@ public class ResourceQuery(IResourceRepository repository)
     }
 
     //获取资源列表
-    public async Task<List<ResourceList>> GetResourceListAsync(string companyId, string webMenuId)
+    public async Task<List<WebMenuResourceListResult>> GetResourceListAsync(string companyId, string webMenuId)
     {
         var result = await repository.GetResourceByPageAsync(new ByResourceListRequest()
         {
@@ -24,12 +24,14 @@ public class ResourceQuery(IResourceRepository repository)
             Page = 1,
             PageSize = 2000
         });
-        return result.items.Select(x => new ResourceList
+        return result.items.Select(x => new WebMenuResourceListResult
         {
             Id = x.Id,
-            ResCode = x.ResCode,
-            ResName = x.ResName
-        }).ToList();
+            Label = x.ResName,
+            IsPenultimate = false,
+            Sequence = x.ResSequence.ToString(),
+            Children = []
+        }).OrderBy(m => m.Sequence).ToList();
     }
 
     public async Task<bool> ValidResourceAsync(ValidResourceCodeRequest request)
