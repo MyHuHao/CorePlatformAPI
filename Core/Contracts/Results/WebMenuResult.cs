@@ -37,6 +37,8 @@ public class WebMenuResourceListResult
     public string Id { get; set; } = "";
     public string Label { get; set; } = "";
     public string Sequence { get; set; } = "";
+    public string Type { get; set; } = "";
+    public string WebMenuId { get; set; } = "";
     public bool IsPenultimate { get; set; }
     public List<WebMenuResourceListResult> Children { get; set; } = [];
 }

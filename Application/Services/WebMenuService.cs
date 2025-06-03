@@ -149,6 +149,8 @@ public class WebMenuService(IMapper mapper, WebMenuQuery query, WebMenuCommand c
                         Id = dto.WebMenuId,
                         Label = dto.Title,
                         Sequence = dto.Sequence,
+                        Type = "menu",
+                        WebMenuId = "",
                         IsPenultimate = resourceList.Count > 0,
                         Children = resourceList.Count > 0 ? resourceList : await BuildTree(dto.WebMenuId)
                     };

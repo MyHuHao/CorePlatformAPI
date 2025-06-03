@@ -30,6 +30,8 @@ public class ResourceQuery(IResourceRepository repository)
             Label = x.ResName,
             IsPenultimate = false,
             Sequence = x.ResSequence.ToString(),
+            Type = "resource",
+            WebMenuId = x.WebMenuId,
             Children = []
         }).OrderBy(m => m.Sequence).ToList();
     }
