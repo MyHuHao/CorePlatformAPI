@@ -69,4 +69,12 @@ public class RoleGroupController(IRoleGroupService service) : Controller
         var result = await service.UpdateRoleGroupAsync(request);
         return Ok(result);
     }
+
+    // 角色组授权菜单和资源
+    [HttpPost]
+    public async Task<IActionResult> RoleGroupAuthorize([FromBody] RoleGroupAuthorizeRequest request)
+    {
+        var result = await service.RoleGroupAuthorizeAsync(request);
+        return Ok(result);
+    }
 }

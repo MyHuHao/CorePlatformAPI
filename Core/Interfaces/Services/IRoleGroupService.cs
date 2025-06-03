@@ -20,4 +20,7 @@ public interface IRoleGroupService
 
     // 修改角色组
     Task<ApiResult<string>> UpdateRoleGroupAsync(UpdateRoleGroupRequest request);
+
+    // 角色组授权菜单和资源
+    Task<ApiResult<string>> RoleGroupAuthorizeAsync(RoleGroupAuthorizeRequest request);
 }

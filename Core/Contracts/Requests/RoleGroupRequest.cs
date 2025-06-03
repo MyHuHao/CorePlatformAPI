@@ -35,10 +35,19 @@ public class ValidRoleGroupRequest
 
 public class UpdateRoleGroupRequest
 {
-    public string CompanyId { get; set; } = "";
+    public required string CompanyId { get; set; }
     public required string RoleGroupId { get; set; }
     public required string RoleGroupName { get; set; }
     public string RoleGroupDesc { get; set; } = "";
     public required string Status { get; set; }
+    public required string StaffId { get; set; }
+}
+
+public class RoleGroupAuthorizeRequest
+{
+    public required string CompanyId { get; set; }
+    public required string RoleGroupId { get; set; }
+    public required List<string> ResIds { get; set; }
+    public required List<string> MenuIds { get; set; }
     public required string StaffId { get; set; }
 }

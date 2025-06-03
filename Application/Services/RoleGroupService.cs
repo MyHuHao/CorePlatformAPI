@@ -6,6 +6,7 @@ using Core.Contracts.Requests;
 using Core.DTOs;
 using Core.Enums;
 using Core.Exceptions;
+using Core.Interfaces;
 using Core.Interfaces.Services;
 
 namespace Application.Services;
@@ -13,7 +14,8 @@ namespace Application.Services;
 public class RoleGroupService(
     IMapper mapper,
     RoleGroupQuery query,
-    RoleGroupCommand command
+    RoleGroupCommand command,
+    IUnitOfWork unitOfWork
 ) : IRoleGroupService
 {
     public async Task<ApiResult<string>> AddRoleGroupAsync(AddRoleGroupRequest request)
@@ -80,5 +82,112 @@ public class RoleGroupService(
         await command.UpdateRoleGroupAsync(request);
 
         return new ApiResult<string> { MsgCode = MsgCodeEnum.Success, Msg = "修改成功" };
+    }
+
+    public async Task<ApiResult<string>> RoleGroupAuthorizeAsync(RoleGroupAuthorizeRequest request)
+    {
+        try
+        {
+            await unitOfWork.BeginTransactionAsync();
+            await ProcessResourcesAsync(request);
+            await ProcessMenusAsync(request);
+            await unitOfWork.CommitAsync();
+            return new ApiResult<string> { MsgCode = MsgCodeEnum.Success, Msg = "创建成功" };
+        }
+        catch (Exception exception)
+        {
+            await unitOfWork.RollbackAsync();
+            throw new BadRequestException(MsgCodeEnum.Error, exception.Message);
+        }
+    }
+
+    private async Task ProcessResourcesAsync(RoleGroupAuthorizeRequest request)
+    {
+        // 获取现有资源关联
+        var existingResources = await query.GetAllRoleGroupResourceByIdAsync(request.CompanyId, request.RoleGroupId);
+
+        var existingResIds = existingResources.Select(r => r.ResId).ToList();
+
+        // 需要删除的资源（数据库存在但请求中不存在）
+        var toDelete = existingResources
+            .Where(r => !request.ResIds.Contains(r.ResId))
+            .Select(r => r.ResId)
+            .ToList();
+
+        // 需要新增的资源（请求中存在但数据库不存在）
+        var toAdd = request.ResIds.Except(existingResIds).ToList();
+
+        // 执行删除操作
+        if (toDelete.Count != 0)
+        {
+            var deleteQuery = new RoleGroupAuthorizeRequest
+            {
+                CompanyId = request.CompanyId,
+                RoleGroupId = request.RoleGroupId,
+                ResIds = toDelete,
+                MenuIds = [],
+                StaffId = request.StaffId
+            };
+            await command.DeleteRoleGroupResourceAsync(deleteQuery);
+        }
+
+        // 执行新增操作
+        if (toAdd.Count != 0)
+        {
+            var addQuery = new RoleGroupAuthorizeRequest
+            {
+                CompanyId = request.CompanyId,
+                RoleGroupId = request.RoleGroupId,
+                ResIds = toAdd,
+                MenuIds = [],
+                StaffId = request.StaffId
+            };
+            await command.AddRoleGroupResourceAsync(addQuery);
+        }
+    }
+
+    private async Task ProcessMenusAsync(RoleGroupAuthorizeRequest request)
+    {
+        // 获取现有菜单关联
+        var existingMenus = await query.GetAllRoleGroupWebMenuByIdAsync(request.CompanyId, request.RoleGroupId);
+
+        var existingMenuIds = existingMenus.Select(m => m.WebMenuId).ToList();
+
+        // 需要删除的菜单
+        var toDelete = existingMenus
+            .Where(m => !request.MenuIds.Contains(m.WebMenuId))
+            .Select(r => r.WebMenuId)
+            .ToList();
+
+        // 需要新增的菜单
+        var toAdd = request.MenuIds.Except(existingMenuIds).ToList();
+
+        // 执行删除
+        if (toDelete.Count != 0)
+        {
+            var deleteQuery = new RoleGroupAuthorizeRequest
+            {
+                CompanyId = request.CompanyId,
+                RoleGroupId = request.RoleGroupId,
+                ResIds = [],
+                MenuIds = toDelete,
+                StaffId = request.StaffId
+            };
+            await command.DeleteRoleGroupMenusAsync(deleteQuery);
+        }
+
+        // 执行新增
+        if (toAdd.Count != 0)
+        {
+            var addQuery = new RoleGroupAuthorizeRequest
+            {
+                CompanyId = request.CompanyId,
+                RoleGroupId = request.RoleGroupId,
+                ResIds = [],
+                MenuIds = toAdd,
+                StaffId = request.StaffId
+            };
+            await command.AddRoleGroupMenusAsync(addQuery);
+        }
     }
 }

@@ -93,7 +93,28 @@ Infrastructure/
 - 角色管理
 - 字典管理
 - 通知管理（SignalR）
-- HttpLogging 
+- HttpLogging
+
+## 快速开始
+
+1. 事务案例
+    ```csharp
+   IUnitOfWork unitOfWork
+       
+    try
+        {
+            await unitOfWork.BeginTransactionAsync();
+
+            await unitOfWork.CommitAsync();
+            return new ApiResult<string> { MsgCode = MsgCodeEnum.Success, Msg = "创建成功" };
+        }
+        catch (Exception exception)
+        {
+            await unitOfWork.RollbackAsync();
+            throw new BadRequestException(MsgCodeEnum.Error, exception.Message);
+        }
+    ```   
+
 
 
 
