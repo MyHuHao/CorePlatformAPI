@@ -1,5 +1,6 @@
 ﻿using Core.Contracts;
 using Core.Contracts.Requests;
+using Core.Contracts.Results;
 using Core.DTOs;
 
 namespace Core.Interfaces.Services;
@@ -26,4 +27,7 @@ public interface IEmployeeService
     /// <param name="request"></param>
     /// <returns></returns>
     Task<ApiResult<PagedResult<EmployeeDto>>> GetEmployeePageAsync(ByEmployeeListRequest request);
+    
+    // 人员选择分页查询
+    Task<ApiResult<PagedResult<EmployeeChangeResult>>> GetEmployeePageBySelectAsync(ByEmployeeListRequest request);
 }

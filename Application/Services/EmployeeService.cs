@@ -2,6 +2,7 @@
 using AutoMapper;
 using Core.Contracts;
 using Core.Contracts.Requests;
+using Core.Contracts.Results;
 using Core.DTOs;
 using Core.Enums;
 using Core.Exceptions;
@@ -52,6 +53,22 @@ public class EmployeeService(EmployeeQuery query, IMapper mapper) : IEmployeeSer
             Total = result.total
         };
         return new ApiResult<PagedResult<EmployeeDto>>
+            { MsgCode = MsgCodeEnum.Success, Msg = "查询成功", Data = pagedResult };
+    }
+
+    // 人员选择分页查询
+    public async Task<ApiResult<PagedResult<EmployeeChangeResult>>> GetEmployeePageBySelectAsync(
+        ByEmployeeListRequest request)
+    {
+        var result = await query.GetEmployeePageBySelectAsync(request);
+        PagedResult<EmployeeChangeResult> pagedResult = new()
+        {
+            Records = result.items,
+            Page = request.Page,
+            PageSize = request.PageSize,
+            Total = result.total
+        };
+        return new ApiResult<PagedResult<EmployeeChangeResult>>
             { MsgCode = MsgCodeEnum.Success, Msg = "查询成功", Data = pagedResult };
     }
 }

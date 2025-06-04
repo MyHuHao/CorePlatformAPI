@@ -9,7 +9,9 @@ public class ByEmployeeRequest
 public class ByEmployeeListRequest
 {
     public required string CompanyId { get; set; }
-    public required string EmpId { get; set; }
+    public string EmpId { get; set; } = "";
+    public string EmpName { get; set; } = "";
+    public string Status { get; set; } = "";
     public required int Page { get; set; } = 1;
     public required int PageSize { get; set; } = 20;
 }

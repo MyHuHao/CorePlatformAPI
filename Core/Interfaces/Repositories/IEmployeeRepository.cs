@@ -1,4 +1,5 @@
 ﻿using Core.Contracts.Requests;
+using Core.Contracts.Results;
 using Core.Entities;
 
 namespace Core.Interfaces.Repositories;
@@ -39,4 +40,7 @@ public interface IEmployeeRepository
     /// <param name="request"></param>
     /// <returns></returns>
     Task DeleteEmployeeAsync(ByEmployeeRequest request);
+    
+    // 人员选择分页查询
+    Task<(IEnumerable<EmployeeChangeResult> items, int total)> GetEmployeePageBySelectAsync(ByEmployeeListRequest request);
 }

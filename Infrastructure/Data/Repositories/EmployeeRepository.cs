@@ -1,4 +1,5 @@
 ﻿using Core.Contracts.Requests;
+using Core.Contracts.Results;
 using Core.Entities;
 using Core.Helpers;
 using Core.Interfaces;
@@ -7,7 +8,10 @@ using Dapper;
 
 namespace Infrastructure.Data.Repositories;
 
-public class EmployeeRepository(IDapperExtensions<Employee> dapper, IUnitOfWork unitOfWork) : IEmployeeRepository
+public class EmployeeRepository(
+    IDapperExtensions<Employee> dapper,
+    IDapperExtensions<EmployeeChangeResult> dapperChange,
+    IUnitOfWork unitOfWork) : IEmployeeRepository
 {
     /// <summary>
     ///     通过人员id查询人员信息
@@ -64,16 +68,25 @@ public class EmployeeRepository(IDapperExtensions<Employee> dapper, IUnitOfWork 
         var conditions = new List<string>();
         var parameters = new DynamicParameters();
 
-        if (!string.IsNullOrEmpty(request.CompanyId))
-        {
-            conditions.Add("CompanyId = @CompanyId");
-            parameters.Add("CompanyId", request.CompanyId);
-        }
+        conditions.Add("CompanyId = @CompanyId");
+        parameters.Add("CompanyId", request.CompanyId);
 
         if (!string.IsNullOrEmpty(request.EmpId))
         {
             conditions.Add("EmpId = @EmpId");
             parameters.Add("EmpId", request.EmpId);
+        }
+        
+        if (!string.IsNullOrEmpty(request.EmpName))
+        {
+            conditions.Add("EmpName = @EmpName");
+            parameters.Add("EmpName", request.EmpName);
+        }
+
+        if (!string.IsNullOrEmpty(request.Status))
+        {
+            conditions.Add("Status = @Status");
+            parameters.Add("Status", request.Status);
         }
 
         var whereClause = conditions.Count > 0 ? $"WHERE {string.Join(" AND ", conditions)}" : string.Empty;
@@ -311,6 +324,56 @@ public class EmployeeRepository(IDapperExtensions<Employee> dapper, IUnitOfWork 
                            """;
         await dapper.ExecuteAsync(sql,
             new { request.CompanyId, request.EmpId },
+            unitOfWork.CurrentConnection,
+            unitOfWork.CurrentTransaction);
+    }
+
+    public async Task<(IEnumerable<EmployeeChangeResult> items, int total)> GetEmployeePageBySelectAsync(ByEmployeeListRequest request)
+    {
+        var conditions = new List<string>();
+        var parameters = new DynamicParameters();
+
+        conditions.Add("a.CompanyId = @CompanyId");
+        parameters.Add("CompanyId", request.CompanyId);
+
+        if (!string.IsNullOrEmpty(request.EmpId))
+        {
+            conditions.Add("a.EmpId = @EmpId");
+            parameters.Add("EmpId", request.EmpId);
+        }
+        
+        if (!string.IsNullOrEmpty(request.EmpName))
+        {
+            conditions.Add("a.EmpName = @EmpName");
+            parameters.Add("EmpName", request.EmpName);
+        }
+
+        if (!string.IsNullOrEmpty(request.Status))
+        {
+            conditions.Add("a.Status = @Status");
+            parameters.Add("Status", request.Status);
+        }
+
+        var whereClause = conditions.Count > 0 ? $"WHERE {string.Join(" AND ", conditions)}" : string.Empty;
+
+        var sql = $"""
+                    SELECT
+                            a.EmpId,
+                            a.EmpName,
+                            a.`Status`,
+                            b.DeptId,
+                            b.DeptName,
+                            a.CreatedTime
+                        FROM Employee as a
+                        LEFT JOIN Department as b on a.CompanyId = b.CompanyId and a.DeptId = b.DeptId
+                         {whereClause}
+                      ORDER BY a.CreatedTime DESC
+                    """;
+        return await dapperChange.QueryPageAsync(
+            request.Page,
+            request.PageSize,
+            sql,
+            parameters,
             unitOfWork.CurrentConnection,
             unitOfWork.CurrentTransaction);
     }

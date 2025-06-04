@@ -1,4 +1,5 @@
 ﻿using Core.Contracts.Requests;
+using Core.Contracts.Results;
 using Core.Entities;
 using Core.Interfaces.Repositories;
 
@@ -24,5 +25,11 @@ public class EmployeeQuery(IEmployeeRepository repository)
     public async Task<(IEnumerable<Employee> items, int total)> GetEmployeePageAsync(ByEmployeeListRequest request)
     {
         return await repository.GetByEmployeeListAsync(request);
+    }
+    
+    // 人员选择分页查询
+    public async Task<(IEnumerable<EmployeeChangeResult> items, int total)> GetEmployeePageBySelectAsync(ByEmployeeListRequest request)
+    {
+        return await repository.GetEmployeePageBySelectAsync(request);
     }
 }

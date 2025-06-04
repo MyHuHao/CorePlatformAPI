@@ -33,4 +33,12 @@ public class EmployeeController(IEmployeeService service) : Controller
         var result = await service.GetEmployeePageAsync(request);
         return Ok(result);
     }
+    
+    // 人员选择分页查询
+    [HttpPost]
+    public async Task<IActionResult> GetEmployeePageBySelect([FromBody] ByEmployeeListRequest request)
+    {
+        var result = await service.GetEmployeePageBySelectAsync(request);
+        return Ok(result);
+    }
 }
