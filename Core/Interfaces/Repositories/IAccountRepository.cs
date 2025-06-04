@@ -1,4 +1,5 @@
 ﻿using Core.Contracts.Requests;
+using Core.Contracts.Results;
 using Core.Entities;
 
 namespace Core.Interfaces.Repositories;
@@ -52,5 +53,8 @@ public interface IAccountRepository
     /// </summary>
     /// <param name="id"></param>
     /// <returns></returns>
-    Task<Account?> GetAccountByIdAsync(string id);
+    Task<AccountResult?> GetAccountByIdAsync(string id);
+    
+    // 修改账号数据
+    Task<int> UpdateAccountAsync(UpdateAccountRequest request);
 }

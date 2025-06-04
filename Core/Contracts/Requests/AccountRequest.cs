@@ -32,3 +32,16 @@ public class AddAccountRequest
     public required string Language { get; set; }
     public required string StaffId { get; set; }
 }
+
+public class UpdateAccountRequest
+{
+    public required string CompanyId { get; set; }
+    public required string LoginName { get; set; }
+    public required string DisplayName { get; set; }
+    public required string IsActive { get; set; }
+    public required sbyte AccountType { get; set; }
+    public string Email { get; set; } = "";
+    public string Phone { get; set; } = "";
+    public required string Language { get; set; }
+    public required string StaffId { get; set; }
+}

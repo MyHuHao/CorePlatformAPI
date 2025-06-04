@@ -16,4 +16,10 @@ public class AccountCommand(IAccountRepository repository)
     {
         await repository.DeleteAccountAsync(id);
     }
+    
+    // 修改账号数据
+    public async Task UpdateAccountAsync(UpdateAccountRequest request)
+    {
+        await repository.UpdateAccountAsync(request);
+    }
 }

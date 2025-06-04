@@ -47,6 +47,25 @@ public class HashHelper
         return inputHash == storedHash; // 比对哈希值 [[6]]
     }
 
+    /// <summary>
+    /// 还原密码
+    /// </summary>
+    /// <param name="storedHash"></param>
+    /// <param name="storedSalt"></param>
+    /// <returns></returns>
+    public static string RestorePassword(string storedHash, string storedSalt)
+    {
+        // 从 Base64 恢复盐值
+        var salt = Convert.FromBase64String(storedSalt);
+
+        // 恢复密码
+        var hash = Convert.FromBase64String(storedHash);
+        var passwordBytes = new byte[hash.Length - salt.Length];
+        Buffer.BlockCopy(hash, salt.Length, passwordBytes, 0, passwordBytes.Length);
+        var password = Encoding.UTF8.GetString(passwordBytes);
+        return password;
+    }
+
     // 辅助方法：合并字节数组
     private static byte[] Combine(byte[] first, byte[] second)
     {

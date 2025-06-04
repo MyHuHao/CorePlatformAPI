@@ -1,4 +1,5 @@
 ﻿using Core.Contracts.Requests;
+using Core.Contracts.Results;
 using Core.Entities;
 using Core.Interfaces.Repositories;
 
@@ -19,7 +20,7 @@ public class AccountQuery(IAccountRepository repository)
     }
 
     // 根据账号ID查询账号
-    public async Task<Account?> GetAccountByIdAsync(string id)
+    public async Task<AccountResult?> GetAccountByIdAsync(string id)
     {
         return await repository.GetAccountByIdAsync(id);
     }

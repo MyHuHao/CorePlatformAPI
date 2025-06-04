@@ -27,18 +27,26 @@ public class AccountController(IAccountService service) : ControllerBase
     }
 
     // 删除
-    [HttpPost]
-    public async Task<IActionResult> DeleteAccountById([FromBody] string id)
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteAccountById(string id)
     {
         var result = await service.DeleteAccountAsync(id);
         return Ok(result);
     }
 
     // 通过ID查询详细
-    [HttpPost]
-    public async Task<IActionResult> GetAccountById([FromBody] string id)
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetAccountById(string id)
     {
         var result = await service.GetAccountByIdAsync(id);
+        return Ok(result);
+    }
+
+    // 修改账号数据
+    [HttpPost]
+    public async Task<IActionResult> UpdateAccount([FromBody] UpdateAccountRequest request)
+    {
+        var result = await service.UpdateAccountAsync(request);
         return Ok(result);
     }
 }

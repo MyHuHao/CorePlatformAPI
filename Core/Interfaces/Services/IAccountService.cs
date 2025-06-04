@@ -1,5 +1,6 @@
 ﻿using Core.Contracts;
 using Core.Contracts.Requests;
+using Core.Contracts.Results;
 using Core.DTOs;
 
 namespace Core.Interfaces.Services;
@@ -16,5 +17,8 @@ public interface IAccountService
     Task<ApiResult<string>> DeleteAccountAsync(string id);
 
     // 通过ID查询详细
-    Task<ApiResult<AccountDto>> GetAccountByIdAsync(string id);
+    Task<ApiResult<AccountResult>> GetAccountByIdAsync(string id);
+    
+    // 修改账号数据
+    Task<ApiResult<string>> UpdateAccountAsync(UpdateAccountRequest request);
 }

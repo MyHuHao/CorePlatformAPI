@@ -1,4 +1,5 @@
 ﻿using Core.Contracts.Requests;
+using Core.Contracts.Results;
 using Core.Entities;
 using Core.Helpers;
 using Core.Interfaces;
@@ -7,7 +8,10 @@ using Dapper;
 
 namespace Infrastructure.Data.Repositories;
 
-public class AccountRepository(IDapperExtensions<Account> dapper, IUnitOfWork unitOfWork) : IAccountRepository
+public class AccountRepository(
+    IDapperExtensions<Account> dapper, 
+    IDapperExtensions<AccountResult> dapperResult, 
+    IUnitOfWork unitOfWork) : IAccountRepository
 {
     /// <summary>
     ///     通过登录用户名查询账号信息
@@ -58,39 +62,67 @@ public class AccountRepository(IDapperExtensions<Account> dapper, IUnitOfWork un
     /// </summary>
     /// <param name="id"></param>
     /// <returns></returns>
-    public async Task<Account?> GetAccountByIdAsync(string id)
+    public async Task<AccountResult?> GetAccountByIdAsync(string id)
     {
         const string sql = """
                             select 
-                                Id,
-                                CompanyId,
-                                LoginName,
-                                DisplayName,
-                                EmpId,
-                                PasswordHash,
-                                PasswordSalt,
-                                AccountType,
-                                IsActive,
-                                DeptId,
-                                Email,
-                                Phone,
-                                Language,
-                                LastLoginTime,
-                                LastLoginIp,
-                                FailedLoginAttempts,
-                                IsLocked,
-                                CreatedBy,
-                                CreatedTime,
-                                ModifiedBy,
-                                ModifiedTime
-                            FROM
-                                Account
-                            WHERE
-                                Id = @Id
+                               a.LoginName,
+                               a.DisplayName,
+                               a.EmpId,
+                               b.EmpName,
+                               a.AccountType,
+                               a.IsActive,
+                               a.DeptId,
+                               c.DeptName,
+                               a.Email,
+                               a.Phone,
+                               a.`Language`
+                               FROM
+                               Account as a
+                               LEFT JOIN employee as b on a.EmpId = b.EmpId and a.CompanyId = b.CompanyId
+                               LEFT JOIN department as c on a.DeptId = c.DeptId and a.CompanyId = c.CompanyId
+                               WHERE
+                               a.Id = @Id
                            """;
-        return await dapper.QueryFirstOrDefaultAsync(
+        return await dapperResult.QueryFirstOrDefaultAsync(
             sql,
             new { Id = id },
+            unitOfWork.CurrentConnection,
+            unitOfWork.CurrentTransaction);
+    }
+
+    public async Task<int> UpdateAccountAsync(UpdateAccountRequest request)
+    {
+        const string sql = """
+                           UPDATE Account SET 
+                               DisplayName = @DisplayName,
+                               IsActive = @IsActive,
+                               AccountType = @AccountType,
+                               Email = @Email,
+                               Phone = @Phone,
+                               Language = @Language,
+                               ModifiedBy = @ModifiedBy,
+                               ModifiedTime = @ModifiedTime
+                           WHERE
+                                LoginName = @LoginName
+                           AND
+                                CompanyId = @CompanyId
+                           """;
+        return await dapper.ExecuteAsync(
+            sql,
+            new
+            {
+                request.DisplayName,
+                request.IsActive,
+                request.AccountType,
+                request.Email,
+                request.Phone,
+                request.Language,
+                ModifiedBy = request.StaffId,
+                ModifiedTime = DateTime.Now,
+                request.LoginName,
+                request.CompanyId
+            },
             unitOfWork.CurrentConnection,
             unitOfWork.CurrentTransaction);
     }

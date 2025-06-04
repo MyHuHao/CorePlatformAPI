@@ -3,9 +3,11 @@ using Application.Queries;
 using AutoMapper;
 using Core.Contracts;
 using Core.Contracts.Requests;
+using Core.Contracts.Results;
 using Core.DTOs;
 using Core.Enums;
 using Core.Exceptions;
+using Core.Helpers;
 using Core.Interfaces.Services;
 
 namespace Application.Services;
@@ -46,14 +48,22 @@ public class AccountService(
     // 删除账号
     public async Task<ApiResult<string>> DeleteAccountAsync(string id)
     {
+        if(id == "c7021a3a2254b49e4a4f64757fbd0890") throw new ValidationException(MsgCodeEnum.Warning, "超级管理员账号不能删除");
         await command.DeleteAccountAsync(id);
         return new ApiResult<string> { MsgCode = MsgCodeEnum.Success, Msg = "删除成功" };
     }
 
     // 通过id查询详情
-    public async Task<ApiResult<AccountDto>> GetAccountByIdAsync(string id)
+    public async Task<ApiResult<AccountResult>> GetAccountByIdAsync(string id)
     {
         var account = await query.GetAccountByIdAsync(id);
-        return new ApiResult<AccountDto> { MsgCode = MsgCodeEnum.Success, Data = mapper.Map<AccountDto>(account) };
+        return new ApiResult<AccountResult> { MsgCode = MsgCodeEnum.Success, Data = account };
+    }
+
+    // 修改账号数据
+    public async Task<ApiResult<string>> UpdateAccountAsync(UpdateAccountRequest request)
+    {
+        await command.UpdateAccountAsync(request);
+        return new ApiResult<string> { MsgCode = MsgCodeEnum.Success, Msg = "修改成功" };
     }
 }
