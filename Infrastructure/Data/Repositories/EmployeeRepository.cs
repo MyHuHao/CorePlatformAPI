@@ -76,7 +76,7 @@ public class EmployeeRepository(
             conditions.Add("EmpId = @EmpId");
             parameters.Add("EmpId", request.EmpId);
         }
-        
+
         if (!string.IsNullOrEmpty(request.EmpName))
         {
             conditions.Add("EmpName = @EmpName");
@@ -328,7 +328,8 @@ public class EmployeeRepository(
             unitOfWork.CurrentTransaction);
     }
 
-    public async Task<(IEnumerable<EmployeeChangeResult> items, int total)> GetEmployeePageBySelectAsync(ByEmployeeListRequest request)
+    public async Task<(IEnumerable<EmployeeChangeResult> items, int total)> GetEmployeePageBySelectAsync(
+        ByEmployeeListRequest request)
     {
         var conditions = new List<string>();
         var parameters = new DynamicParameters();
@@ -341,7 +342,7 @@ public class EmployeeRepository(
             conditions.Add("a.EmpId = @EmpId");
             parameters.Add("EmpId", request.EmpId);
         }
-        
+
         if (!string.IsNullOrEmpty(request.EmpName))
         {
             conditions.Add("a.EmpName = @EmpName");
@@ -357,18 +358,18 @@ public class EmployeeRepository(
         var whereClause = conditions.Count > 0 ? $"WHERE {string.Join(" AND ", conditions)}" : string.Empty;
 
         var sql = $"""
-                    SELECT
-                            a.EmpId,
-                            a.EmpName,
-                            a.`Status`,
-                            b.DeptId,
-                            b.DeptName,
-                            a.CreatedTime
-                        FROM Employee as a
-                        LEFT JOIN Department as b on a.CompanyId = b.CompanyId and a.DeptId = b.DeptId
-                         {whereClause}
-                      ORDER BY a.CreatedTime DESC
-                    """;
+                   SELECT
+                           a.EmpId,
+                           a.EmpName,
+                           a.`Status`,
+                           b.DeptId,
+                           b.DeptName,
+                           a.CreatedTime
+                       FROM Employee as a
+                       LEFT JOIN Department as b on a.CompanyId = b.CompanyId and a.DeptId = b.DeptId
+                   """;
+        sql += $" {whereClause}";
+        sql += " ORDER BY a.CreatedTime DESC";
         return await dapperChange.QueryPageAsync(
             request.Page,
             request.PageSize,
