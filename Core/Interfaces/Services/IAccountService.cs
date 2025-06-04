@@ -21,4 +21,10 @@ public interface IAccountService
     
     // 修改账号数据
     Task<ApiResult<string>> UpdateAccountAsync(UpdateAccountRequest request);
+    
+    // 验证原密码是否正确
+    Task<ApiResult<string>> VerifyPasswordAsync(VerifyPasswordRequest request);
+    
+    // 修改密码
+    Task<ApiResult<string>> UpdatePasswordAsync(VerifyPasswordRequest request);
 }

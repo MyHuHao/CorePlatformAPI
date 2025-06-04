@@ -57,4 +57,7 @@ public interface IAccountRepository
     
     // 修改账号数据
     Task<int> UpdateAccountAsync(UpdateAccountRequest request);
+    
+    // 修改密码
+    Task<int> UpdatePasswordAsync(VerifyPasswordRequest request);
 }

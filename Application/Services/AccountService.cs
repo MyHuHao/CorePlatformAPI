@@ -15,6 +15,7 @@ namespace Application.Services;
 public class AccountService(
     IMapper mapper,
     AccountQuery query,
+    LoginQuery loginQuery,
     AccountCommand command) : IAccountService
 {
     // 分页查询账号
@@ -64,6 +65,38 @@ public class AccountService(
     public async Task<ApiResult<string>> UpdateAccountAsync(UpdateAccountRequest request)
     {
         await command.UpdateAccountAsync(request);
+        return new ApiResult<string> { MsgCode = MsgCodeEnum.Success, Msg = "修改成功" };
+    }
+
+    /// <summary>
+    /// 验证原密码是否正确
+    /// </summary>
+    /// <param name="request"></param>
+    /// <returns></returns>
+    /// <exception cref="ValidationException"></exception>
+    public async Task<ApiResult<string>> VerifyPasswordAsync(VerifyPasswordRequest request)
+    {
+        // 验证账号，获取账号信息
+        var accountResult = await loginQuery.GetAccountById(new ByAccountRequest
+        {
+            CompanyId = request.CompanyId,
+            LoginName = request.LoginName
+        });
+        if (accountResult == null) throw new ValidationException(MsgCodeEnum.Warning, "该账户不存在");
+
+        // 验证账户，密码是否正确
+        var isValid = HashHelper.VerifyPassword(
+            request.OldPassword,
+            accountResult.PasswordHash,
+            accountResult.PasswordSalt);
+        if (isValid == false) throw new ValidationException(MsgCodeEnum.Warning, "密码错误");
+        
+        return new ApiResult<string> { MsgCode = MsgCodeEnum.Success, Msg = "验证成功" };
+    }
+
+    public async Task<ApiResult<string>> UpdatePasswordAsync(VerifyPasswordRequest request)
+    {
+        await command.UpdatePasswordAsync(request);
         return new ApiResult<string> { MsgCode = MsgCodeEnum.Success, Msg = "修改成功" };
     }
 }

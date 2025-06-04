@@ -49,4 +49,20 @@ public class AccountController(IAccountService service) : ControllerBase
         var result = await service.UpdateAccountAsync(request);
         return Ok(result);
     }
+    
+    // 验证原密码是否正确
+    [HttpPost]
+    public async Task<IActionResult> VerifyPassword([FromBody] VerifyPasswordRequest request)
+    {
+        var result = await service.VerifyPasswordAsync(request);
+        return Ok(result);
+    }
+
+    // 修改密码
+    [HttpPost]
+    public async Task<IActionResult> UpdatePassword([FromBody] VerifyPasswordRequest request)
+    {
+        var result = await service.UpdatePasswordAsync(request);
+        return Ok(result);
+    }
 }

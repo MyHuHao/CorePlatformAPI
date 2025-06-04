@@ -9,8 +9,8 @@ using Dapper;
 namespace Infrastructure.Data.Repositories;
 
 public class AccountRepository(
-    IDapperExtensions<Account> dapper, 
-    IDapperExtensions<AccountResult> dapperResult, 
+    IDapperExtensions<Account> dapper,
+    IDapperExtensions<AccountResult> dapperResult,
     IUnitOfWork unitOfWork) : IAccountRepository
 {
     /// <summary>
@@ -118,6 +118,35 @@ public class AccountRepository(
                 request.Email,
                 request.Phone,
                 request.Language,
+                ModifiedBy = request.StaffId,
+                ModifiedTime = DateTime.Now,
+                request.LoginName,
+                request.CompanyId
+            },
+            unitOfWork.CurrentConnection,
+            unitOfWork.CurrentTransaction);
+    }
+
+    public async Task<int> UpdatePasswordAsync(VerifyPasswordRequest request)
+    {
+        var (passwordHash, passwordSalt) = HashHelper.GeneratePasswordHash(request.SurPassword);
+        const string sql = """
+                            UPDATE Account 
+                            SET
+                                PasswordHash = @PasswordHash,
+                                PasswordSalt = @PasswordSalt,
+                                ModifiedBy = @ModifiedBy,
+                                ModifiedTime = @ModifiedTime
+                            WHERE
+                                LoginName = @LoginName
+                            AND
+                                CompanyId = @CompanyId
+                           """;
+        return await dapper.ExecuteAsync(sql,
+            new
+            {
+                PasswordHash = passwordHash,
+                PasswordSalt = passwordSalt,
                 ModifiedBy = request.StaffId,
                 ModifiedTime = DateTime.Now,
                 request.LoginName,

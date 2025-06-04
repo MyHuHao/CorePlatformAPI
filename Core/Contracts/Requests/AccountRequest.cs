@@ -45,3 +45,14 @@ public class UpdateAccountRequest
     public required string Language { get; set; }
     public required string StaffId { get; set; }
 }
+
+public class VerifyPasswordRequest
+{
+    public required string CompanyId { get; set; }
+    public required string LoginName { get; set; }
+    public string Id { get; set; } = "";
+    public string OldPassword { get; set; } = "";
+    public string NewPassword { get; set; } = "";
+    public string SurPassword { get; set; } = "";
+    public string StaffId { get; set; } = "";
+}

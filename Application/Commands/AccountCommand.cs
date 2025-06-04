@@ -22,4 +22,10 @@ public class AccountCommand(IAccountRepository repository)
     {
         await repository.UpdateAccountAsync(request);
     }
+    
+    // 修改密码
+    public async Task UpdatePasswordAsync(VerifyPasswordRequest request)
+    {
+        await repository.UpdatePasswordAsync(request);
+    }
 }
