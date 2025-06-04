@@ -24,13 +24,11 @@ public class AddAccountRequest
     public required string DisplayName { get; set; }
     public required string EmpId { get; set; }
     public required string Password { get; set; }
-    public sbyte IsActive { get; set; } = 1;
+    public required string IsActive { get; set; }
     public required sbyte AccountType { get; set; }
     public required string DeptId { get; set; }
     public string Email { get; set; } = "";
     public string Phone { get; set; } = "";
-    public sbyte FailedLoginAttempts { get; set; } = 0;
-    public sbyte IsLocked { get; set; } = 0;
     public required string Language { get; set; }
     public required string StaffId { get; set; }
 }
