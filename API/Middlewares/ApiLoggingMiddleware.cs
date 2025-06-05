@@ -50,7 +50,7 @@ public class ApiLoggingMiddleware(
             var duration = (int)(DateTime.Now - startTime).TotalMilliseconds;
 
             var requestPath = context.Request.Path.Value;
-            if (!string.Equals(requestPath, "/ApiLog/GetApiLogByPage", StringComparison.OrdinalIgnoreCase))
+            if (!string.Equals(requestPath, "/ApiLog/GetByApiLogPage", StringComparison.OrdinalIgnoreCase))
             {
                 await LogApiRequest(apiLogService, context, startTime, duration, requestBody, responseBody, statusCode,
                     errorMessage);
