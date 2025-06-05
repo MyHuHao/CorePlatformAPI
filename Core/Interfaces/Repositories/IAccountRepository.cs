@@ -60,4 +60,10 @@ public interface IAccountRepository
     
     // 修改密码
     Task<int> UpdatePasswordAsync(VerifyPasswordRequest request);
+    
+    // 新增角色组
+    Task<int> GrantMenuRoleAsync(GrantMenuRoleRequest request);
+    
+    // 删除角色组
+    Task<int> RevokeMenuRoleAsync(GrantMenuRoleRequest request);
 }

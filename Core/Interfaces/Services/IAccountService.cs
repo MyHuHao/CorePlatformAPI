@@ -27,4 +27,10 @@ public interface IAccountService
     
     // 修改密码
     Task<ApiResult<string>> UpdatePasswordAsync(VerifyPasswordRequest request);
+    
+    // 给菜单授权角色组
+    Task<ApiResult<string>> GrantMenuRoleAsync(GrantMenuRoleRequest request);
+    
+    // 通过ID查询已经授权的角色组
+    Task<ApiResult<List<string>>> GetGrantMenuRoleByIdAsync(string companyId,string id);
 }

@@ -49,7 +49,7 @@ public class AccountController(IAccountService service) : ControllerBase
         var result = await service.UpdateAccountAsync(request);
         return Ok(result);
     }
-    
+
     // 验证原密码是否正确
     [HttpPost]
     public async Task<IActionResult> VerifyPassword([FromBody] VerifyPasswordRequest request)
@@ -63,6 +63,22 @@ public class AccountController(IAccountService service) : ControllerBase
     public async Task<IActionResult> UpdatePassword([FromBody] VerifyPasswordRequest request)
     {
         var result = await service.UpdatePasswordAsync(request);
+        return Ok(result);
+    }
+
+    // 给菜单授权角色组
+    [HttpPost]
+    public async Task<IActionResult> GrantMenuRole([FromBody] GrantMenuRoleRequest request)
+    {
+        var result = await service.GrantMenuRoleAsync(request);
+        return Ok(result);
+    }
+
+    // 通过ID查询已经授权的角色组
+    [HttpGet]
+    public async Task<IActionResult> GetGrantMenuRoleById(string companyId, string id)
+    {
+        var result = await service.GetGrantMenuRoleByIdAsync(companyId, id);
         return Ok(result);
     }
 }

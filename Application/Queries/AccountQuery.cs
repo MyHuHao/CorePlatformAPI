@@ -5,7 +5,7 @@ using Core.Interfaces.Repositories;
 
 namespace Application.Queries;
 
-public class AccountQuery(IAccountRepository repository)
+public class AccountQuery(IAccountRepository repository, IAccountRoleRepository accountRoleRepository)
 {
     // 分页查询
     public async Task<(IEnumerable<Account> items, int total)> GetAccountPageAsync(ByAccountListRequest request)
@@ -23,5 +23,12 @@ public class AccountQuery(IAccountRepository repository)
     public async Task<AccountResult?> GetAccountByIdAsync(string id)
     {
         return await repository.GetAccountByIdAsync(id);
+    }
+
+    // 获取当前账号的所有角色组ID
+    public async Task<List<string>> GetAccountRoleGroupIdsAsync(string companyId, string accId)
+    {
+        var result = await accountRoleRepository.GetAccountRoleAsync(companyId, accId);
+        return result.Select(x => x.RoleGroupId).ToList();
     }
 }

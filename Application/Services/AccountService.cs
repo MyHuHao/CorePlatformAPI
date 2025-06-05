@@ -49,7 +49,7 @@ public class AccountService(
     // 删除账号
     public async Task<ApiResult<string>> DeleteAccountAsync(string id)
     {
-        if(id == "c7021a3a2254b49e4a4f64757fbd0890") throw new ValidationException(MsgCodeEnum.Warning, "超级管理员账号不能删除");
+        if (id == "c7021a3a2254b49e4a4f64757fbd0890") throw new ValidationException(MsgCodeEnum.Warning, "超级管理员账号不能删除");
         await command.DeleteAccountAsync(id);
         return new ApiResult<string> { MsgCode = MsgCodeEnum.Success, Msg = "删除成功" };
     }
@@ -90,7 +90,7 @@ public class AccountService(
             accountResult.PasswordHash,
             accountResult.PasswordSalt);
         if (isValid == false) throw new ValidationException(MsgCodeEnum.Warning, "密码错误");
-        
+
         return new ApiResult<string> { MsgCode = MsgCodeEnum.Success, Msg = "验证成功" };
     }
 
@@ -98,5 +98,47 @@ public class AccountService(
     {
         await command.UpdatePasswordAsync(request);
         return new ApiResult<string> { MsgCode = MsgCodeEnum.Success, Msg = "修改成功" };
+    }
+
+    public async Task<ApiResult<string>> GrantMenuRoleAsync(GrantMenuRoleRequest request)
+    {
+        var existingRoleGroupIds = await query.GetAccountRoleGroupIdsAsync(request.CompanyId, request.AccId);
+
+        var requestRoleGroups = new HashSet<string>(request.RoleGroupIds);
+        var existingRoleGroups = new HashSet<string>(existingRoleGroupIds);
+
+        var toDelete = existingRoleGroups.Except(requestRoleGroups).ToList();
+
+        var toAdd = requestRoleGroups.Except(existingRoleGroups).ToList();
+
+        if (toAdd.Count != 0)
+        {
+            await command.GrantMenuRoleAsync(new GrantMenuRoleRequest
+            {
+                CompanyId = request.CompanyId,
+                AccId = request.AccId,
+                RoleGroupIds = toAdd,
+                StaffId = request.StaffId
+            });
+        }
+
+        if (toDelete.Count != 0)
+        {
+            await command.RevokeMenuRoleAsync(new GrantMenuRoleRequest
+            {
+                CompanyId = request.CompanyId,
+                AccId = request.AccId,
+                RoleGroupIds = toDelete,
+                StaffId = request.StaffId
+            });
+        }
+
+        return new ApiResult<string> { MsgCode = MsgCodeEnum.Success, Msg = "授权成功" };
+    }
+
+    public async Task<ApiResult<List<string>>> GetGrantMenuRoleByIdAsync(string companyId,string id)
+    {
+        var result = await query.GetAccountRoleGroupIdsAsync(companyId,id);
+        return new ApiResult<List<string>> { MsgCode = MsgCodeEnum.Success, Data = result };
     }
 }

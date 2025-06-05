@@ -56,3 +56,11 @@ public class VerifyPasswordRequest
     public string SurPassword { get; set; } = "";
     public string StaffId { get; set; } = "";
 }
+
+public class GrantMenuRoleRequest
+{
+    public required string CompanyId { get; set; }
+    public required string AccId { get; set; }
+    public required List<string> RoleGroupIds { get; set; } 
+    public required string StaffId { get; set; } = "";
+}

@@ -28,4 +28,16 @@ public class AccountCommand(IAccountRepository repository)
     {
         await repository.UpdatePasswordAsync(request);
     }
+    
+    // 新增角色组
+    public async Task GrantMenuRoleAsync(GrantMenuRoleRequest request)
+    {
+        await repository.GrantMenuRoleAsync(request);
+    }
+    
+    // 删除角色组
+    public async Task RevokeMenuRoleAsync(GrantMenuRoleRequest request)
+    {
+        await repository.RevokeMenuRoleAsync(request);
+    }
 }

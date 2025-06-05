@@ -156,6 +156,62 @@ public class AccountRepository(
             unitOfWork.CurrentTransaction);
     }
 
+    public async Task<int> GrantMenuRoleAsync(GrantMenuRoleRequest request)
+    {
+        const string sql = """
+                           INSERT INTO AccountRole
+                           (CompanyId,
+                           AccId,
+                           RoleGroupId,
+                           CreatedBy,
+                           CreatedTime,
+                           ModifiedBy,
+                           ModifiedTime)
+                           VALUES
+                           (@CompanyId,
+                           @AccId,
+                           @RoleGroupId,
+                           @CreatedBy,
+                           @CreatedTime,
+                           @ModifiedBy,
+                           @ModifiedTime)
+                           """;
+        var currentTime = DateTime.Now;
+        var records = request.RoleGroupIds.Select(roleId => new AccountRole
+        {
+            CompanyId = request.CompanyId,
+            AccId = request.AccId,
+            RoleGroupId = roleId,
+            CreatedBy = request.StaffId,
+            CreatedTime = currentTime,
+            ModifiedBy = request.StaffId,
+            ModifiedTime = currentTime
+        }).ToList();
+        return await dapper.ExecuteAsync(sql, records, unitOfWork.CurrentConnection, unitOfWork.CurrentTransaction);
+    }
+
+    public async Task<int> RevokeMenuRoleAsync(GrantMenuRoleRequest request)
+    {
+        const string sql = """
+                           DELETE FROM AccountRole
+                           WHERE
+                                CompanyId = @CompanyId
+                           AND
+                                AccId = @AccId
+                           AND
+                                RoleGroupId IN @RoleGroupIds
+                           """;
+        return await dapper.ExecuteAsync(sql,
+            new
+            {
+                request.CompanyId,
+                request.AccId,
+                request.RoleGroupIds
+            },
+            unitOfWork.CurrentConnection,
+            unitOfWork.CurrentTransaction);
+    }
+
     /// <summary>
     ///     获取账号列表
     /// </summary>
