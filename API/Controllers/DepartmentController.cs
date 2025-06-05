@@ -17,4 +17,12 @@ public class DepartmentController(IDepartmentService service) : Controller
         var result = await service.GetDepartmentPageAsync(request);
         return Ok(result);
     }
+    
+    // 树形部门列表
+    [HttpPost]
+    public async Task<IActionResult> GetDepartmentTree([FromBody] ByDepartmentListRequest request)
+    {
+        var result = await service.GetDepartmentTreeAsync(request);
+        return Ok(result);
+    }
 }
