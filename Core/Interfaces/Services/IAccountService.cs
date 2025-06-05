@@ -14,23 +14,23 @@ public interface IAccountService
     Task<ApiResult<string>> AddAccountAsync(AddAccountRequest request);
 
     // 删除
-    Task<ApiResult<string>> DeleteAccountAsync(string id);
+    Task<ApiResult<string>> DeleteAccountAsync(string id, string companyId);
 
     // 通过ID查询详细
     Task<ApiResult<AccountResult>> GetAccountByIdAsync(string id);
-    
+
     // 修改账号数据
     Task<ApiResult<string>> UpdateAccountAsync(UpdateAccountRequest request);
-    
+
     // 验证原密码是否正确
     Task<ApiResult<string>> VerifyPasswordAsync(VerifyPasswordRequest request);
-    
+
     // 修改密码
     Task<ApiResult<string>> UpdatePasswordAsync(VerifyPasswordRequest request);
-    
+
     // 给菜单授权角色组
     Task<ApiResult<string>> GrantMenuRoleAsync(GrantMenuRoleRequest request);
-    
+
     // 通过ID查询已经授权的角色组
-    Task<ApiResult<List<string>>> GetGrantMenuRoleByIdAsync(string companyId,string id);
+    Task<ApiResult<List<string>>> GetGrantMenuRoleByIdAsync(string companyId, string id);
 }

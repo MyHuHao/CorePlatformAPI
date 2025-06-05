@@ -17,7 +17,9 @@ public interface IWebMenuRepository
     // 删除菜单
     Task<int> DeleteWebMenuById(string id);
 
-
     // 验证菜单是否合格
     Task<WebMenu?> VerifyWebMenuAsync(VerifyWebMenuRequest request);
+
+    // 通过父菜单ID查询子菜单
+    Task<IEnumerable<WebMenu>> GetChildWebMenusByParentIdAsync(string webMenuId);
 }

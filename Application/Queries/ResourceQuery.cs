@@ -5,7 +5,7 @@ using Core.Interfaces.Repositories;
 
 namespace Application.Queries;
 
-public class ResourceQuery(IResourceRepository repository)
+public class ResourceQuery(IResourceRepository repository, IRoleGroupResRepository roleGroupResRepository)
 {
     public async Task<(IEnumerable<Resource> items, int total)> GetResourceByPageAsync(ByResourceListRequest request)
     {
@@ -45,5 +45,12 @@ public class ResourceQuery(IResourceRepository repository)
     public async Task<Resource?> GetResourceByIdAsync(string id)
     {
         return await repository.GetResourceByIdAsync(id);
+    }
+
+    // 验证是否有关联角色组
+    public async Task<bool> VerifyWebMenuHasRoleGroupAsync(string id, string companyId)
+    {
+        var result = await roleGroupResRepository.GetRoleGroupByResIdAsync(companyId, id);
+        return result.Any();
     }
 }

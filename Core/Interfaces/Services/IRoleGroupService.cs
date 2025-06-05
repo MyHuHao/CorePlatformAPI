@@ -14,7 +14,7 @@ public interface IRoleGroupService
     Task<ApiResult<PagedResult<RoleGroupDto>>> GetRoleGroupPageAsync(ByRoleGroupListRequest request);
 
     // 删除角色组
-    Task<ApiResult<string>> DeleteRoleGroupAsync(string id);
+    Task<ApiResult<string>> DeleteRoleGroupAsync(string id,string companyId, string roleGroupId);
 
     // 通过id查询角色组详细
     Task<ApiResult<RoleGroupDto>> GetRoleGroupByIdAsync(string id);

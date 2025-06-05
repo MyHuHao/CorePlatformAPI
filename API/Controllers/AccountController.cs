@@ -27,10 +27,10 @@ public class AccountController(IAccountService service) : ControllerBase
     }
 
     // 删除
-    [HttpDelete("{id}")]
-    public async Task<IActionResult> DeleteAccountById(string id)
+    [HttpDelete]
+    public async Task<IActionResult> DeleteAccountById(string id, string companyId)
     {
-        var result = await service.DeleteAccountAsync(id);
+        var result = await service.DeleteAccountAsync(id, companyId);
         return Ok(result);
     }
 

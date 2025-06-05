@@ -43,10 +43,10 @@ public class WebMenuController(IWebMenuService service) : Controller
     }
 
     // 通过ID删除菜单
-    [HttpGet("{id}")]
-    public async Task<IActionResult> DeleteWebMenuById(string id)
+    [HttpDelete]
+    public async Task<IActionResult> DeleteWebMenuById(string id, string companyId, string webMenuId)
     {
-        var result = await service.DeleteWebMenuByIdAsync(id);
+        var result = await service.DeleteWebMenuByIdAsync(id, companyId, webMenuId);
         return Ok(result);
     }
 

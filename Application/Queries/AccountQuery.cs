@@ -31,4 +31,11 @@ public class AccountQuery(IAccountRepository repository, IAccountRoleRepository 
         var result = await accountRoleRepository.GetAccountRoleAsync(companyId, accId);
         return result.Select(x => x.RoleGroupId).ToList();
     }
+
+    // 验证账号是否和角色组绑定
+    public async Task<bool> VerifyWebMenuHasRoleGroupAsync(string companyId, string accId)
+    {
+        var result = await accountRoleRepository.GetAccountRoleAsync(companyId, accId);
+        return result.Any();
+    }
 }

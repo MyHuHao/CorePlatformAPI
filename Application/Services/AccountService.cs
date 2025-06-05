@@ -47,9 +47,13 @@ public class AccountService(
     }
 
     // 删除账号
-    public async Task<ApiResult<string>> DeleteAccountAsync(string id)
+    public async Task<ApiResult<string>> DeleteAccountAsync(string id, string companyId)
     {
         if (id == "c7021a3a2254b49e4a4f64757fbd0890") throw new ValidationException(MsgCodeEnum.Warning, "超级管理员账号不能删除");
+
+        var verifyRoleGroup = await query.VerifyWebMenuHasRoleGroupAsync(companyId, id);
+        if (verifyRoleGroup) throw new ValidationException(MsgCodeEnum.Warning, "账号已绑定角色组，请先解除绑定");
+
         await command.DeleteAccountAsync(id);
         return new ApiResult<string> { MsgCode = MsgCodeEnum.Success, Msg = "删除成功" };
     }
@@ -136,9 +140,9 @@ public class AccountService(
         return new ApiResult<string> { MsgCode = MsgCodeEnum.Success, Msg = "授权成功" };
     }
 
-    public async Task<ApiResult<List<string>>> GetGrantMenuRoleByIdAsync(string companyId,string id)
+    public async Task<ApiResult<List<string>>> GetGrantMenuRoleByIdAsync(string companyId, string id)
     {
-        var result = await query.GetAccountRoleGroupIdsAsync(companyId,id);
+        var result = await query.GetAccountRoleGroupIdsAsync(companyId, id);
         return new ApiResult<List<string>> { MsgCode = MsgCodeEnum.Success, Data = result };
     }
 }

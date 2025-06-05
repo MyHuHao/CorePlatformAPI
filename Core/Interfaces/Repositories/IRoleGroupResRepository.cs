@@ -13,4 +13,7 @@ public interface IRoleGroupResRepository
 
     // 删除角色组资源
     Task<int> DeleteRoleGroupResourceAsync(RoleGroupAuthorizeRequest request);
+    
+    // 通过资源ID查询绑定的角色组
+    Task<IEnumerable<RoleGroupResource>> GetRoleGroupByResIdAsync(string companyId, string resId);
 }

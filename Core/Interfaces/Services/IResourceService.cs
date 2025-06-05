@@ -16,7 +16,7 @@ public interface IResourceService
     Task<ApiResult<string>> UpdateResourceAsync(UpdateResourceRequest request);
 
     // 删除资源
-    Task<ApiResult<string>> DeleteResourceByIdAsync(string id);
+    Task<ApiResult<string>> DeleteResourceByIdAsync(string id,string companyId);
 
     // 通过ID查询资源详细
     Task<ApiResult<ResourceDto>> GetResourceByIdAsync(string id);

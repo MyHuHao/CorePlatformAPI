@@ -94,11 +94,16 @@ public class WebMenuService(IMapper mapper, WebMenuQuery query, WebMenuCommand c
         await command.UpdateWebMenuAsync(request);
         return new ApiResult<string> { MsgCode = MsgCodeEnum.Success, Msg = "修改成功" };
     }
-
+    
     // 删除菜单
-    public async Task<ApiResult<string>> DeleteWebMenuByIdAsync(string id)
+    public async Task<ApiResult<string>> DeleteWebMenuByIdAsync(string id, string companyId, string webMenuId)
     {
-        // 删除菜单
+        var hasChild = await query.VerifyWebMenuHasChildAsync(webMenuId);
+        if (hasChild) throw new ValidationException(MsgCodeEnum.Warning, "该菜单下有子菜单，不能删除");
+
+        var hasRoleGroup = await query.VerifyWebMenuHasRoleGroupAsync(companyId, webMenuId);
+        if (hasRoleGroup) throw new ValidationException(MsgCodeEnum.Warning, "该菜单有绑定角色组，不能删除");
+
         await command.DeleteWebMenuByIdAsync(id);
         return new ApiResult<string> { MsgCode = MsgCodeEnum.Success, Msg = "删除成功" };
     }

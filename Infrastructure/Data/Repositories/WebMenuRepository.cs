@@ -241,4 +241,12 @@ public class WebMenuRepository(IDapperExtensions<WebMenu> dapper, IUnitOfWork un
             unitOfWork.CurrentConnection,
             unitOfWork.CurrentTransaction);
     }
+
+    public async Task<IEnumerable<WebMenu>> GetChildWebMenusByParentIdAsync(string webMenuId)
+    {
+        const string sql = "SELECT * FROM WebMenu WHERE ParentWebMenuId = @WebMenuId";
+        return await dapper.QueryAsync(sql, new { WebMenuId = webMenuId },
+            unitOfWork.CurrentConnection,
+            unitOfWork.CurrentTransaction);
+    }
 }

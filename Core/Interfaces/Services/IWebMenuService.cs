@@ -19,7 +19,7 @@ public interface IWebMenuService
     Task<ApiResult<string>> UpdateWebMenuAsync(UpdateWebMenuRequest request);
 
     // 删除菜单
-    Task<ApiResult<string>> DeleteWebMenuByIdAsync(string id);
+    Task<ApiResult<string>> DeleteWebMenuByIdAsync(string id, string companyId, string webMenuId);
     
     //  获取菜单资源列表
     Task<ApiResult<List<WebMenuResourceListResult>>> GetWebMenuResourceListAsync(ByWebMenuResourceRequest request);

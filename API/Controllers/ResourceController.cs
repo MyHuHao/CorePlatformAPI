@@ -39,10 +39,10 @@ public class ResourceController(IResourceService service) : Controller
     }
 
     // 删除资源
-    [HttpGet("{id}")]
-    public async Task<IActionResult> DeleteResourceById(string id)
+    [HttpDelete]
+    public async Task<IActionResult> DeleteResourceById(string id,string companyId)
     {
-        var result = await service.DeleteResourceByIdAsync(id);
+        var result = await service.DeleteResourceByIdAsync(id,companyId);
         return Ok(result);
     }
 

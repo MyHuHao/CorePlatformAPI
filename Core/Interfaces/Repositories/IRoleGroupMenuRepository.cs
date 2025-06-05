@@ -14,5 +14,6 @@ public interface IRoleGroupMenuRepository
     // 删除角色组菜单
     Task<int> DeleteRoleGroupWebMenuAsync(RoleGroupAuthorizeRequest request);
     
-    
+    // 通过菜单ID查询绑定的角色组
+    Task<IEnumerable<RoleGroupWebMenu>> GetRoleGroupByMenuIdAsync(string companyId, string webMenuId);
 }

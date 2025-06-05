@@ -75,4 +75,17 @@ public class RoleGroupMenuRepository(IDapperExtensions<RoleGroupWebMenu> dapper,
             unitOfWork.CurrentConnection,
             unitOfWork.CurrentTransaction);
     }
+
+    public async Task<IEnumerable<RoleGroupWebMenu>> GetRoleGroupByMenuIdAsync(string companyId, string webMenuId)
+    {
+        const string sql = "SELECT * FROM RoleGroupWebMenu WHERE CompanyId = @CompanyId AND WebMenuId = @WebMenuId";
+        return await dapper.QueryAsync(sql,
+            new
+            {
+                CompanyId = companyId,
+                WebMenuId = webMenuId
+            },
+            unitOfWork.CurrentConnection,
+            unitOfWork.CurrentTransaction);
+    }
 }

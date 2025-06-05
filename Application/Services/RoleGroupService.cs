@@ -61,8 +61,11 @@ public class RoleGroupService(
             { MsgCode = MsgCodeEnum.Success, Msg = "查询成功", Data = mapper.Map<RoleGroupDto>(result) };
     }
 
-    public async Task<ApiResult<string>> DeleteRoleGroupAsync(string id)
+    public async Task<ApiResult<string>> DeleteRoleGroupAsync(string id, string companyId, string roleGroupId)
     {
+        if (id == "f6311a3a98d4c83e4b942f7e168b72f7") throw new ValidationException(MsgCodeEnum.Warning, "管理员角色组不允许删除");
+        var existingMenus = await query.GetAllRoleGroupWebMenuByIdAsync(companyId, roleGroupId);
+        if (existingMenus.Count != 0) throw new ValidationException(MsgCodeEnum.Warning, "该角色组已授权菜单，请先取消授权");
         await command.DeleteRoleGroupAsync(id);
         return new ApiResult<string> { MsgCode = MsgCodeEnum.Success, Msg = "删除成功" };
     }
@@ -144,10 +147,10 @@ public class RoleGroupService(
 
         var requestRoleGroups = new HashSet<string>(request.ResIds);
         var existingRoleGroups = new HashSet<string>(existingResources);
-        
+
         var toDelete = existingRoleGroups.Except(requestRoleGroups).ToList();
         var toAdd = requestRoleGroups.Except(existingRoleGroups).ToList();
-        
+
         // 执行删除操作
         if (toDelete.Count != 0)
         {
@@ -184,7 +187,7 @@ public class RoleGroupService(
 
         var requestRoleGroups = new HashSet<string>(request.MenuIds);
         var existingRoleGroups = new HashSet<string>(existingMenus);
-        
+
         var toDelete = existingRoleGroups.Except(requestRoleGroups).ToList();
         var toAdd = requestRoleGroups.Except(existingRoleGroups).ToList();
 

@@ -44,7 +44,7 @@ public class ResourceService(ResourceQuery query, ResourceCommand command, IMapp
             ResCode = request.ResCode
         });
         if (validResourceCode) throw new ValidationException(MsgCodeEnum.Warning, "资源编码已存在");
-        
+
         // 验证是否重复
         var validResSequence = await query.ValidResourceAsync(new ValidResourceCodeRequest
         {
@@ -87,8 +87,12 @@ public class ResourceService(ResourceQuery query, ResourceCommand command, IMapp
         return new ApiResult<string> { MsgCode = MsgCodeEnum.Success, Msg = "修改成功" };
     }
 
-    public async Task<ApiResult<string>> DeleteResourceByIdAsync(string id)
+    public async Task<ApiResult<string>> DeleteResourceByIdAsync(string id, string companyId)
     {
+        // 如果这个资源被其他角色组关联，则不能删除
+        var isExist = await query.VerifyWebMenuHasRoleGroupAsync(id, companyId);
+        if (isExist) throw new ValidationException(MsgCodeEnum.Warning, "该资源被角色组关联，不能删除");
+
         await command.DeleteResourceByIdAsync(id);
         return new ApiResult<string> { MsgCode = MsgCodeEnum.Success, Msg = "删除成功" };
     }

@@ -38,11 +38,13 @@ public class RoleGroupController(IRoleGroupService service) : Controller
     ///     删除角色组
     /// </summary>
     /// <param name="id"></param>
+    /// <param name="companyId"></param>
+    /// <param name="roleGroupId"></param>
     /// <returns></returns>
-    [HttpGet("{id}")]
-    public async Task<IActionResult> Delete(string id)
+    [HttpDelete]
+    public async Task<IActionResult> Delete(string id, string companyId, string roleGroupId)
     {
-        var result = await service.DeleteRoleGroupAsync(id);
+        var result = await service.DeleteRoleGroupAsync(id, companyId, roleGroupId);
         return Ok(result);
     }
 
@@ -77,7 +79,7 @@ public class RoleGroupController(IRoleGroupService service) : Controller
         var result = await service.RoleGroupAuthorizeAsync(request);
         return Ok(result);
     }
-    
+
     // 通过ID获取已经授权的菜单和资源
     [HttpPost]
     public async Task<IActionResult> GetRoleGroupAuthorizeById([FromBody] ByRoleGroupRequest request)

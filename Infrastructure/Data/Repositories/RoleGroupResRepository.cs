@@ -76,4 +76,17 @@ public class RoleGroupResRepository(IDapperExtensions<RoleGroupResource> dapper,
             unitOfWork.CurrentConnection,
             unitOfWork.CurrentTransaction);
     }
+
+    public async Task<IEnumerable<RoleGroupResource>> GetRoleGroupByResIdAsync(string companyId, string resId)
+    {
+        const string sql = "SELECT * FROM RoleGroupResource WHERE CompanyId = @CompanyId AND ResId = @ResId";
+        return await dapper.QueryAsync(sql,
+            new
+            {
+                CompanyId = companyId,
+                ResId = resId
+            },
+            unitOfWork.CurrentConnection,
+            unitOfWork.CurrentTransaction);
+    }
 }
