@@ -92,7 +92,7 @@ public class RoleGroupService(
             await ProcessResourcesAsync(request);
             await ProcessMenusAsync(request);
             await unitOfWork.CommitAsync();
-            return new ApiResult<string> { MsgCode = MsgCodeEnum.Success, Msg = "创建成功" };
+            return new ApiResult<string> { MsgCode = MsgCodeEnum.Success, Msg = "授权成功" };
         }
         catch (Exception exception)
         {
@@ -142,17 +142,12 @@ public class RoleGroupService(
         // 获取现有资源关联
         var existingResources = await query.GetAllRoleGroupResourceByIdAsync(request.CompanyId, request.RoleGroupId);
 
-        var existingResIds = existingResources.Select(r => r.ResId).ToList();
-
-        // 需要删除的资源（数据库存在但请求中不存在）
-        var toDelete = existingResources
-            .Where(r => !request.ResIds.Contains(r.ResId))
-            .Select(r => r.ResId)
-            .ToList();
-
-        // 需要新增的资源（请求中存在但数据库不存在）
-        var toAdd = request.ResIds.Except(existingResIds).ToList();
-
+        var requestRoleGroups = new HashSet<string>(request.ResIds);
+        var existingRoleGroups = new HashSet<string>(existingResources);
+        
+        var toDelete = existingRoleGroups.Except(requestRoleGroups).ToList();
+        var toAdd = requestRoleGroups.Except(existingRoleGroups).ToList();
+        
         // 执行删除操作
         if (toDelete.Count != 0)
         {
@@ -187,16 +182,11 @@ public class RoleGroupService(
         // 获取现有菜单关联
         var existingMenus = await query.GetAllRoleGroupWebMenuByIdAsync(request.CompanyId, request.RoleGroupId);
 
-        var existingMenuIds = existingMenus.Select(m => m.WebMenuId).ToList();
-
-        // 需要删除的菜单
-        var toDelete = existingMenus
-            .Where(m => !request.MenuIds.Contains(m.WebMenuId))
-            .Select(r => r.WebMenuId)
-            .ToList();
-
-        // 需要新增的菜单
-        var toAdd = request.MenuIds.Except(existingMenuIds).ToList();
+        var requestRoleGroups = new HashSet<string>(request.MenuIds);
+        var existingRoleGroups = new HashSet<string>(existingMenus);
+        
+        var toDelete = existingRoleGroups.Except(requestRoleGroups).ToList();
+        var toAdd = requestRoleGroups.Except(existingRoleGroups).ToList();
 
         // 执行删除
         if (toDelete.Count != 0)
