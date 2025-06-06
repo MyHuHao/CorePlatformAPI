@@ -8,5 +8,6 @@ public class TreeDepartmentResult
     public string DeptName { get; set; } = "";
     public string DeptLevel { get; set; } = "";
     public string ParentDeptId { get; set; }  = "";
+    public string IsCancel { get; set; }  = "";
     public List<TreeDepartmentResult> Children { get; set; } = [];
 }

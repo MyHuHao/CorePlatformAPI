@@ -45,7 +45,6 @@ public class DepartmentService(DepartmentQuery query, IMapper mapper) : IDepartm
 
     private static List<TreeDepartmentResult> FormatTreeDepartmentResult(List<DepartmentDto> departmentDto)
     {
-        // 创建快速查找的字典结构
         var lookup = departmentDto.ToLookup(d => d.ParentDeptId);
         return BuildTree(string.Empty).ToList();
 
@@ -56,6 +55,7 @@ public class DepartmentService(DepartmentQuery query, IMapper mapper) : IDepartm
                 yield return new TreeDepartmentResult
                 {
                     Id = dto.Id,
+                    IsCancel = dto.IsCancel,
                     CompanyId = dto.CompanyId,
                     DeptId = dto.DeptId,
                     DeptName = dto.DeptName,
