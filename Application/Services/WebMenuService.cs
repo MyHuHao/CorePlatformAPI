@@ -94,7 +94,7 @@ public class WebMenuService(IMapper mapper, WebMenuQuery query, WebMenuCommand c
         await command.UpdateWebMenuAsync(request);
         return new ApiResult<string> { MsgCode = MsgCodeEnum.Success, Msg = "修改成功" };
     }
-    
+
     // 删除菜单
     public async Task<ApiResult<string>> DeleteWebMenuByIdAsync(string id, string companyId, string webMenuId)
     {
@@ -136,65 +136,90 @@ public class WebMenuService(IMapper mapper, WebMenuQuery query, WebMenuCommand c
         return await resourceQuery.GetResourceListAsync(companyId, webMenuId);
     }
 
-    // 格式化 webMenuDto 为 树形数组 FormatWebMenuResourceListResult
+    // 格式化 webMenuDto 为 树形数组
     private async Task<List<WebMenuResourceListResult>> FormatWebMenuResourceListResult(string companyId,
         List<WebMenuDto> webMenuDto)
     {
+        var lookup = webMenuDto.ToLookup(d => d.ParentWebMenuId);
+
         return await BuildTree(string.Empty);
 
         async Task<List<WebMenuResourceListResult>> BuildTree(string parentId)
         {
-            var tasks = webMenuDto
-                .Where(dto => dto.ParentWebMenuId == parentId)
-                .Select(async dto =>
+            // 获取并排序当前层级的节点
+            var currentLevel = lookup[parentId]
+                .OrderBy(dto => Convert.ToInt32(dto.Sequence))
+                .ToList();
+
+            // 准备所有节点的任务
+            var nodeTasks = currentLevel.Select(async dto =>
+            {
+                // 并发获取资源列表
+                var resourceList = await GetResourceListAsync(companyId, dto.WebMenuId);
+                var isPenultimate = resourceList.Count > 0;
+
+                // 递归获取子节点（如果没有资源）
+                var children = isPenultimate
+                    ? resourceList
+                    : await BuildTree(dto.WebMenuId);
+
+                return new WebMenuResourceListResult
                 {
-                    var resourceList = await GetResourceListAsync(companyId, dto.WebMenuId);
-                    return new WebMenuResourceListResult
-                    {
-                        Id = dto.WebMenuId,
-                        Label = dto.Title,
-                        Sequence = dto.Sequence,
-                        Type = "menu",
-                        WebMenuId = "",
-                        IsPenultimate = resourceList.Count > 0,
-                        Children = resourceList.Count > 0 ? resourceList : await BuildTree(dto.WebMenuId)
-                    };
-                }).ToList();
-            var nodes = await Task.WhenAll(tasks);
-            return nodes.OrderBy(m => Convert.ToInt32(m.Sequence)).ToList();
+                    Id = dto.WebMenuId,
+                    Label = dto.Title,
+                    Sequence = dto.Sequence,
+                    Type = "menu",
+                    WebMenuId = dto.WebMenuId,
+                    IsPenultimate = isPenultimate,
+                    Children = children
+                };
+            }).ToList();
+
+            // 并发执行所有任务
+            return (await Task.WhenAll(nodeTasks)).ToList();
         }
     }
 
     // 格式化 webMenuDto 为 树形数组
     private static List<ParentWebMenuListResult> FormatParentWebMenuListResult(List<WebMenuDto> webMenuDto)
     {
-        return BuildTree(string.Empty);
+        var lookup = webMenuDto.ToLookup(d => d.ParentWebMenuId);
+        return BuildTree(string.Empty).ToList();
 
-        List<ParentWebMenuListResult> BuildTree(string parentId)
+        IEnumerable<ParentWebMenuListResult> BuildTree(string parentId)
         {
-            return webMenuDto
-                .Where(dto => dto.ParentWebMenuId == parentId)
-                .Select(dto => new ParentWebMenuListResult
+            var sortedItems = lookup[parentId]
+                .OrderBy(dto => Convert.ToInt32(dto.Sequence))
+                .ToList();
+            foreach (var dto in sortedItems)
+            {
+                yield return new ParentWebMenuListResult
                 {
                     Value = dto.WebMenuId,
                     ParentWebMenuId = dto.ParentWebMenuId,
                     Sequence = dto.Sequence,
                     Label = dto.Title,
-                    Children = BuildTree(dto.WebMenuId)
-                }).OrderBy(m => Convert.ToInt32(m.Sequence)).ToList();
+                    Children = BuildTree(dto.WebMenuId).ToList()
+                };
+            }
         }
     }
 
     // 格式化 webMenuDto 为 树形数组
     private static List<WebMenuResult> FormatWebMenuListResult(List<WebMenuDto> webMenuDto)
     {
-        return BuildTree(string.Empty);
+        var lookup = webMenuDto.ToLookup(d => d.ParentWebMenuId);
+        return BuildTree(string.Empty).ToList();
 
-        List<WebMenuResult> BuildTree(string parentId)
+        IEnumerable<WebMenuResult> BuildTree(string parentId)
         {
-            return webMenuDto
-                .Where(dto => dto.ParentWebMenuId == parentId)
-                .Select(dto => new WebMenuResult
+            var sortedItems = lookup[parentId]
+                .OrderBy(dto => Convert.ToInt32(dto.Sequence))
+                .ToList();
+
+            foreach (var dto in sortedItems)
+            {
+                yield return new WebMenuResult
                 {
                     Id = dto.Id,
                     WebMenuId = dto.WebMenuId,
@@ -214,8 +239,9 @@ public class WebMenuService(IMapper mapper, WebMenuQuery query, WebMenuCommand c
                     MenuType = dto.MenuType,
                     Status = dto.Status,
                     Remark = dto.Remark,
-                    Children = BuildTree(dto.WebMenuId)
-                }).OrderBy(m => Convert.ToInt32(m.Sequence)).ToList();
+                    Children = BuildTree(dto.WebMenuId).ToList()
+                };
+            }
         }
     }
 }
