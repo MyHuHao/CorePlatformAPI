@@ -71,4 +71,19 @@ public class EmployeeService(EmployeeQuery query, IMapper mapper) : IEmployeeSer
         return new ApiResult<PagedResult<EmployeeChangeResult>>
             { MsgCode = MsgCodeEnum.Success, Msg = "查询成功", Data = pagedResult };
     }
+
+    public Task<ApiResult<int>> AddEmployeeAsync(AddEmployeeRequest request)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<ApiResult<int>> UpdateEmployeeAsync(UpdateEmployeeRequest request)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<ApiResult<int>> DeleteEmployeeByIdAsync(string id, string companyId)
+    {
+        throw new NotImplementedException();
+    }
 }

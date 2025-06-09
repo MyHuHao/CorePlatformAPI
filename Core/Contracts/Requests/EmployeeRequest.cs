@@ -23,18 +23,22 @@ public class AddEmployeeRequest
     public required string EmpName { get; set; } = "";
     public string EmpMobilePhone { get; set; } = "";
     public string EmpEmail { get; set; } = "";
-    public DateTime? EmpEntryDate { get; set; }
-    public DateTime? EmpDepartureDate { get; set; }
-    public required int UserType { get; set; }
+    public string Birthday { get; set; } = "";
+    public string Sex { get; set; } = "";
+    public string UserType { get; set; } = "";
+    public string Direct { get; set; } = "";
     public string DeptId { get; set; } = "";
     public string CostCenterId { get; set; } = "";
     public string JobCategoryId { get; set; } = "";
-    public int Status { get; set; }
-    public string Direct { get; set; } = "";
-    public DateTime? DeliveredDate { get; set; }
-    public DateTime? Birthday { get; set; }
-    public string Sex { get; set; } = "";
-    public int WorkYear { get; set; }
     public string EducationName { get; set; } = "";
-    public required string StaffId { get; set; } = "";
+    public string DeliveredDate { get; set; } = "";
+    public string EmpEntryDate { get; set; } = "";
+    public string EmpDepartureDate { get; set; } = "";
+    public string WorkYear { get; set; } = "";
+    public string Status { get; set; } = "";
+    public string StaffId { get; set; } = "";
+}
+
+public class UpdateEmployeeRequest
+{
 }

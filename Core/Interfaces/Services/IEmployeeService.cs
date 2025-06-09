@@ -27,7 +27,16 @@ public interface IEmployeeService
     /// <param name="request"></param>
     /// <returns></returns>
     Task<ApiResult<PagedResult<EmployeeDto>>> GetEmployeePageAsync(ByEmployeeListRequest request);
-    
+
     // 人员选择分页查询
     Task<ApiResult<PagedResult<EmployeeChangeResult>>> GetEmployeePageBySelectAsync(ByEmployeeListRequest request);
+
+    // 新增人员
+    Task<ApiResult<int>> AddEmployeeAsync(AddEmployeeRequest request);
+
+    // 修改人员信息
+    Task<ApiResult<int>> UpdateEmployeeAsync(UpdateEmployeeRequest request);
+
+    // 删除人员
+    Task<ApiResult<int>> DeleteEmployeeByIdAsync(string id, string companyId);
 }

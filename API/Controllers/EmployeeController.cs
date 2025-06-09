@@ -33,12 +33,36 @@ public class EmployeeController(IEmployeeService service) : Controller
         var result = await service.GetEmployeePageAsync(request);
         return Ok(result);
     }
-    
+
     // 人员选择分页查询
     [HttpPost]
     public async Task<IActionResult> GetEmployeePageBySelect([FromBody] ByEmployeeListRequest request)
     {
         var result = await service.GetEmployeePageBySelectAsync(request);
+        return Ok(result);
+    }
+    
+    // 新增人员
+    [HttpPost]
+    public async Task<IActionResult> AddEmployee([FromBody] AddEmployeeRequest request)
+    {
+        var result = await service.AddEmployeeAsync(request);
+        return Ok(result);
+    }
+    
+    // 修改人员信息
+    [HttpPost]
+    public async Task<IActionResult> UpdateEmployee([FromBody] UpdateEmployeeRequest request)
+    {
+        var result = await service.UpdateEmployeeAsync(request);
+        return Ok(result);
+    }
+    
+    // 删除人员
+    [HttpDelete]
+    public async Task<IActionResult> DeleteEmployeeById(string id, string companyId)
+    {
+        var result = await service.DeleteEmployeeByIdAsync(id, companyId);
         return Ok(result);
     }
 }
