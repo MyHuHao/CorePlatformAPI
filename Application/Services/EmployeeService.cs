@@ -1,4 +1,5 @@
-﻿using Application.Queries;
+﻿using Application.Commands;
+using Application.Queries;
 using AutoMapper;
 using Core.Contracts;
 using Core.Contracts.Requests;
@@ -10,7 +11,7 @@ using Core.Interfaces.Services;
 
 namespace Application.Services;
 
-public class EmployeeService(EmployeeQuery query, IMapper mapper) : IEmployeeService
+public class EmployeeService(EmployeeQuery query, EmployeeCommand command, IMapper mapper) : IEmployeeService
 {
     /// <summary>
     ///     通过用户ID获取详情
@@ -72,9 +73,11 @@ public class EmployeeService(EmployeeQuery query, IMapper mapper) : IEmployeeSer
             { MsgCode = MsgCodeEnum.Success, Msg = "查询成功", Data = pagedResult };
     }
 
-    public Task<ApiResult<int>> AddEmployeeAsync(AddEmployeeRequest request)
+    // 新增人员
+    public async Task<ApiResult<int>> AddEmployeeAsync(AddEmployeeRequest request)
     {
-        throw new NotImplementedException();
+        await command.AddEmployeeAsync(request);
+        return new ApiResult<int> { MsgCode = MsgCodeEnum.Success, Msg = "新增成功" };
     }
 
     public Task<ApiResult<int>> UpdateEmployeeAsync(UpdateEmployeeRequest request)
