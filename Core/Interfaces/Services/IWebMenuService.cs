@@ -1,6 +1,7 @@
 ﻿using Core.Contracts;
 using Core.Contracts.Requests;
 using Core.Contracts.Results;
+using Core.Contracts.WebMenu;
 
 namespace Core.Interfaces.Services;
 
@@ -23,4 +24,6 @@ public interface IWebMenuService
     
     //  获取菜单资源列表
     Task<ApiResult<List<WebMenuResourceListResult>>> GetWebMenuResourceListAsync(ByWebMenuResourceRequest request);
+
+    Task<ApiResult<List<GetWebMenuResourceListResult>>> GetWebMenuResourceList();
 }

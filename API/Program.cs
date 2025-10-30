@@ -99,7 +99,7 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseMiddleware<GlobalExceptionMiddleware>();
-app.UseMiddleware<ApiLoggingMiddleware>();
+// app.UseMiddleware<ApiLoggingMiddleware>();
 app.UseSwagger();
 app.UseSwaggerUI(c =>
 {

@@ -1,4 +1,5 @@
 ﻿using Core.Contracts.Requests;
+using Core.Contracts.WebMenu;
 using Core.Entities;
 
 namespace Core.Interfaces.Repositories;
@@ -22,4 +23,6 @@ public interface IWebMenuRepository
 
     // 通过父菜单ID查询子菜单
     Task<IEnumerable<WebMenu>> GetChildWebMenusByParentIdAsync(string webMenuId);
+
+    Task<List<GetWebMenuResourceListResult>> GetWebMenuResourceList();
 }

@@ -4,6 +4,7 @@ using AutoMapper;
 using Core.Contracts;
 using Core.Contracts.Requests;
 using Core.Contracts.Results;
+using Core.Contracts.WebMenu;
 using Core.DTOs;
 using Core.Enums;
 using Core.Exceptions;
@@ -128,6 +129,18 @@ public class WebMenuService(IMapper mapper, WebMenuQuery query, WebMenuCommand c
             MsgCode = MsgCodeEnum.Success,
             Msg = "查询成功",
             Data = list
+        };
+    }
+
+    public async Task<ApiResult<List<GetWebMenuResourceListResult>>> GetWebMenuResourceList()
+    {
+        var data = await query.GetWebMenuResourceList();
+        
+        return new ApiResult<List<GetWebMenuResourceListResult>>
+        {
+            MsgCode = MsgCodeEnum.Success,
+            Msg = "查询成功",
+            Data = data
         };
     }
 

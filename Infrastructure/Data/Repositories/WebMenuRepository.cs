@@ -1,4 +1,5 @@
 ﻿using Core.Contracts.Requests;
+using Core.Contracts.WebMenu;
 using Core.Entities;
 using Core.Helpers;
 using Core.Interfaces;
@@ -248,5 +249,10 @@ public class WebMenuRepository(IDapperExtensions<WebMenu> dapper, IUnitOfWork un
         return await dapper.QueryAsync(sql, new { WebMenuId = webMenuId },
             unitOfWork.CurrentConnection,
             unitOfWork.CurrentTransaction);
+    }
+
+    public async Task<List<GetWebMenuResourceListResult>> GetWebMenuResourceList()
+    {
+        throw new NotImplementedException();
     }
 }

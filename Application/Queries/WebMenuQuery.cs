@@ -1,4 +1,5 @@
 ﻿using Core.Contracts.Requests;
+using Core.Contracts.WebMenu;
 using Core.Entities;
 using Core.Interfaces.Repositories;
 
@@ -29,6 +30,13 @@ public class WebMenuQuery(IWebMenuRepository repository, IRoleGroupMenuRepositor
     public async Task<bool> VerifyWebMenuHasRoleGroupAsync(string companyId, string webMenuId)
     {
         var result = await roleGroupMenuRepository.GetRoleGroupByMenuIdAsync(companyId, webMenuId);
+        return result.Any();
+    }
+    
+    // 查询所有的菜单
+    public async Task<List<GetWebMenuResourceListResult>> GetWebMenuResourceList()
+    {
+        var result = await repository.GetWebMenuResourceList();
         return result.Any();
     }
 }
