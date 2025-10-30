@@ -34,9 +34,9 @@ public class WebMenuQuery(IWebMenuRepository repository, IRoleGroupMenuRepositor
     }
     
     // 查询所有的菜单
-    public async Task<List<GetWebMenuResourceListResult>> GetWebMenuResourceList()
+    public async Task<IEnumerable<WebMenu>> GetWebMenuRouterListAsync()
     {
-        var result = await repository.GetWebMenuResourceList();
-        return result.Any();
+        var result = await repository.GetWebMenuRouterListAsync();
+        return result;
     }
 }

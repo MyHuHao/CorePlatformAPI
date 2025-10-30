@@ -24,5 +24,5 @@ public interface IWebMenuRepository
     // 通过父菜单ID查询子菜单
     Task<IEnumerable<WebMenu>> GetChildWebMenusByParentIdAsync(string webMenuId);
 
-    Task<List<GetWebMenuResourceListResult>> GetWebMenuResourceList();
+    Task<IEnumerable<WebMenu>> GetWebMenuRouterListAsync();
 }

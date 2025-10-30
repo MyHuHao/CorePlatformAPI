@@ -6,6 +6,7 @@ using Core.Contracts.Requests;
 using Core.Contracts.Results;
 using Core.Contracts.WebMenu;
 using Core.DTOs;
+using Core.Entities;
 using Core.Enums;
 using Core.Exceptions;
 using Core.Interfaces.Services;
@@ -28,7 +29,7 @@ public class WebMenuService(IMapper mapper, WebMenuQuery query, WebMenuCommand c
             Total = result.total
         };
         return new ApiResult<PagedResult<WebMenuResult>>
-            { MsgCode = MsgCodeEnum.Success, Msg = "查询成功", Data = pagedResult };
+        { MsgCode = MsgCodeEnum.Success, Msg = "查询成功", Data = pagedResult };
     }
 
     // 获取所有父级菜单
@@ -132,11 +133,13 @@ public class WebMenuService(IMapper mapper, WebMenuQuery query, WebMenuCommand c
         };
     }
 
-    public async Task<ApiResult<List<GetWebMenuResourceListResult>>> GetWebMenuResourceList()
+    public async Task<ApiResult<List<GetGetWebMenuRoutelListResult>>> GetWebMenuRouterListAsync()
     {
-        var data = await query.GetWebMenuResourceList();
-        
-        return new ApiResult<List<GetWebMenuResourceListResult>>
+        var menus = await query.GetWebMenuRouterListAsync();
+
+        var data = BuildMenuTree(menus, "");
+
+        return new ApiResult<List<GetGetWebMenuRoutelListResult>>
         {
             MsgCode = MsgCodeEnum.Success,
             Msg = "查询成功",
@@ -144,10 +147,36 @@ public class WebMenuService(IMapper mapper, WebMenuQuery query, WebMenuCommand c
         };
     }
 
+    // 递归构建树
+    private static List<GetGetWebMenuRoutelListResult> BuildMenuTree(IEnumerable<WebMenu> menus, string parentId)
+    {
+        var webMenus = menus as WebMenu[] ?? menus.ToArray();
+        // 只筛选父ID完全匹配的节点，避免递归时混入根节点
+        return webMenus
+            .Where(m => m.ParentWebMenuId == parentId)
+            .Select(m => new GetGetWebMenuRoutelListResult
+            {
+                Path = m.Path,
+                Name = m.Name,
+                Src = m.Component,
+                Meta = new RouterMeta
+                {
+                    Title = m.Title,
+                    Icon = m.Icon,
+                    KeepAlive = m.IsCache == 1
+                },
+                // 递归查询当前节点的子节点（子节点的ParentWebMenuId等于当前节点的WebMenuId）
+                Children = BuildMenuTree(webMenus, m.WebMenuId)
+            })
+            .ToList(); // 使用ToList()替代集合表达式，提升版本兼容性
+    }
+
     private async Task<List<WebMenuResourceListResult>> GetResourceListAsync(string companyId, string webMenuId)
     {
         return await resourceQuery.GetResourceListAsync(companyId, webMenuId);
     }
+
+
 
     // 格式化 webMenuDto 为 树形数组
     private async Task<List<WebMenuResourceListResult>> FormatWebMenuResourceListResult(string companyId,

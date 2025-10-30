@@ -60,9 +60,9 @@ public class WebMenuController(IWebMenuService service) : Controller
     
     // 获取路由菜单
     [HttpGet]
-    public async Task<IActionResult> GetWebMenuResourceList()
+    public async Task<IActionResult> GetWebMenuRouterList()
     {
-        var result = await service.GetWebMenuResourceList();
+        var result = await service.GetWebMenuRouterListAsync();
         return Ok(result);
     }
 }

@@ -25,5 +25,5 @@ public interface IWebMenuService
     //  获取菜单资源列表
     Task<ApiResult<List<WebMenuResourceListResult>>> GetWebMenuResourceListAsync(ByWebMenuResourceRequest request);
 
-    Task<ApiResult<List<GetWebMenuResourceListResult>>> GetWebMenuResourceList();
+    Task<ApiResult<List<GetGetWebMenuRoutelListResult>>> GetWebMenuRouterListAsync();
 }

@@ -251,8 +251,11 @@ public class WebMenuRepository(IDapperExtensions<WebMenu> dapper, IUnitOfWork un
             unitOfWork.CurrentTransaction);
     }
 
-    public async Task<List<GetWebMenuResourceListResult>> GetWebMenuResourceList()
+    public async Task<IEnumerable<WebMenu>> GetWebMenuRouterListAsync()
     {
-        throw new NotImplementedException();
+        const string sql = "SELECT * FROM WebMenu";
+        return await dapper.QueryAsync(sql, new { },
+            unitOfWork.CurrentConnection,
+            unitOfWork.CurrentTransaction);
     }
 }
